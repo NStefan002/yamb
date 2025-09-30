@@ -1,0 +1,161 @@
+package views
+
+import (
+	"fmt"
+	"yamb/game"
+)
+
+// Add this component for displaying other players' dice
+templ OtherPlayerDice(dice []int) {
+	if len(dice) == 0 {
+		<span class="text-xs text-gray-400">Waiting for roll</span>
+	} else {
+		for _, die := range dice {
+			<div class="w-6 h-6 bg-gray-200 rounded flex items-center justify-center text-xs font-bold border">
+				{ die }
+			</div>
+		}
+	}
+}
+
+templ DiceArea(roomID string, dice game.Dice) {
+	<!-- Main Player Dice Area - Always under scorecard -->
+	<div class="bg-white rounded-xl shadow p-4" id="dice-area">
+		<div class="flex justify-between items-center mb-3">
+			<h2 class="text-lg font-semibold">Your Dice</h2>
+			<div class="text-sm text-gray-600 font-medium">
+				Rolls remaining: { dice.RollsLeft }
+			</div>
+		</div>
+		<div class="flex flex-col lg:flex-row items-center gap-4">
+			<!-- Dice Containers -->
+			<div class="flex-1 grid grid-cols-2 gap-4">
+				<!-- Kept Dice -->
+				<div class="border-2 border-green-200 rounded-lg p-3">
+					<h3 class="font-medium text-sm text-gray-600 mb-2">Kept Dice</h3>
+					<div class="flex flex-wrap gap-2 justify-center min-h-12" id="kept-dice">
+						@DiceRow(roomID, dice.Values, dice.Held, true)
+					</div>
+				</div>
+				<!-- Rolling Dice -->
+				<div class="border-2 border-blue-200 rounded-lg p-3">
+					<h3 class="font-medium text-sm text-gray-600 mb-2">Rolling Dice</h3>
+					<div class="flex flex-wrap gap-2 justify-center min-h-12" id="rolling-dice">
+						@DiceRow(roomID, dice.Values, dice.Held, false)
+					</div>
+				</div>
+			</div>
+			<!-- Roll Button -->
+			<button
+				id="roll-button"
+				class="w-full lg:w-32 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+				hx-post="/roll-dice"
+				hx-target="#dice-area"
+				hx-swap="innerHTML"
+				hx-vals={ fmt.Sprintf(`{"room_id":"%s"}`, roomID) }
+			>
+				Roll Dice
+			</button>
+		</div>
+	</div>
+}
+
+templ Dice(roomID string, n int, index int, isKept bool) {
+	<div
+		hx-post="/toggle-dice"
+		hx-target="#dice-area"
+		hx-swap="innerHTML"
+		if isKept {
+			title="Click to un-keep"
+			class="w-16 h-16 bg-white border-2 rounded-lg shadow flex items-center justify-center cursor-pointer transition-all duration-200 border-gray-400 hover:border-green-500 hover:bg-green-50"
+		} else {
+			title="Click to keep"
+			class="w-16 h-16 bg-white border-2 rounded-lg shadow flex items-center justify-center cursor-pointer transition-all duration-200 border-gray-400 hover:border-blue-500 hover:bg-blue-50"
+		}
+		hx-vals={ fmt.Sprintf(`{"room_id":"%s", "die_index":%d}`, roomID, index) }
+	>
+		<div class="grid grid-cols-3 grid-rows-3 w-full h-full p-1">
+			switch n {
+				case 1:
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div class="flex items-center justify-center">●</div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+				case 2:
+					<div class="flex items-start justify-start">●</div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div class="flex items-end justify-end">●</div>
+				case 3:
+					<div class="flex items-start justify-start">●</div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div class="flex items-center justify-center">●</div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div class="flex items-end justify-end">●</div>
+				case 4:
+					<div class="flex items-start justify-start">●</div>
+					<div></div>
+					<div class="flex items-start justify-end">●</div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div class="flex items-end justify-start">●</div>
+					<div></div>
+					<div class="flex items-end justify-end">●</div>
+				case 5:
+					<div class="flex items-start justify-start">●</div>
+					<div></div>
+					<div class="flex items-start justify-end">●</div>
+					<div></div>
+					<div class="flex items-center justify-center">●</div>
+					<div></div>
+					<div class="flex items-end justify-start">●</div>
+					<div></div>
+					<div class="flex items-end justify-end">●</div>
+				case 6:
+					<div class="flex items-start justify-start">●</div>
+					<div></div>
+					<div class="flex items-start justify-end">●</div>
+					<div class="flex items-center justify-start">●</div>
+					<div></div>
+					<div class="flex items-center justify-end">●</div>
+					<div class="flex items-end justify-start">●</div>
+					<div></div>
+					<div class="flex items-end justify-end">●</div>
+			}
+		</div>
+	</div>
+}
+
+templ DiceRow(roomID string, values []int, keptDice []bool, displayKept bool) {
+	<div class="flex space-x-2">
+		{{ displayMsg := true }}
+		for i, v := range values {
+			if keptDice[i] == displayKept {
+				@Dice(roomID, v, i, keptDice[i])
+				{{ displayMsg = false }}
+			}
+		}
+		if displayMsg {
+			if displayKept {
+				No kept dice
+			} else {
+				No dice to roll
+			}
+		}
+	</div>
+}
