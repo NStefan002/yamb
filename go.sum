@@ -1,0 +1,4 @@
+github.com/a-h/templ v0.3.943 h1:o+mT/4yqhZ33F3ootBiHwaY4HM5EVaOJfIshvd5UNTY=
+github.com/a-h/templ v0.3.943/go.mod h1:oCZcnKRf5jjsGpf2yELzQfodLphd2mwecwG4Crk5HBo=
+golang.org/x/net v0.44.0 h1:evd8IRDyfNBMBTTY5XRF1vaZlD+EmWx6x8PkhR04H/I=
+golang.org/x/net v0.44.0/go.mod h1:ECOoLqd5U3Lhyeyo/QDCEVQ4sNgYsqvCZ722XogGieY=
