@@ -5,8 +5,8 @@ import (
 )
 
 templ RoomLink(link string) {
-	<div class="space-y-2">
-		<p class="text-sm">Your room is ready:</p>
+	<div class="space-y-3">
+		<p class="text-sm text-center">Your room is ready:</p>
 		<div class="flex items-center space-x-2">
 			<input
 				id="room-url"
@@ -14,11 +14,19 @@ templ RoomLink(link string) {
 				value={ link }
 				readonly
 			/>
+		</div>
+		<div class="flex justify-center space-x-2">
+			<button
+				onclick="window.location.href = document.getElementById('room-url').value"
+				class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 font-medium"
+			>
+				Join Room Now
+			</button>
 			<button
 				onclick="navigator.clipboard.writeText(document.getElementById('room-url').value)"
-				class="bg-gray-200 px-3 py-2 rounded-lg hover:bg-gray-300"
+				class="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 font-medium"
 			>
-				Copy
+				Copy Room URL
 			</button>
 		</div>
 	</div>
@@ -220,6 +228,42 @@ templ RoomPage(roomID string, room *game.Room) {
 					showSection("scorecards");
 				});
 			</script>
+		</body>
+	</html>
+}
+
+templ UsernameEntry(roomID string) {
+	<html>
+		<head>
+			<title>Join Room - Yamb Online</title>
+			<script src="https://cdn.tailwindcss.com"></script>
+		</head>
+		<body class="flex items-center justify-center h-screen bg-gray-100">
+			<div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-md space-y-4">
+				<h1 class="text-2xl font-bold text-center">Join Room</h1>
+				<p class="text-sm text-gray-600 text-center">Enter your username to join the game</p>
+				<form action="/join-room" method="POST" class="space-y-4">
+					<input type="hidden" name="room_id" value={ roomID }/>
+					<div>
+						<label class="block text-sm font-medium mb-2">Username</label>
+						<input
+							type="text"
+							name="username"
+							class="w-full border rounded-lg p-2"
+							placeholder="Enter your username"
+							required
+							maxlength="20"
+							autofocus
+						/>
+					</div>
+					<button
+						type="submit"
+						class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 font-medium"
+					>
+						Join Game
+					</button>
+				</form>
+			</div>
 		</body>
 	</html>
 }
