@@ -1,7 +1,7 @@
 package game
 
 type Player struct {
-	ID        string
+	ID       string
 	Username  string
 	ScoreCard ScoreCard
 	Dice      Dice
@@ -10,7 +10,7 @@ type Player struct {
 
 func NewPlayer(id, username string) *Player {
 	return &Player{
-		ID:        id,
+		ID:       id,
 		Username:  username,
 		ScoreCard: NewScoreCard(),
 		Dice:      NewDice(),
