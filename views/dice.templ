@@ -5,19 +5,6 @@ import (
 	"yamb/game"
 )
 
-// Add this component for displaying other players' dice
-templ OtherPlayerDice(dice []int) {
-	if len(dice) == 0 {
-		<span class="text-xs text-gray-400">Waiting for roll</span>
-	} else {
-		for _, die := range dice {
-			<div class="w-6 h-6 bg-gray-200 rounded flex items-center justify-center text-xs font-bold border">
-				{ die }
-			</div>
-		}
-	}
-}
-
 templ DiceArea(roomID string, dice game.Dice) {
 	<!-- Main Player Dice Area - Always under scorecard -->
 	<div class="bg-white rounded-xl shadow p-4" id="dice-area">
@@ -156,6 +143,30 @@ templ DiceRow(roomID string, values []int, keptDice []bool, displayKept bool) {
 			} else {
 				No dice to roll
 			}
+		}
+	</div>
+}
+
+templ SmallDiceRow(dice game.Dice) {
+	<!-- Display held then unheld dice in a small row -->
+	<div class="flex gap-1 justify-center">
+		for i, v := range dice.Values {
+			<div
+				if dice.Held[i] {
+					class="w-6 h-6 bg-green-100 border-green-400 border rounded flex items-center justify-center text-xs"
+				}
+			>
+				{ v }
+			</div>
+		}
+		for i, v := range dice.Values {
+			<div
+				if !dice.Held[i] {
+					class="w-6 h-6 bg-blue-50 border-blue-300 border rounded flex items-center justify-center text-xs"
+				}
+			>
+				{ v }
+			</div>
 		}
 	</div>
 }

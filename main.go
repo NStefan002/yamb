@@ -6,23 +6,40 @@ import (
 	"net/http"
 	"yamb/views"
 
-	"github.com/a-h/templ"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
-	mux := http.NewServeMux()
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 
-	// Routes
-	mux.Handle("/", templ.Handler(views.Index()))
-	mux.HandleFunc("/create-room", handleCreateRoom)
-	mux.HandleFunc("/room/", handleRoomPage)
+	// landing page
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		views.Index().Render(r.Context(), w)
+	})
+
+	// create a room (POST from index form)
+	r.Post("/create-room", CreateRoomHandler)
+
+	// show username entry when someone visits the room link
+	r.Get("/{roomID}", RoomLinkHandler)
+
+	// join a room (username form POST)
+	r.Post("/join-room", JoinRoomHandler)
+
+	// actual game page
+	r.Get("/room/{roomID}", RoomPageHandler)
 
 	// Actions (HTMX endpoints)
-	mux.HandleFunc("/roll-dice", handleRollDice)
-	mux.HandleFunc("/toggle-dice", handleToggleDice)
-	mux.HandleFunc("/select-cell", handleSelectCell)
-	// mux.HandleFunc("/send-message", handleSendMessage)
+	r.Post("/roll-dice", RollDiceHandler)
+	r.Post("/toggle-dice", ToggleDiceHandler)
+	r.Post("/select-cell", SelectCellHandler)
+	// r.Post("/send-message", handleSendMessage)
 
 	fmt.Println("Listening on http://localhost:1312")
-	log.Fatal(http.ListenAndServe(":1312", mux))
+	log.Fatal(http.ListenAndServe(":1312", r))
 }

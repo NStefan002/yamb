@@ -7,11 +7,14 @@ import (
 	"strconv"
 	"yamb/game"
 	"yamb/views"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 )
 
 var rooms = make(map[string]*game.Room)
 
-func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
+func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "bad form", http.StatusBadRequest)
 		return
@@ -21,21 +24,70 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 
 	rooms[roomID] = game.NewRoom()
 
-	views.RoomLink(fmt.Sprintf("http://localhost:1312/room/%s", roomID)).Render(r.Context(), w)
+	views.RoomLink(roomID).Render(r.Context(), w)
 }
 
-func handleRoomPage(w http.ResponseWriter, r *http.Request) {
-	roomID := r.URL.Path[len("/room/"):]
+func RoomLinkHandler(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "roomID")
+	if _, ok := rooms[roomID]; !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	views.UsernameEntry(roomID).Render(r.Context(), w)
+}
+
+func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
+	roomID := r.FormValue("room_id")
+	username := r.FormValue("username")
+
 	room, ok := rooms[roomID]
 	if !ok {
 		http.NotFound(w, r)
 		return
 	}
 
-	views.RoomPage(roomID, room).Render(r.Context(), w)
+	if len(room.Players) >= 4 {
+		http.Error(w, "room full", http.StatusForbidden)
+		return
+	}
+
+	playerID := uuid.New().String()
+	http.SetCookie(w, &http.Cookie{
+		Name:  "player_id",
+		Value: playerID,
+		Path:  "/",
+	})
+	http.SetCookie(w, &http.Cookie{
+		Name:  "room_id",
+		Value: roomID,
+		Path:  "/",
+	})
+
+	room.AddPlayer(game.NewPlayer(playerID, username))
+
+	http.Redirect(w, r, fmt.Sprintf("/room/%s", roomID), http.StatusSeeOther)
 }
 
-func handleRollDice(w http.ResponseWriter, r *http.Request) {
+func RoomPageHandler(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "roomID")
+	room, ok := rooms[roomID]
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	playerCookie, err := r.Cookie("player_id")
+	if err != nil {
+		http.Redirect(w, r, fmt.Sprintf("/room/%s", roomID), http.StatusSeeOther)
+		return
+	}
+
+	playerID := playerCookie.Value
+	views.RoomPage(roomID, playerID, room).Render(r.Context(), w)
+}
+
+func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := r.FormValue("room_id")
 	room, ok := rooms[roomID]
 	if !ok {
@@ -47,7 +99,7 @@ func handleRollDice(w http.ResponseWriter, r *http.Request) {
 	views.DiceArea(roomID, room.Players[0].Dice).Render(r.Context(), w)
 }
 
-func handleToggleDice(w http.ResponseWriter, r *http.Request) {
+func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := r.FormValue("room_id")
 	room, ok := rooms[roomID]
 	if !ok {
@@ -60,7 +112,7 @@ func handleToggleDice(w http.ResponseWriter, r *http.Request) {
 	views.DiceArea(roomID, room.Players[0].Dice).Render(r.Context(), w)
 }
 
-func handleSelectCell(w http.ResponseWriter, r *http.Request) {
+func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := r.URL.Query().Get("room_id")
 	room, ok := rooms[roomID]
 	if !ok {

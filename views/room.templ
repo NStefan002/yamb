@@ -2,22 +2,27 @@ package views
 
 import (
 	"yamb/game"
+	"fmt"
 )
 
-templ RoomLink(link string) {
+script hrefToRoomID(roomID string) {
+	window.location.href = "/" + roomID
+}
+
+templ RoomLink(roomID string) {
 	<div class="space-y-3">
 		<p class="text-sm text-center">Your room is ready:</p>
 		<div class="flex items-center space-x-2">
 			<input
 				id="room-url"
 				class="border rounded-lg p-2 flex-1"
-				value={ link }
+				value={ fmt.Sprintf("http://localhost:1312/%s", roomID) }
 				readonly
 			/>
 		</div>
 		<div class="flex justify-center space-x-2">
 			<button
-				onclick="window.location.href = document.getElementById('room-url').value"
+				onclick={ hrefToRoomID(roomID) }
 				class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 font-medium"
 			>
 				Join Room Now
@@ -32,7 +37,8 @@ templ RoomLink(link string) {
 	</div>
 }
 
-templ RoomPage(roomID string, room *game.Room) {
+templ RoomPage(roomID, playerID string, room *game.Room) {
+	{{ player := room.GetPlayerByID(playerID) }}
 	<html>
 		<head>
 			<title>Room { roomID } - Yamb Online</title>
@@ -43,7 +49,15 @@ templ RoomPage(roomID string, room *game.Room) {
 			<header class="p-4 bg-white shadow flex justify-between items-center">
 				<h1 class="font-bold text-xl">Room { roomID }</h1>
 				<div class="flex items-center space-x-4">
-					<div id="players" class="text-sm text-gray-600">
+					<div
+						id="players"
+						hx-ext="sse"
+						sse-connect={ "/events/" + roomID }
+						sse-swap="update"
+						hx-get={ "/room/" + roomID + "/players" }
+						hx-trigger="sse:update"
+						hx-target="#players"
+					>
 						0/0 players joined
 					</div>
 					<!-- Hamburger Button -->
@@ -65,11 +79,11 @@ templ RoomPage(roomID string, room *game.Room) {
 					<div class="bg-white rounded-xl shadow p-4 flex-1 min-h-0 flex flex-col">
 						<!-- <h2 class="text-lg font-semibold mb-3">Your Scorecard</h2> -->
 						<div class="flex-1 min-h-0">
-							@CompactScoreCardTable(room.Players[0].ScoreCard)
+							@CompactScoreCardTable(player.ScoreCard)
 						</div>
 					</div>
 					<!-- Main Player Dice Area -->
-					@DiceArea(roomID, room.Players[0].Dice)
+					@DiceArea(roomID, player.Dice)
 				</div>
 				<!-- Sliding Sidebar -->
 				<div id="sidebar" class="fixed lg:relative inset-y-0 right-0 w-80 bg-white shadow-xl transform translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-10 flex flex-col min-h-0">
@@ -116,20 +130,27 @@ templ RoomPage(roomID string, room *game.Room) {
 								</div>
 							} else {
 								<div class="space-y-4">
-									for i := 1; i < len(room.Players); i++ {
+									for i := 0; i < len(room.Players); i++ {
+										if room.Players[i].ID == playerID {
+											{{ continue }}
+										}
 										<div class="border border-gray-200 rounded-lg p-3">
 											<div class="flex justify-between items-center mb-2">
-												<h4 class="font-medium text-sm">Player { i + 1 }</h4>
-												<span class="text-xs text-gray-500">Rolling...</span>
+												<h4 class="font-medium text-sm">{ room.Players[i].Username }</h4>
+												if room.CurrentTurn == i {
+													<span class="text-xs text-green-600 font-medium">Rolling...</span>
+												} else {
+													<span class="text-xs text-gray-400">Waiting for turn</span>
+												}
 											</div>
-											<!-- Other Player's Dice Display -->
+											<!-- Other Player's Dice -->
 											<div class="mb-2">
-												<div class="flex gap-1 justify-center">
-													<!-- Other player's dice will appear here -->
-													<span class="text-xs text-gray-400">Waiting for roll</span>
-												</div>
+												if room.CurrentTurn == i {
+													@SmallDiceRow(room.Players[i].Dice)
+												} else {
+													<div class="text-xs text-gray-400 text-center">-</div>
+												}
 											</div>
-											<!-- Other Player's Scorecard -->
 											<div class="scale-90 origin-top-left">
 												@SmallScoreCardTable(room.Players[i].ScoreCard)
 											</div>
@@ -260,7 +281,7 @@ templ UsernameEntry(roomID string) {
 						type="submit"
 						class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 font-medium"
 					>
-						Join Game
+						Join Room
 					</button>
 				</form>
 			</div>
