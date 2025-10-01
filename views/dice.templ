@@ -162,22 +162,22 @@ templ SmallDiceRow(dice game.Dice) {
 	<!-- Display held then unheld dice in a small row -->
 	<div class="flex gap-1 justify-center">
 		for i, v := range dice.Values {
-			<div
-				if dice.Held[i] {
+			if dice.Held[i] {
+				<div
 					class="w-6 h-6 bg-green-100 border-green-400 border rounded flex items-center justify-center text-xs"
-				}
-			>
-				{ v }
-			</div>
+				>
+					{ v }
+				</div>
+			}
 		}
 		for i, v := range dice.Values {
-			<div
-				if !dice.Held[i] {
+			if !dice.Held[i] {
+				<div
 					class="w-6 h-6 bg-blue-50 border-blue-300 border rounded flex items-center justify-center text-xs"
-				}
-			>
-				{ v }
-			</div>
+				>
+					{ v }
+				</div>
+			}
 		}
 	</div>
 }
