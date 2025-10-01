@@ -7,34 +7,33 @@ import (
 
 templ DiceArea(roomID string, dice game.Dice) {
 	<!-- Main Player Dice Area - Always under scorecard -->
-	<div class="bg-white rounded-xl shadow p-4" id="dice-area">
-		<div class="flex justify-between items-center mb-3">
-			<h2 class="text-lg font-semibold">Your Dice</h2>
-			<div class="text-sm text-gray-600 font-medium">
-				Rolls remaining: { dice.RollsLeft }
+	<div class="flex justify-between items-center mb-3">
+		<h2 class="text-lg font-semibold">Your Dice</h2>
+		<div class="text-sm text-gray-600 font-medium">
+			Rolls remaining: { dice.RollsLeft }
+		</div>
+	</div>
+	<div class="flex flex-col lg:flex-row items-center gap-4">
+		<!-- Dice Containers -->
+		<div class="flex-1 grid grid-cols-2 gap-4">
+			<!-- Kept Dice -->
+			<div class="border-2 border-green-200 rounded-lg p-3">
+				<h3 class="font-medium text-sm text-gray-600 mb-2">Kept Dice</h3>
+				<div class="flex flex-wrap gap-2 justify-center min-h-12" id="kept-dice">
+					@DiceRow(roomID, dice.Values, dice.Held, true)
+				</div>
+			</div>
+			<!-- Rolling Dice -->
+			<div class="border-2 border-blue-200 rounded-lg p-3">
+				<h3 class="font-medium text-sm text-gray-600 mb-2">Rolling Dice</h3>
+				<div class="flex flex-wrap gap-2 justify-center min-h-12" id="rolling-dice">
+					@DiceRow(roomID, dice.Values, dice.Held, false)
+				</div>
 			</div>
 		</div>
-		<div class="flex flex-col lg:flex-row items-center gap-4">
-			<!-- Dice Containers -->
-			<div class="flex-1 grid grid-cols-2 gap-4">
-				<!-- Kept Dice -->
-				<div class="border-2 border-green-200 rounded-lg p-3">
-					<h3 class="font-medium text-sm text-gray-600 mb-2">Kept Dice</h3>
-					<div class="flex flex-wrap gap-2 justify-center min-h-12" id="kept-dice">
-						@DiceRow(roomID, dice.Values, dice.Held, true)
-					</div>
-				</div>
-				<!-- Rolling Dice -->
-				<div class="border-2 border-blue-200 rounded-lg p-3">
-					<h3 class="font-medium text-sm text-gray-600 mb-2">Rolling Dice</h3>
-					<div class="flex flex-wrap gap-2 justify-center min-h-12" id="rolling-dice">
-						@DiceRow(roomID, dice.Values, dice.Held, false)
-					</div>
-				</div>
-			</div>
-			<!-- Roll Button -->
-			<!-- disable button if no rolls left or all dice are kept -->
-			{{
+		<!-- Roll Button -->
+		<!-- disable button if no rolls left or all dice are kept -->
+		{{
 	disableRoll := dice.RollsLeft == 0
 	allKept := true
 	for _, kept := range dice.Held {
@@ -44,19 +43,18 @@ templ DiceArea(roomID string, dice game.Dice) {
 		}
 	}
 	disableRoll = disableRoll || allKept
-			}}
-			<button
-				id="roll-button"
-				class="w-full lg:w-32 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
-				hx-post="/roll-dice"
-				hx-target="#dice-area"
-				hx-swap="innerHTML"
-				hx-vals={ fmt.Sprintf(`{"room_id":"%s"}`, roomID) }
-				disabled?={ disableRoll }
-			>
-				Roll Dice
-			</button>
-		</div>
+		}}
+		<button
+			id="roll-button"
+			class="w-full lg:w-32 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+			hx-post="/roll-dice"
+			hx-target="#dice-area"
+			hx-swap="innerHTML"
+			hx-vals={ fmt.Sprintf(`{"room_id":"%s"}`, roomID) }
+			disabled?={ disableRoll }
+		>
+			Roll Dice
+		</button>
 	</div>
 }
 
