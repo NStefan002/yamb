@@ -33,6 +33,18 @@ templ DiceArea(roomID string, dice game.Dice) {
 				</div>
 			</div>
 			<!-- Roll Button -->
+			<!-- disable button if no rolls left or all dice are kept -->
+			{{
+	disableRoll := dice.RollsLeft == 0
+	allKept := true
+	for _, kept := range dice.Held {
+		if !kept {
+			allKept = false
+			break
+		}
+	}
+	disableRoll = disableRoll || allKept
+			}}
 			<button
 				id="roll-button"
 				class="w-full lg:w-32 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
@@ -40,6 +52,7 @@ templ DiceArea(roomID string, dice game.Dice) {
 				hx-target="#dice-area"
 				hx-swap="innerHTML"
 				hx-vals={ fmt.Sprintf(`{"room_id":"%s"}`, roomID) }
+				disabled?={ disableRoll }
 			>
 				Roll Dice
 			</button>
