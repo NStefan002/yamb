@@ -71,12 +71,18 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					<div class="bg-white rounded-xl shadow p-4 flex-1 min-h-0 flex flex-col">
 						<!-- <h2 class="text-lg font-semibold mb-3">Your Scorecard</h2> -->
 						<div class="flex-1 min-h-0">
-							@CompactScoreCardTable(player.ScoreCard)
+							@CompactScoreCardTable(roomID, player.ScoreCard)
 						</div>
 					</div>
 					<!-- Main Player Dice Area -->
 					<div class="bg-white rounded-xl shadow p-4" id="dice-area">
-						@DiceArea(roomID, player.Dice)
+						if room.Players[room.CurrentTurn].ID == playerID {
+							@DiceArea(roomID, room.Dice)
+						} else {
+							<div class="text-center text-gray-500">
+								Waiting for your turn...
+							</div>
+						}
 					</div>
 				</div>
 				<!-- Sliding Sidebar -->
@@ -140,7 +146,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 											<!-- Other Player's Dice -->
 											<div class="mb-2">
 												if room.CurrentTurn == i {
-													@SmallDiceRow(room.Players[i].Dice)
+													@SmallDiceRow(room.Dice)
 												} else {
 													<div class="text-xs text-gray-400 text-center">-</div>
 												}

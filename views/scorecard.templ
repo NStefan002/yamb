@@ -3,9 +3,10 @@ package views
 import (
 	"yamb/game"
 	"strings"
+	"fmt"
 )
 
-templ CompactScoreCardTable(sc game.ScoreCard) {
+templ CompactScoreCardTable(roomID string, sc game.ScoreCard) {
 	<table class="table-fixed border-collapse border border-gray-400 mx-auto text-center text-xs">
 		<thead>
 			<tr>
@@ -32,9 +33,10 @@ templ CompactScoreCardTable(sc game.ScoreCard) {
 						for _, c := range sc.Columns {
 							<td
 								class="border border-gray-400 w-12 h-8 text-center align-middle cursor-pointer hover:bg-yellow-100 text-xs"
-								hx-post={ "/select-cell?row=" + r.ID + "&col=" + c.ID }
-								hx-target="#cell-{r.ID}-{c.ID}"
+								hx-post="/select-cell"
+								hx-target={ "#cell-" + r.ID + "-" + c.ID }
 								hx-swap="outerHTML"
+								hx-vals={ fmt.Sprintf(`{"room_id":"%s", "row":"%s", "col":"%s"}`, roomID, r.ID, c.ID) }
 								id={ "cell-" + r.ID + "-" + c.ID }
 							>
 								if sc.Scores[r.ID][c.ID] != nil {

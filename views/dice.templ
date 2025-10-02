@@ -5,7 +5,7 @@ import (
 	"yamb/game"
 )
 
-templ DiceArea(roomID string, dice game.Dice) {
+templ DiceArea(roomID string, dice *game.Dice) {
 	<!-- Main Player Dice Area - Always under scorecard -->
 	<div class="flex justify-between items-center mb-3">
 		<h2 class="text-lg font-semibold">Your Dice</h2>
@@ -158,7 +158,7 @@ templ DiceRow(roomID string, values []int, keptDice []bool, displayKept bool) {
 	</div>
 }
 
-templ SmallDiceRow(dice game.Dice) {
+templ SmallDiceRow(dice *game.Dice) {
 	<!-- Display held then unheld dice in a small row -->
 	<div class="flex gap-1 justify-center">
 		for i, v := range dice.Values {

@@ -1,15 +1,32 @@
 package game
 
-import "math/rand"
+import (
+	"errors"
+	"math/rand"
+	"strconv"
+)
 
 type Room struct {
-	ID          string
-	Players     []*Player
-	CurrentTurn int  // index of the player whose turn it is
-	GameStarted bool // true if the game has started
+	ID           string
+	Players      []*Player
+	Dice         *Dice
+	CurrentTurn  int // index of the player whose turn it is
+	GameStarted  bool
+	NumOfPlayers int // 2-4
+	NumOfDice    int // 5 or 6
 }
 
-func NewRoom() *Room {
+func NewRoom(mode, dice string) *Room {
+	numOfDice, _ := strconv.Atoi(dice)
+	numOfPlayers := 2
+	switch mode {
+	case "1v1":
+		numOfPlayers = 2
+	case "1v1v1":
+		numOfPlayers = 3
+	case "2v2":
+		numOfPlayers = 4
+	}
 	return &Room{
 		Players: []*Player{
 			// dummy players for testing
@@ -17,33 +34,37 @@ func NewRoom() *Room {
 			// {ID: "2", Username: "Bob", ScoreCard: NewScoreCard(), Dice: NewDice()},
 			// {ID: "3", Username: "Charlie", ScoreCard: NewScoreCard(), Dice: NewDice()},
 		},
-		CurrentTurn: 0,
-		GameStarted: false,
+		CurrentTurn:  0,
+		GameStarted:  false,
+		Dice:         NewDice(numOfDice),
+		NumOfPlayers: numOfPlayers,
+		NumOfDice:    numOfDice,
 	}
 }
 
-func (r *Room) AddPlayer(player *Player) {
+func (r *Room) AddPlayer(player *Player) error {
+	if len(r.Players) == r.NumOfPlayers {
+		return errors.New("room is full")
+	}
 	r.Players = append(r.Players, player)
+	return nil
 }
 
+// TODO: move to dice.go
 func (r *Room) RollDice() {
-	currPlayer := r.Players[r.CurrentTurn]
-	if currPlayer.Dice.RollsLeft > 0 {
-		for i := range 6 {
-			if !currPlayer.Dice.Held[i] {
-				currPlayer.Dice.Values[i] = 1 + (rand.Intn(6))
+	if r.Dice.RollsLeft > 0 {
+		for i := range r.NumOfDice {
+			if !r.Dice.Held[i] {
+				r.Dice.Values[i] = 1 + (rand.Intn(r.NumOfDice))
 			}
 		}
-		currPlayer.Dice.RollsLeft--
-	} else {
-		r.EndTurn()
+		r.Dice.RollsLeft--
 	}
 }
 
 func (r *Room) EndTurn() {
 	r.CurrentTurn = (r.CurrentTurn + 1) % len(r.Players)
-	currPlayer := r.Players[r.CurrentTurn]
-	currPlayer.Dice = NewDice()
+	r.Dice = NewDice(r.NumOfDice)
 }
 
 func (r *Room) GetPlayerByID(playerID string) *Player {

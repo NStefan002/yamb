@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -17,14 +18,22 @@ var rooms = make(map[string]*game.Room)
 func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "bad form", http.StatusBadRequest)
+		log.Println("error parsing form:", err)
 		return
 	}
 
 	roomID := fmt.Sprintf("%06d", rand.Intn(1000000))
+	mode := r.FormValue("mode")
+	dice := r.FormValue("dice")
 
-	rooms[roomID] = game.NewRoom()
+	rooms[roomID] = game.NewRoom(mode, dice)
 
-	views.RoomLink(roomID).Render(r.Context(), w)
+	err := views.RoomLink(roomID).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "could not render room link", http.StatusInternalServerError)
+		log.Println("error rendering room link:", err)
+		return
+	}
 }
 
 func RoomLinkHandler(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +43,12 @@ func RoomLinkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	views.UsernameEntry(roomID).Render(r.Context(), w)
+	err := views.UsernameEntry(roomID).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "could not render username entry", http.StatusInternalServerError)
+		log.Println("error rendering username entry:", err)
+		return
+	}
 }
 
 func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +78,16 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 		Path:  "/",
 	})
 
-	room.AddPlayer(game.NewPlayer(playerID, username))
+	err := room.AddPlayer(game.NewPlayer(playerID, username))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("could not add player: %v", err), http.StatusInternalServerError)
+		log.Println("error adding player to room:", err)
+		return
+	}
+
+	if len(room.Players) == room.NumOfPlayers {
+		room.GameStarted = true
+	}
 
 	http.Redirect(w, r, fmt.Sprintf("/room/%s", roomID), http.StatusSeeOther)
 }
@@ -80,11 +103,17 @@ func RoomPageHandler(w http.ResponseWriter, r *http.Request) {
 	playerCookie, err := r.Cookie("player_id")
 	if err != nil {
 		http.Redirect(w, r, fmt.Sprintf("/room/%s", roomID), http.StatusSeeOther)
+		log.Println("no player cookie:", err)
 		return
 	}
 
 	playerID := playerCookie.Value
-	views.RoomPage(roomID, playerID, room).Render(r.Context(), w)
+	err = views.RoomPage(roomID, playerID, room).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "could not render room page", http.StatusInternalServerError)
+		log.Println("error rendering room page:", err)
+		return
+	}
 }
 
 func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +125,13 @@ func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	room.RollDice()
-	views.DiceArea(roomID, room.Players[0].Dice).Render(r.Context(), w)
+	fmt.Println("TURN: ", room.CurrentTurn)
+	err := views.DiceArea(roomID, room.Dice).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "could not render dice area", http.StatusInternalServerError)
+		log.Println("error rendering dice area:", err)
+		return
+	}
 }
 
 func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
@@ -108,27 +143,58 @@ func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dieIdx, _ := strconv.Atoi(r.FormValue("die_index"))
-	room.Players[0].Dice.ToggleDie(dieIdx)
-	views.DiceArea(roomID, room.Players[0].Dice).Render(r.Context(), w)
+	room.Dice.ToggleDie(dieIdx)
+	err := views.DiceArea(roomID, room.Dice).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "could not render dice area", http.StatusInternalServerError)
+		log.Println("error rendering dice area:", err)
+		return
+	}
 }
 
 func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
-	roomID := r.URL.Query().Get("room_id")
+	roomID := r.FormValue("room_id")
 	room, ok := rooms[roomID]
 	if !ok {
 		http.NotFound(w, r)
 		return
 	}
 
-	row := r.URL.Query().Get("row")
-	col := r.URL.Query().Get("col")
+	playerCookie, err := r.Cookie("player_id")
+	if err != nil {
+		http.Error(w, "no player cookie", http.StatusForbidden)
+		log.Println("no player cookie:", err)
+		return
+	}
+	playerID := playerCookie.Value
 
-	// for testing purposes, just set a random number
-	score := rand.Intn(30) + 1
+	player := room.GetPlayerByID(playerID)
+	if player == nil {
+		http.Error(w, "player not in room", http.StatusForbidden)
+		return
+	}
 
-	room.Players[0].ScoreCard.Scores[row][col] = &score
+	if room.Players[room.CurrentTurn].ID != playerID {
+		http.Error(w, "not your turn", http.StatusForbidden)
+		return
+	}
 
-	fmt.Fprintf(w, `<td class="border border-gray-400 w-12 h-8 bg-green-100 text-center">%d</td>`, score)
+	row := r.FormValue("row")
+	col := r.FormValue("col")
 
-	fmt.Println("Cell selected", row, col, "=", score)
+	score, err := player.ScoreCard.FillField(row, col, room.Dice)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("could not fill cell: %v", err), http.StatusBadRequest)
+		log.Println("error filling cell:", err)
+		return
+	}
+
+	room.EndTurn() // end the turn when the user enters result in a cell
+
+	_, err = fmt.Fprintf(w, `<td class="border border-gray-400 w-12 h-8 bg-green-100 text-center">%d</td>`, score)
+	if err != nil {
+		http.Error(w, "could not write response", http.StatusInternalServerError)
+		log.Println("error writing response:", err)
+		return
+	}
 }
