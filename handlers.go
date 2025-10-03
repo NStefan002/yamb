@@ -140,8 +140,16 @@ func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	room.RollDice()
-	fmt.Println("TURN: ", room.CurrentTurn)
-	err := views.DiceArea(roomID, room.Dice).Render(r.Context(), w)
+
+	playerCookie, err := r.Cookie("player_id")
+	if err != nil {
+		http.Error(w, "no player cookie", http.StatusForbidden)
+		log.Println("no player cookie:", err)
+		return
+	}
+	playerID := playerCookie.Value
+
+	err = views.DiceArea(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "could not render dice area", http.StatusInternalServerError)
 		log.Println("error rendering dice area:", err)
@@ -161,7 +169,16 @@ func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
 
 	dieIdx, _ := strconv.Atoi(r.FormValue("die_index"))
 	room.Dice.ToggleDie(dieIdx)
-	err := views.DiceArea(roomID, room.Dice).Render(r.Context(), w)
+
+	playCookie, err := r.Cookie("player_id")
+	if err != nil {
+		http.Error(w, "no player cookie", http.StatusForbidden)
+		log.Println("no player cookie:", err)
+		return
+	}
+	playerID := playCookie.Value
+
+	err = views.DiceArea(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "could not render dice area", http.StatusInternalServerError)
 		log.Println("error rendering dice area:", err)

@@ -5,12 +5,18 @@ import (
 	"yamb/game"
 )
 
-templ DiceArea(roomID string, dice *game.Dice) {
+templ DiceArea(roomID, playerID string, room *game.Room) {
+	if room.Players[room.CurrentTurn].ID != playerID {
+		<div class="text-center text-gray-500">
+			Waiting for your turn...
+		</div>
+		{{ return }}
+	}
 	<!-- Main Player Dice Area - Always under scorecard -->
 	<div class="flex justify-between items-center mb-3">
 		<h2 class="text-lg font-semibold">Your Dice</h2>
 		<div class="text-sm text-gray-600 font-medium">
-			Rolls remaining: { dice.RollsLeft }
+			Rolls remaining: { room.Dice.RollsLeft }
 		</div>
 	</div>
 	<div class="flex flex-col lg:flex-row items-center gap-4">
@@ -20,23 +26,23 @@ templ DiceArea(roomID string, dice *game.Dice) {
 			<div class="border-2 border-green-200 rounded-lg p-3">
 				<h3 class="font-medium text-sm text-gray-600 mb-2">Kept Dice</h3>
 				<div class="flex flex-wrap gap-2 justify-center min-h-12" id="kept-dice">
-					@DiceRow(roomID, dice.Values, dice.Held, true)
+					@DiceRow(roomID, room.Dice.Values, room.Dice.Held, true)
 				</div>
 			</div>
 			<!-- Rolling Dice -->
 			<div class="border-2 border-blue-200 rounded-lg p-3">
 				<h3 class="font-medium text-sm text-gray-600 mb-2">Rolling Dice</h3>
 				<div class="flex flex-wrap gap-2 justify-center min-h-12" id="rolling-dice">
-					@DiceRow(roomID, dice.Values, dice.Held, false)
+					@DiceRow(roomID, room.Dice.Values, room.Dice.Held, false)
 				</div>
 			</div>
 		</div>
 		<!-- Roll Button -->
 		<!-- disable button if no rolls left or all dice are kept -->
 		{{
-	disableRoll := dice.RollsLeft == 0
+	disableRoll := room.Dice.RollsLeft == 0
 	allKept := true
-	for _, kept := range dice.Held {
+	for _, kept := range room.Dice.Held {
 		if !kept {
 			allKept = false
 			break

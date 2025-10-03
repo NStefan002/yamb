@@ -71,18 +71,12 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					<div class="bg-white rounded-xl shadow p-4 flex-1 min-h-0 flex flex-col">
 						<!-- <h2 class="text-lg font-semibold mb-3">Your Scorecard</h2> -->
 						<div class="flex-1 min-h-0">
-							@CompactScoreCardTable(roomID, player.ScoreCard)
+							@MainScoreCard(roomID, player.ScoreCard)
 						</div>
 					</div>
 					<!-- Main Player Dice Area -->
 					<div class="bg-white rounded-xl shadow p-4" id="dice-area">
-						if room.Players[room.CurrentTurn].ID == playerID {
-							@DiceArea(roomID, room.Dice)
-						} else {
-							<div class="text-center text-gray-500">
-								Waiting for your turn...
-							</div>
-						}
+						@DiceArea(roomID, playerID, room)
 					</div>
 				</div>
 				<!-- Sliding Sidebar -->
@@ -122,42 +116,8 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					<!-- Sidebar Content -->
 					<div class="flex-1 min-h-0 p-4 overflow-hidden">
 						<!-- Other Players Scorecards Section -->
-						<div id="scorecards-section" class="h-full overflow-auto">
-							<h3 class="font-semibold mb-3">Other Players</h3>
-							if len(room.Players) == 0 {
-								<div class="text-gray-500 text-sm text-center py-4">
-									No other players yet
-								</div>
-							} else {
-								<div class="space-y-4">
-									for i := 0; i < len(room.Players); i++ {
-										if room.Players[i].ID == playerID {
-											{{ continue }}
-										}
-										<div class="border border-gray-200 rounded-lg p-3">
-											<div class="flex justify-between items-center mb-2">
-												<h4 class="font-medium text-sm">{ room.Players[i].Username }</h4>
-												if room.CurrentTurn == i {
-													<span class="text-xs text-green-600 font-medium">Rolling...</span>
-												} else {
-													<span class="text-xs text-gray-400">Waiting for turn</span>
-												}
-											</div>
-											<!-- Other Player's Dice -->
-											<div class="mb-2">
-												if room.CurrentTurn == i {
-													@SmallDiceRow(room.Dice)
-												} else {
-													<div class="text-xs text-gray-400 text-center">-</div>
-												}
-											</div>
-											<div class="scale-90 origin-top-left">
-												@SmallScoreCardTable(room.Players[i].ScoreCard)
-											</div>
-										</div>
-									}
-								</div>
-							}
+						<div class="scale-90 origin-top-left">
+							@OtherScorecards(roomID, playerID, room)
 						</div>
 						<!-- Chat Section -->
 						<div id="chat-section" class="h-full flex flex-col hidden">
