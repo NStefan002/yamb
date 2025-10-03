@@ -42,15 +42,18 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 	<html>
 		<head>
 			<title>Room { roomID } - Yamb Online</title>
-			<script src="assets/js/htmx.min.js"></script>
+			<script src="/js/htmx.min.js"></script>
+			<script src="/js/sse.js"></script>
+			<!-- <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"></script> -->
+			<!-- <script src="https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.2"></script> -->
 			<script src="https://cdn.tailwindcss.com"></script>
 		</head>
-		<body class="h-screen flex flex-col bg-gray-100 overflow-hidden">
+		<body class="h-screen flex flex-col bg-gray-100 overflow-hidden" hx-ext="sse">
 			<header class="p-4 bg-white shadow flex justify-between items-center">
 				<h1 class="font-bold text-xl">Room { roomID }</h1>
 				<div class="flex items-center space-x-4">
-					<div id="players" class="text-sm text-gray-600">
-						0/0 players joined
+					<div id="player-counter" class="text-sm text-gray-600">
+						@PlayerCounter(room)
 					</div>
 					<!-- Hamburger Button -->
 					<button
@@ -116,7 +119,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					<!-- Sidebar Content -->
 					<div class="flex-1 min-h-0 p-4 overflow-hidden">
 						<!-- Other Players Scorecards Section -->
-						<div class="scale-90 origin-top-left">
+						<div class="scale-90 origin-top-left" id="other-scorecards">
 							@OtherScorecards(roomID, playerID, room)
 						</div>
 						<!-- Chat Section -->
@@ -147,6 +150,29 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 				<!-- Overlay for mobile -->
 				<div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-0 lg:hidden hidden" onclick="toggleSidebar()"></div>
 			</main>
+			<!-- SSE connection -->
+			<div sse-connect={ "/room/" + roomID + "/events" }>
+				<!-- update other players' scorecards and dices scoreUpdated events -->
+				<div
+					hx-trigger="sse:scoreUpdated"
+					hx-get={ fmt.Sprintf("/room/%s/other-scorecards", roomID) }
+					hx-target="#other-scorecards"
+					hx-swap="innerHTML"
+				></div>
+				<div
+					hx-trigger="sse:turnEnded"
+					hx-get={ fmt.Sprintf("/room/%s/dice-area", roomID) }
+					hx-target="#dice-area"
+					hx-swap="innerHTML"
+				></div>
+				<!-- update player count on playerJoined events -->
+				<div
+					hx-trigger="sse:playerJoined"
+					hx-get={ "/room/" + roomID + "/player-counter" }
+					hx-target="#player-counter"
+					hx-swap="innerHTML"
+				></div>
+			</div>
 			<script>
 				function toggleSidebar() {
 					const sidebar = document.getElementById("sidebar");
@@ -165,7 +191,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 
 				function showSection(section) {
 					// Hide all sections
-					document.getElementById("scorecards-section").classList.add("hidden");
+					document.getElementById("other-scorecards").classList.add("hidden");
 					document.getElementById("chat-section").classList.add("hidden");
 
 					// Reset all buttons
@@ -185,7 +211,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					// Show selected section and highlight button
 					if (section === "scorecards") {
 						document
-							.getElementById("scorecards-section")
+							.getElementById("other-scorecards")
 							.classList.remove("hidden");
 						document
 							.getElementById("toggle-scorecards")
@@ -211,6 +237,10 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 			</script>
 		</body>
 	</html>
+}
+
+templ PlayerCounter(room *game.Room) {
+	{ len(room.Players) } / { room.NumOfPlayers } players joined
 }
 
 templ UsernameEntry(roomID string) {

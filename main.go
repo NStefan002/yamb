@@ -17,8 +17,9 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	fileServer := http.FileServer(http.Dir("./assets"))
-	r.Handle("/assets/*", http.StripPrefix("/assets", fileServer))
+	// load htmx from assets/js
+	fs := http.StripPrefix("/js/", http.FileServer(http.Dir("assets/js")))
+	r.Handle("/js/*", fs)
 
 	// landing page
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -36,6 +37,12 @@ func main() {
 
 	// actual game page
 	r.Get("/room/{roomID}", RoomPageHandler)
+
+	// HTMX endpoints for partial updates (events)
+	r.Get("/room/{roomID}/events", EventsHandler)
+	r.Get("/room/{roomID}/other-scorecards", OtherScorecardsHandler)
+	r.Get("/room/{roomID}/dice-area", DiceAreaHandler)
+	r.Get("/room/{roomID}/player-counter", PlayerCounterHandler)
 
 	// Actions (HTMX endpoints)
 	r.Post("/roll-dice", RollDiceHandler)

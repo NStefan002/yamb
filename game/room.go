@@ -5,10 +5,13 @@ import (
 	"math/rand"
 	"strconv"
 	"sync"
+	"yamb/broadcaster"
 )
 
 type Room struct {
-	Mu           sync.Mutex
+	Mu          sync.Mutex
+	Broadcaster *broadcaster.Broadcaster
+
 	ID           string
 	Players      []*Player
 	Dice         *Dice
@@ -30,6 +33,8 @@ func NewRoom(mode, dice string) *Room {
 		numOfPlayers = 4
 	}
 	return &Room{
+		Broadcaster:  broadcaster.NewBroadcaster(),
+
 		Players: []*Player{
 			// dummy players for testing
 			// {ID: "1", Username: "Alice", ScoreCard: NewScoreCard(), Dice: NewDice()},

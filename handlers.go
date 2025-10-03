@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"yamb/broadcaster"
 	"yamb/game"
 	"yamb/views"
 
@@ -96,6 +97,9 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: "playerJoined"})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: "scoreUpdated"})
+
 	if len(room.Players) == room.NumOfPlayers {
 		room.GameStarted = true
 	}
@@ -140,6 +144,8 @@ func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	room.RollDice()
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: "diceAreaUpdated"})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: "scoreUpdated"})
 
 	playerCookie, err := r.Cookie("player_id")
 	if err != nil {
@@ -169,6 +175,8 @@ func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
 
 	dieIdx, _ := strconv.Atoi(r.FormValue("die_index"))
 	room.Dice.ToggleDie(dieIdx)
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: "diceAreaUpdated"})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: "scoreUpdated"})
 
 	playCookie, err := r.Cookie("player_id")
 	if err != nil {
@@ -226,11 +234,120 @@ func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	room.EndTurn() // end the turn when the user enters result in a cell
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: "turnEnded"})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: "scoreUpdated"})
 
 	err = views.ScoreCardField(roomID, player.ScoreCard, row, col).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "could not render score", http.StatusInternalServerError)
 		log.Println("error rendering score:", err)
+		return
+	}
+}
+
+func OtherScorecardsHandler(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "roomID")
+	roomsMu.Lock()
+	room, ok := rooms[roomID]
+	roomsMu.Unlock()
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	playerCookie, err := r.Cookie("player_id")
+	if err != nil {
+		http.Error(w, "no player cookie", http.StatusForbidden)
+		log.Println("no player cookie:", err)
+		return
+	}
+	playerID := playerCookie.Value
+
+	if err := views.OtherScorecards(roomID, playerID, room).Render(r.Context(), w); err != nil {
+		http.Error(w, "could not render scorecards", http.StatusInternalServerError)
+		log.Println("error rendering scorecards:", err)
+		return
+	}
+}
+
+func EventsHandler(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "roomID")
+
+	roomsMu.Lock()
+	room, ok := rooms[roomID]
+	roomsMu.Unlock()
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	// SSE headers
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "Streaming unsupported", http.StatusInternalServerError)
+		return
+	}
+
+	ch := room.Broadcaster.Subscribe()
+	defer room.Broadcaster.Unsubscribe(ch)
+
+	ctx := r.Context()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case ev := <-ch:
+			fmt.Fprintf(w, "event: %s\n", ev.Name)
+			fmt.Fprintf(w, "data: _\n\n")
+			flusher.Flush()
+		}
+	}
+}
+
+func DiceAreaHandler(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "roomID")
+	roomsMu.Lock()
+	room, ok := rooms[roomID]
+	roomsMu.Unlock()
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	playerCookie, err := r.Cookie("player_id")
+	if err != nil {
+		http.Error(w, "no player cookie", http.StatusForbidden)
+		log.Println("no player cookie:", err)
+		return
+	}
+	playerID := playerCookie.Value
+
+	err = views.DiceArea(roomID, playerID, room).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "could not render dice area", http.StatusInternalServerError)
+		log.Println("error rendering dice area:", err)
+		return
+	}
+}
+
+func PlayerCounterHandler(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "roomID")
+	roomsMu.Lock()
+	room, ok := rooms[roomID]
+	roomsMu.Unlock()
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	err := views.PlayerCounter(room).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "could not render player counter", http.StatusInternalServerError)
+		log.Println("error rendering player counter:", err)
 		return
 	}
 }

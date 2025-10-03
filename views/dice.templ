@@ -164,7 +164,11 @@ templ DiceRow(roomID string, values []int, keptDice []bool, displayKept bool) {
 	</div>
 }
 
-templ SmallDiceRow(dice *game.Dice) {
+templ SmallDiceRow(dice *game.Dice, display bool) {
+	if !display {
+		<div class="text-xs text-gray-400 text-center">-</div>
+		{{ return }}
+	}
 	<!-- Display held then unheld dice in a small row -->
 	<div class="flex gap-1 justify-center">
 		for i, v := range dice.Values {
