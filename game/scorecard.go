@@ -138,6 +138,7 @@ func (sc *ScoreCard) FillField(rowID, colID string, dice *Dice) (int, error) {
 	return 0, errors.New("unknown column ID")
 }
 
+// TODO: make error messages more informative
 func (sc *ScoreCard) CalculateScore(rowID string, dice *Dice) (int, error) {
 	switch rowID {
 	case "1":
@@ -153,9 +154,16 @@ func (sc *ScoreCard) CalculateScore(rowID string, dice *Dice) (int, error) {
 	case "6":
 		return dice.Count(6) * 6, nil
 	case "max":
-		return dice.MinMax(), nil
+		val := dice.MinMax()
+		if val == 0 {
+			return 0, errors.New("no max")
+		}
+		return val, nil
 	case "min":
-		return dice.MinMax(), nil
+		val := dice.MinMax()
+		if val == 0 {
+			return 0, errors.New("no min")
+		}
 	case "kenta":
 		val := dice.Kenta()
 		if val == 0 {
@@ -180,7 +188,6 @@ func (sc *ScoreCard) CalculateScore(rowID string, dice *Dice) (int, error) {
 			return 0, errors.New("no yamb")
 		}
 		return val, nil
-	default:
-		return 0, errors.New("unknown row ID")
 	}
+	return 0, errors.New("unknown row ID")
 }
