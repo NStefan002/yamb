@@ -182,7 +182,7 @@ func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 	row := r.FormValue("row")
 	col := r.FormValue("col")
 
-	score, err := player.ScoreCard.FillField(row, col, room.Dice)
+	_, err = player.ScoreCard.FillField(row, col, room.Dice)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("could not fill cell: %v", err), http.StatusBadRequest)
 		log.Println("error filling cell:", err)
@@ -191,10 +191,10 @@ func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 
 	room.EndTurn() // end the turn when the user enters result in a cell
 
-	_, err = fmt.Fprintf(w, `<td class="border border-gray-400 w-12 h-8 bg-green-100 text-center">%d</td>`, score)
+	err = views.ScoreCardField(roomID, player.ScoreCard, row, col).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not write response", http.StatusInternalServerError)
-		log.Println("error writing response:", err)
+		http.Error(w, "could not render score", http.StatusInternalServerError)
+		log.Println("error rendering score:", err)
 		return
 	}
 }

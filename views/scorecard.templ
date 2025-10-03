@@ -31,26 +31,28 @@ templ CompactScoreCardTable(roomID string, sc game.ScoreCard) {
 						}
 					} else {
 						for _, c := range sc.Columns {
-							<td
-								class="border border-gray-400 w-12 h-8 text-center align-middle cursor-pointer hover:bg-yellow-100 text-xs"
-								hx-post="/select-cell"
-								hx-target={ "#cell-" + r.ID + "-" + c.ID }
-								hx-swap="outerHTML"
-								hx-vals={ fmt.Sprintf(`{"room_id":"%s", "row":"%s", "col":"%s"}`, roomID, r.ID, c.ID) }
-								id={ "cell-" + r.ID + "-" + c.ID }
-							>
-								if sc.Scores[r.ID][c.ID] != nil {
-									<span class="bg-green-100 px-1 py-0.5 rounded text-xs">
-										{ *sc.Scores[r.ID][c.ID] }
-									</span>
-								}
-							</td>
+							@ScoreCardField(roomID, sc, r.ID, c.ID)
 						}
 					}
 				</tr>
 			}
 		</tbody>
 	</table>
+}
+
+templ ScoreCardField(roomID string, sc game.ScoreCard, rowID, colID string) {
+	if sc.Scores[rowID][colID] != nil {
+		<td class="border border-gray-400 w-12 h-8 bg-green-100 text-center">{ *sc.Scores[rowID][colID] }</td>
+	} else {
+		<td
+			class="border border-gray-400 w-12 h-8 text-center align-middle cursor-pointer hover:bg-yellow-100 text-xs"
+			hx-post="/select-cell"
+			hx-target={ "#cell-" + rowID + "-" + colID }
+			hx-swap="outerHTML"
+			hx-vals={ fmt.Sprintf(`{"room_id":"%s", "row":"%s", "col":"%s"}`, roomID, rowID, colID) }
+			id={ "cell-" + rowID + "-" + colID }
+		></td>
+	}
 }
 
 templ SmallScoreCardTable(sc game.ScoreCard) {
