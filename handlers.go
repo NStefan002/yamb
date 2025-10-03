@@ -20,6 +20,15 @@ var (
 	roomsMu sync.Mutex
 )
 
+func IndexHandler(w http.ResponseWriter, r *http.Request) {
+	err := views.Index().Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "could not render index", http.StatusInternalServerError)
+		log.Println("error rendering index:", err)
+		return
+	}
+}
+
 func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "bad form", http.StatusBadRequest)

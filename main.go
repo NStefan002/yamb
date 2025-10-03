@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"yamb/views"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -22,9 +21,7 @@ func main() {
 	r.Handle("/js/*", fs)
 
 	// landing page
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		views.Index().Render(r.Context(), w)
-	})
+	r.Get("/", IndexHandler)
 
 	// create a room (POST from index form)
 	r.Post("/create-room", CreateRoomHandler)
