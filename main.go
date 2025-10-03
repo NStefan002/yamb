@@ -17,6 +17,9 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
+	fileServer := http.FileServer(http.Dir("./assets"))
+	r.Handle("/assets/*", http.StripPrefix("/assets", fileServer))
+
 	// landing page
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		views.Index().Render(r.Context(), w)
