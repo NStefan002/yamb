@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"sync"
 	"yamb/game"
 	"yamb/views"
 
@@ -13,7 +14,10 @@ import (
 	"github.com/google/uuid"
 )
 
-var rooms = make(map[string]*game.Room)
+var (
+	rooms   = make(map[string]*game.Room)
+	roomsMu sync.Mutex
+)
 
 func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
@@ -26,7 +30,9 @@ func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 	mode := r.FormValue("mode")
 	dice := r.FormValue("dice")
 
+	roomsMu.Lock()
 	rooms[roomID] = game.NewRoom(mode, dice)
+	roomsMu.Unlock()
 
 	err := views.RoomLink(roomID).Render(r.Context(), w)
 	if err != nil {
@@ -38,7 +44,10 @@ func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 
 func RoomLinkHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := chi.URLParam(r, "roomID")
-	if _, ok := rooms[roomID]; !ok {
+	roomsMu.Lock()
+	_, ok := rooms[roomID]
+	roomsMu.Unlock()
+	if !ok {
 		http.NotFound(w, r)
 		return
 	}
@@ -55,7 +64,9 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := r.FormValue("room_id")
 	username := r.FormValue("username")
 
+	roomsMu.Lock()
 	room, ok := rooms[roomID]
+	roomsMu.Unlock()
 	if !ok {
 		http.NotFound(w, r)
 		return
@@ -94,7 +105,9 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 
 func RoomPageHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := chi.URLParam(r, "roomID")
+	roomsMu.Lock()
 	room, ok := rooms[roomID]
+	roomsMu.Unlock()
 	if !ok {
 		http.NotFound(w, r)
 		return
@@ -118,7 +131,9 @@ func RoomPageHandler(w http.ResponseWriter, r *http.Request) {
 
 func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := r.FormValue("room_id")
+	roomsMu.Lock()
 	room, ok := rooms[roomID]
+	roomsMu.Unlock()
 	if !ok {
 		http.NotFound(w, r)
 		return
@@ -136,7 +151,9 @@ func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
 
 func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := r.FormValue("room_id")
+	roomsMu.Lock()
 	room, ok := rooms[roomID]
+	roomsMu.Unlock()
 	if !ok {
 		http.NotFound(w, r)
 		return
@@ -154,7 +171,9 @@ func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
 
 func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := r.FormValue("room_id")
+	roomsMu.Lock()
 	room, ok := rooms[roomID]
+	roomsMu.Unlock()
 	if !ok {
 		http.NotFound(w, r)
 		return

@@ -4,9 +4,11 @@ import (
 	"errors"
 	"math/rand"
 	"strconv"
+	"sync"
 )
 
 type Room struct {
+	Mu           sync.Mutex
 	ID           string
 	Players      []*Player
 	Dice         *Dice
@@ -43,6 +45,8 @@ func NewRoom(mode, dice string) *Room {
 }
 
 func (r *Room) AddPlayer(player *Player) error {
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
 	if len(r.Players) == r.NumOfPlayers {
 		return errors.New("room is full")
 	}
@@ -52,6 +56,8 @@ func (r *Room) AddPlayer(player *Player) error {
 
 // TODO: move to dice.go
 func (r *Room) RollDice() {
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
 	if r.Dice.RollsLeft > 0 {
 		for i := range r.NumOfDice {
 			if !r.Dice.Held[i] {
@@ -63,11 +69,15 @@ func (r *Room) RollDice() {
 }
 
 func (r *Room) EndTurn() {
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
 	r.CurrentTurn = (r.CurrentTurn + 1) % len(r.Players)
 	r.Dice = NewDice(r.NumOfDice)
 }
 
 func (r *Room) GetPlayerByID(playerID string) *Player {
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
 	for _, p := range r.Players {
 		if p.ID == playerID {
 			return p
