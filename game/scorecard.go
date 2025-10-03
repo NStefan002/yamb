@@ -142,52 +142,29 @@ func (sc *ScoreCard) FillField(rowID, colID string, dice *Dice) (int, error) {
 func (sc *ScoreCard) CalculateScore(rowID string, dice *Dice) (int, error) {
 	switch rowID {
 	case "1":
-		return dice.Count(1) * 1, nil
+		return dice.Number(1)
 	case "2":
-		return dice.Count(2) * 2, nil
+		return dice.Number(2)
 	case "3":
-		return dice.Count(3) * 3, nil
+		return dice.Number(3)
 	case "4":
-		return dice.Count(4) * 4, nil
+		return dice.Number(4)
 	case "5":
-		return dice.Count(5) * 5, nil
+		return dice.Number(5)
 	case "6":
-		return dice.Count(6) * 6, nil
+		return dice.Number(6)
 	case "max":
-		val := dice.MinMax()
-		if val == 0 {
-			return 0, errors.New("no max")
-		}
-		return val, nil
+		return dice.MinMax()
 	case "min":
-		val := dice.MinMax()
-		if val == 0 {
-			return 0, errors.New("no min")
-		}
+		return dice.MinMax()
 	case "kenta":
-		val := dice.Kenta()
-		if val == 0 {
-			return 0, errors.New("no kenta")
-		}
-		return val, nil
+		return dice.Kenta()
 	case "full":
-		val := dice.Full()
-		if val == 0 {
-			return 0, errors.New("no full")
-		}
-		return val, nil
+		return dice.Full()
 	case "poker":
-		val := dice.Poker()
-		if val == 0 {
-			return 0, errors.New("no poker")
-		}
-		return val, nil
+		return dice.Poker()
 	case "yamb":
-		val := dice.Yamb()
-		if val == 0 {
-			return 0, errors.New("no yamb")
-		}
-		return val, nil
+		return dice.Yamb()
 	}
 	return 0, errors.New("unknown row ID")
 }

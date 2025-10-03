@@ -1,6 +1,7 @@
 package game
 
 import (
+	"errors"
 	"slices"
 )
 
@@ -49,14 +50,6 @@ func (d *Dice) counts() map[int]int {
 	return counts
 }
 
-func (d *Dice) Count(value int) int {
-	counts := d.counts()
-	if counts[value] > 5 {
-		return 5
-	}
-	return counts[value]
-}
-
 func (d *Dice) sum() int {
 	held := d.getHeldDice()
 	sum := 0
@@ -66,18 +59,31 @@ func (d *Dice) sum() int {
 	return sum
 }
 
-func (d *Dice) MinMax() int {
+func (d *Dice) Number(value int) (int, error) {
 	held := d.getHeldDice()
-	if len(held) != 5 {
-		return 0
+	sum := 0
+	for _, v := range held {
+		if v == value {
+			sum += v
+		} else {
+			return 0, errors.New("not all dice match the value")
+		}
 	}
-	return d.sum()
+	return sum, nil
 }
 
-func (d *Dice) Kenta() int {
+func (d *Dice) MinMax() (int, error) {
 	held := d.getHeldDice()
 	if len(held) != 5 {
-		return 0
+		return 0, errors.New("need all 5 dice")
+	}
+	return d.sum(), nil
+}
+
+func (d *Dice) Kenta() (int, error) {
+	held := d.getHeldDice()
+	if len(held) != 5 {
+		return 0, errors.New("need all 5 dice")
 	}
 	sorted := make([]int, len(d.Values))
 	copy(sorted, d.Values)
@@ -92,7 +98,7 @@ func (d *Dice) Kenta() int {
 		}
 	}
 	if smallKenta {
-		return 55
+		return 55, nil
 	}
 
 	// check for big kenta (2-6)
@@ -104,17 +110,17 @@ func (d *Dice) Kenta() int {
 		}
 	}
 	if bigKenta {
-		return 60
+		return 60, nil
 	}
 
 	// no kenta
-	return 0
+	return 0, errors.New("no kenta")
 }
 
-func (d *Dice) Full() int {
+func (d *Dice) Full() (int, error) {
 	held := d.getHeldDice()
 	if len(held) != 5 {
-		return 0
+		return 0, errors.New("need all 5 dice")
 	}
 
 	counts := d.counts()
@@ -131,38 +137,38 @@ func (d *Dice) Full() int {
 		}
 	}
 	if !hasThree || !hasTwo {
-		return 0
+		return 0, errors.New("need a three-of-a-kind and a pair")
 	}
 	// 2 same + 3 same + 30
-	return d.sum() + 30
+	return d.sum() + 30, nil
 }
 
-func (d *Dice) Poker() int {
+func (d *Dice) Poker() (int, error) {
 	held := d.getHeldDice()
 	if len(held) != 4 {
-		return 0
+		return 0, errors.New("need 4 dice")
 	}
 	for i := range len(held) - 1 {
 		// all should be the same
 		if held[i] != held[i+1] {
-			return 0
+			return 0, errors.New("not all dice match")
 		}
 	}
 	// 4 same + 50
-	return held[0]*4 + 50
+	return held[0]*4 + 50, nil
 }
 
-func (d *Dice) Yamb() int {
+func (d *Dice) Yamb() (int, error) {
 	held := d.getHeldDice()
 	if len(held) != 5 {
-		return 0
+		return 0, errors.New("need all 5 dice")
 	}
 	for i := range len(held) - 1 {
 		// all should be the same
 		if held[i] != held[i+1] {
-			return 0
+			return 0, errors.New("not all dice match")
 		}
 	}
 	// 5 same + 80
-	return held[0]*5 + 80
+	return held[0]*5 + 80, nil
 }
