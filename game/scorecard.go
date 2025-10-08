@@ -89,7 +89,7 @@ func (sc *ScoreCard) fillB2T(rowID string, score int) error {
 	// check if the field below is filled (if not the last row)
 	for i, r := range sc.Rows {
 		if r.ID == rowID {
-			if i == len(sc.Rows)-1 {
+			if i == len(sc.Rows)-2 { // -2 because actual last row is sum
 				// last row, no need to check below
 				sc.Scores[rowID]["b2t"] = &score
 				return nil
