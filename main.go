@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -47,6 +48,12 @@ func main() {
 	r.Post("/select-cell", SelectCellHandler)
 	// r.Post("/send-message", handleSendMessage)
 
-	fmt.Println("Listening on http://localhost:1312")
-	log.Fatal(http.ListenAndServe(":1312", r))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	addr := fmt.Sprintf("http://localhost:%s", port)
+	fmt.Println("Starting server on:", addr)
+	log.Fatal(http.ListenAndServe(addr, r))
 }
