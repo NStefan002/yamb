@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -52,8 +51,6 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-
-	addr := fmt.Sprintf("http://localhost:%s", port)
-	fmt.Println("Starting server on:", addr)
-	log.Fatal(http.ListenAndServe(addr, r))
+	port = ":" + port
+	log.Fatal(http.ListenAndServe(port, r))
 }
