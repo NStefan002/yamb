@@ -21,9 +21,9 @@ type ScoreCard struct {
 
 func NewScoreCard() ScoreCard {
 	cols := []Column{
-		{ID: "t2b", Name: "⬇️"},
-		{ID: "b2t", Name: "⬆️"},
-		{ID: "free", Name: "🔃"},
+		{ID: "t2b", Name: "↓"},
+		{ID: "b2t", Name: "↑"},
+		{ID: "free", Name: "↑↓"},
 		{ID: "announce", Name: "N"},
 	}
 
