@@ -6,32 +6,42 @@ import (
 	"fmt"
 )
 
-templ MainScoreCard(roomID string, sc game.ScoreCard) {
-	<table class="table-fixed border-collapse border border-gray-400 mx-auto text-center text-xs">
-		<thead>
+templ MainScoreCard(roomID string, player *game.Player) {
+	{{
+	sc := player.ScoreCard
+
+	filledTextColor := ""
+	switch player.Team {
+	case game.Blue:
+		filledTextColor = BlueAccent
+	case game.Red:
+		filledTextColor = RedAccent
+	case game.Yellow:
+		filledTextColor = YellowAccent
+	}
+	}}
+	<table class={ fmt.Sprintf("table-fixed border-collapse border-2 border-[%s] w-full h-full max-w-[90vw] max-h-[90vh] text-sm text-center", BorderPrimary) }>
+		<thead class={ fmt.Sprintf("bg-[%s] h-[calc(100%%/%d)]", BgHeaderField, len(sc.Rows)+1) }>
 			<tr>
-				<th class="border border-gray-400 w-12 h-8 text-xs"></th>
+				<th class={ fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, TextPrimary, len(sc.Columns)) }></th>
 				for _, c := range sc.Columns {
-					<th class="border border-gray-400 w-12 h-8 bg-gray-200 text-xs">{ c.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, TextPrimary, len(sc.Columns)) }>{ c.Name }</th>
 				}
 			</tr>
 		</thead>
-		<tbody>
+		<tbody class={ fmt.Sprintf("h-[calc(100%%-100%%/%d)]", len(sc.Rows)+1) }>
 			for _, r := range sc.Rows {
-				<tr>
-					<th class="border border-gray-400 w-12 h-8 bg-gray-100 text-left text-xs">{ r.Name }</th>
-					// If it's a sum row (auto-filled, non-clickable)
-					if strings.Contains(strings.ToLower(r.Name), "sum") {
-						for _, c := range sc.Columns {
-							<td class="border border-gray-400 w-12 h-8 bg-gray-100 text-center align-middle text-xs">
+				<tr class={ fmt.Sprintf("h-[calc(100%%/%d)]", len(sc.Rows)+1) }>
+					<th class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-left px-2 text-sm font-bold text-[%s]", BorderPrimary, BgHeaderField, TextPrimary) }>{ r.Name }</th>
+					for _, c := range sc.Columns {
+						if strings.Contains(strings.ToLower(r.Name), "sum") {
+							<td class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-center font-semibold text-[%s]", BorderPrimary, BgSumField, filledTextColor) }>
 								if sc.Scores[r.ID][c.ID] != nil {
 									{ *sc.Scores[r.ID][c.ID] }
 								}
 							</td>
-						}
-					} else {
-						for _, c := range sc.Columns {
-							@ScoreCardField(roomID, sc, r.ID, c.ID)
+						} else {
+							@ScoreCardField(roomID, player, r.ID, c.ID)
 						}
 					}
 				</tr>
@@ -40,12 +50,29 @@ templ MainScoreCard(roomID string, sc game.ScoreCard) {
 	</table>
 }
 
-templ ScoreCardField(roomID string, sc game.ScoreCard, rowID, colID string) {
+templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
+	{{
+	sc := player.ScoreCard
+
+	filledBgColor := ""
+	filledTextColor := ""
+	switch player.Team {
+	case game.Blue:
+		filledBgColor = BlueFilled
+		filledTextColor = BlueAccent
+	case game.Red:
+		filledBgColor = RedFilled
+		filledTextColor = RedAccent
+	case game.Yellow:
+		filledBgColor = YellowFilled
+		filledTextColor = YellowAccent
+	}
+	}}
 	if sc.Scores[rowID][colID] != nil {
-		<td class="border border-gray-400 w-12 h-8 bg-green-100 text-center">{ *sc.Scores[rowID][colID] }</td>
+		<td class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-sm bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }>{ *sc.Scores[rowID][colID] }</td>
 	} else {
 		<td
-			class="border border-gray-400 w-12 h-8 text-center align-middle cursor-pointer hover:bg-yellow-100 text-xs"
+			class={ fmt.Sprintf("border-2 border-[%s] text-center align-middle cursor-pointer hover:bg-[%s] bg-[%s] text-sm transition-colors", BorderPrimary, BgGamePanel, BgRollingArea) }
 			hx-post="/select-cell"
 			hx-target={ "#cell-" + rowID + "-" + colID }
 			hx-swap="outerHTML"
@@ -55,63 +82,41 @@ templ ScoreCardField(roomID string, sc game.ScoreCard, rowID, colID string) {
 	}
 }
 
-templ SmallScoreCardTable(sc game.ScoreCard) {
-	<table class="table-fixed border-collapse border border-gray-300 text-center text-xs">
-		<thead>
-			<tr>
-				<th class="border border-gray-300 w-8 h-6 p-0"></th>
-				for _, c := range sc.Columns {
-					<th class="border border-gray-300 w-8 h-6 p-0 bg-gray-100">{ c.Name }</th>
-				}
-			</tr>
-		</thead>
-		<tbody>
-			for _, r := range sc.Rows {
-				<tr>
-					<th class="border border-gray-300 w-8 h-6 p-0 bg-gray-50 text-left text-xs">{ r.Name }</th>
-					if strings.Contains(strings.ToLower(r.Name), "sum") {
-						for _, c := range sc.Columns {
-							<td class="border border-gray-300 w-8 h-6 p-0 bg-gray-50 text-xs">
-								if sc.Scores[r.ID][c.ID] != nil {
-									{ *sc.Scores[r.ID][c.ID] }
-								}
-							</td>
-						}
-					} else {
-						for _, c := range sc.Columns {
-							<td class="border border-gray-300 w-8 h-6 p-0 text-xs">
-								if sc.Scores[r.ID][c.ID] != nil {
-									<span class="bg-green-100 px-1 rounded text-xs">
-										{ *sc.Scores[r.ID][c.ID] }
-									</span>
-								}
-							</td>
-						}
-					}
-				</tr>
-			}
-		</tbody>
-	</table>
-}
+templ SmallScoreCardTable(player *game.Player) {
+	{{
+	sc := player.ScoreCard
 
-templ ScoreCardTable(sc game.ScoreCard) {
-	<table class="table-fixed border-collapse border border-gray-400 mx-auto text-center text-sm">
+	filledBgColor := ""
+	filledTextColor := ""
+	switch player.Team {
+	case game.Blue:
+		filledBgColor = BlueFilled
+		filledTextColor = BlueAccent
+	case game.Red:
+		filledBgColor = RedFilled
+		filledTextColor = RedAccent
+	case game.Yellow:
+		filledBgColor = YellowFilled
+		filledTextColor = YellowAccent
+	}
+	fmt.Println("Colors:", filledBgColor, filledTextColor)
+	}}
+	<table class={ fmt.Sprintf("table-auto border-collapse border-2 border-[%s] w-full max-w-[90vw] text-center text-xs", BorderPrimary) }>
 		<thead>
 			<tr>
-				<th class="border border-gray-400 w-16 h-12"></th>
+				<th class={ fmt.Sprintf("border-2 border-[%s] px-1 py-1 bg-[%s] text-[%s] font-bold text-[10px] whitespace-nowrap", BorderPrimary, BgHeaderField, TextPrimary) }></th>
 				for _, c := range sc.Columns {
-					<th class="border border-gray-400 w-16 h-12 bg-gray-200">{ c.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 bg-[%s] text-[%s] font-bold text-[10px] whitespace-nowrap", BorderPrimary, BgHeaderField, TextPrimary) }>{ c.Name }</th>
 				}
 			</tr>
 		</thead>
 		<tbody>
 			for _, r := range sc.Rows {
 				<tr>
-					<th class="border border-gray-400 w-16 h-12 bg-gray-100 text-left">{ r.Name }</th>
-					// If it's a sum row (auto-filled, non-clickable)
+					<th class={ fmt.Sprintf("border-2 border-[%s] px-1 py-1 bg-[%s] text-left text-[10px] font-bold text-[%s] whitespace-nowrap", BorderPrimary, BgHeaderField, TextPrimary) }>{ r.Name }</th>
 					if strings.Contains(strings.ToLower(r.Name), "sum") {
 						for _, c := range sc.Columns {
-							<td class="border border-gray-400 w-16 h-12 bg-gray-100 text-center align-middle">
+							<td class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 bg-[%s] text-[10px] font-semibold whitespace-nowrap text-[%s]", BorderPrimary, BgSumField, filledTextColor) }>
 								if sc.Scores[r.ID][c.ID] != nil {
 									{ *sc.Scores[r.ID][c.ID] }
 								}
@@ -119,19 +124,11 @@ templ ScoreCardTable(sc game.ScoreCard) {
 						}
 					} else {
 						for _, c := range sc.Columns {
-							<td
-								class="border border-gray-400 w-16 h-12 text-center align-middle cursor-pointer hover:bg-yellow-100"
-								hx-post={ "/select-cell?row=" + r.ID + "&col=" + c.ID }
-								hx-target="#cell-{r.ID}-{c.ID}"
-								hx-swap="outerHTML"
-								id={ "cell-" + r.ID + "-" + c.ID }
-							>
-								if sc.Scores[r.ID][c.ID] != nil {
-									<span class="bg-green-100 px-2 py-1 rounded">
-										{ *sc.Scores[r.ID][c.ID] }
-									</span>
-								}
-							</td>
+							if sc.Scores[r.ID][c.ID] != nil {
+								<td class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 text-[10px] font-semibold whitespace-nowrap bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }>{ *sc.Scores[r.ID][c.ID] }</td>
+							} else {
+								<td class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 text-[10px] font-semibold whitespace-nowrap bg-[%s]", BorderPrimary, BgRollingArea) }></td>
+							}
 						}
 					}
 				</tr>
@@ -141,32 +138,58 @@ templ ScoreCardTable(sc game.ScoreCard) {
 }
 
 templ OtherScorecards(roomID, playerID string, room *game.Room) {
-	<h3 class="font-semibold mb-3">Other Players</h3>
-	if len(room.Players) == 0 {
-		<div class="text-gray-500 text-sm text-center py-4">
+	<h3 class={ fmt.Sprintf("font-bold text-[%s] mb-3 text-lg", TextPrimary) }>Other Players</h3>
+	{{ otherCount := len(room.Players) - 1 }}
+	if otherCount <= 0 {
+		<div class={ fmt.Sprintf("text-[%s] text-sm text-center py-8 bg-white rounded-lg border-2 border-[%s] w-full", TextPrimary, BorderPrimary) }>
 			No other players yet
 		</div>
-	} else {
-		<div class="space-y-4">
+	} else if otherCount == 1 {
+		<!-- Single other player: center with flex -->
+		<div class="w-full h-full flex items-center justify-center p-2">
 			for i := 0; i < len(room.Players); i++ {
 				if room.Players[i].ID == playerID {
 					{{ continue }}
 				}
-				<div class="border border-gray-200 rounded-lg p-3">
+				<div class={ fmt.Sprintf("w-full max-w-sm bg-white rounded-lg p-2 border-2 border-[%s] shadow-md", BorderPrimary) }>
 					<div class="flex justify-between items-center mb-2">
-						<h4 class="font-medium text-sm">{ room.Players[i].Username }</h4>
+						<h4 class={ fmt.Sprintf("font-bold text-xs text-[%s]", TextPrimary) }>{ room.Players[i].Username }</h4>
 						if room.CurrentTurn == i {
-							<span class="text-xs text-green-600 font-medium">Rolling...</span>
+							<span class={ fmt.Sprintf("text-[10px] text-[%s] font-semibold", BtnHover) }>Rolling...</span>
 						} else {
-							<span class="text-xs text-gray-400">Waiting for turn</span>
+							<span class={ fmt.Sprintf("text-[10px] text-[%s] font-medium", BtnHover) }>Waiting</span>
 						}
 					</div>
-					<!-- Other Player's Dice -->
 					<div class="mb-2" id={ "other-dice-" + room.Players[i].ID }>
 						@SmallDiceRow(room.Dice, room.CurrentTurn == i)
 					</div>
-					<div class="scale-90 origin-top-left">
-						@SmallScoreCardTable(room.Players[i].ScoreCard)
+					<div class="flex justify-center">
+						@SmallScoreCardTable(room.Players[i])
+					</div>
+				</div>
+			}
+		</div>
+	} else {
+		<!-- 2 or more: grid layout -->
+		<div class="grid grid-cols-1 2xl:grid-cols-2 gap-3 w-full h-full">
+			for i := 0; i < len(room.Players); i++ {
+				if room.Players[i].ID == playerID {
+					{{ continue }}
+				}
+				<div class={ fmt.Sprintf("bg-white rounded-lg p-2 border-2 border-[%s] shadow-md", BorderPrimary) }>
+					<div class="flex justify-between items-center mb-2">
+						<h4 class={ fmt.Sprintf("font-bold text-xs text-[%s]", TextPrimary) }>{ room.Players[i].Username }</h4>
+						if room.CurrentTurn == i {
+							<span class={ fmt.Sprintf("text-[10px] text-[%s] font-semibold", BtnHover) }>Rolling...</span>
+						} else {
+							<span class={ fmt.Sprintf("text-[10px] text-[%s] font-medium", BtnHover) }>Waiting</span>
+						}
+					</div>
+					<div class="mb-2" id={ "other-dice-" + room.Players[i].ID }>
+						@SmallDiceRow(room.Dice, room.CurrentTurn == i)
+					</div>
+					<div class="flex justify-center">
+						@SmallScoreCardTable(room.Players[i])
 					</div>
 				</div>
 			}

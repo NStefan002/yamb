@@ -246,7 +246,7 @@ func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 	room.Broadcaster.Broadcast(broadcaster.Event{Name: "turnEnded"})
 	room.Broadcaster.Broadcast(broadcaster.Event{Name: "scoreUpdated"})
 
-	err = views.ScoreCardField(roomID, player.ScoreCard, row, col).Render(r.Context(), w)
+	err = views.ScoreCardField(roomID, player, row, col).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "could not render score", http.StatusInternalServerError)
 		log.Println("error rendering score:", err)
