@@ -23,16 +23,16 @@ templ MainScoreCard(roomID string, player *game.Player) {
 	<table class={ fmt.Sprintf("table-fixed border-collapse border-2 border-[%s] w-full h-full max-w-[90vw] max-h-[90vh] text-sm text-center", BorderPrimary) }>
 		<thead class={ fmt.Sprintf("bg-[%s] h-[calc(100%%/%d)]", BgHeaderField, len(sc.Rows)+1) }>
 			<tr>
-				<th class={ fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, TextPrimary, len(sc.Columns)) }></th>
+				<th class={ fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, filledTextColor, len(sc.Columns)) }></th>
 				for _, c := range sc.Columns {
-					<th class={ fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, TextPrimary, len(sc.Columns)) }>{ c.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, filledTextColor, len(sc.Columns)) }>{ c.Name }</th>
 				}
 			</tr>
 		</thead>
 		<tbody class={ fmt.Sprintf("h-[calc(100%%-100%%/%d)]", len(sc.Rows)+1) }>
 			for _, r := range sc.Rows {
 				<tr class={ fmt.Sprintf("h-[calc(100%%/%d)]", len(sc.Rows)+1) }>
-					<th class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-left px-2 text-sm font-bold text-[%s]", BorderPrimary, BgHeaderField, TextPrimary) }>{ r.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-left px-2 text-sm font-bold text-[%s]", BorderPrimary, BgHeaderField, filledTextColor) }>{ r.Name }</th>
 					for _, c := range sc.Columns {
 						if strings.Contains(strings.ToLower(r.Name), "sum") {
 							<td class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-center font-semibold text-[%s]", BorderPrimary, BgSumField, filledTextColor) }>
@@ -104,16 +104,16 @@ templ SmallScoreCardTable(player *game.Player) {
 	<table class={ fmt.Sprintf("table-auto border-collapse border-2 border-[%s] w-full max-w-[90vw] text-center text-xs", BorderPrimary) }>
 		<thead>
 			<tr>
-				<th class={ fmt.Sprintf("border-2 border-[%s] px-1 py-1 bg-[%s] text-[%s] font-bold text-[10px] whitespace-nowrap", BorderPrimary, BgHeaderField, TextPrimary) }></th>
+				<th class={ fmt.Sprintf("border-2 border-[%s] px-1 py-1 bg-[%s] text-[%s] font-bold text-[10px] whitespace-nowrap", BorderPrimary, BgHeaderField, filledTextColor) }></th>
 				for _, c := range sc.Columns {
-					<th class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 bg-[%s] text-[%s] font-bold text-[10px] whitespace-nowrap", BorderPrimary, BgHeaderField, TextPrimary) }>{ c.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 bg-[%s] text-[%s] font-bold text-[10px] whitespace-nowrap", BorderPrimary, BgHeaderField, filledTextColor) }>{ c.Name }</th>
 				}
 			</tr>
 		</thead>
 		<tbody>
 			for _, r := range sc.Rows {
 				<tr>
-					<th class={ fmt.Sprintf("border-2 border-[%s] px-1 py-1 bg-[%s] text-left text-[10px] font-bold text-[%s] whitespace-nowrap", BorderPrimary, BgHeaderField, TextPrimary) }>{ r.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] px-1 py-1 bg-[%s] text-left text-[10px] font-bold text-[%s] whitespace-nowrap", BorderPrimary, BgHeaderField, filledTextColor) }>{ r.Name }</th>
 					if strings.Contains(strings.ToLower(r.Name), "sum") {
 						for _, c := range sc.Columns {
 							<td class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 bg-[%s] text-[10px] font-semibold whitespace-nowrap text-[%s]", BorderPrimary, BgSumField, filledTextColor) }>
