@@ -85,8 +85,8 @@ func (d *Dice) Kenta() (int, error) {
 	if len(held) != 5 {
 		return 0, errors.New("need all 5 dice")
 	}
-	sorted := make([]int, len(d.Values))
-	copy(sorted, d.Values)
+	sorted := make([]int, len(held))
+	copy(sorted, held)
 	slices.Sort(sorted)
 
 	// check for small kenta (1-5)
