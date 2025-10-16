@@ -470,7 +470,6 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 			filledBgColor = YellowFilled
 			filledTextColor = YellowAccent
 		}
-		fmt.Println("Colors:", filledBgColor, filledTextColor)
 		var templ_7745c5c3_Var31 = []any{fmt.Sprintf("table-auto border-collapse border-2 border-[%s] w-full max-w-[90vw] text-center text-xs", BorderPrimary)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var31...)
 		if templ_7745c5c3_Err != nil {
@@ -541,7 +540,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 			var templ_7745c5c3_Var37 string
 			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(c.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 109, Col: 180}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 108, Col: 180}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 			if templ_7745c5c3_Err != nil {
@@ -586,7 +585,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 			var templ_7745c5c3_Var40 string
 			templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(r.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 116, Col: 188}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 115, Col: 188}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 			if templ_7745c5c3_Err != nil {
@@ -624,7 +623,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 						var templ_7745c5c3_Var43 string
 						templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(*sc.Scores[r.ID][c.ID])
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 121, Col: 33}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 120, Col: 33}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 						if templ_7745c5c3_Err != nil {
@@ -664,7 +663,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 						var templ_7745c5c3_Var46 string
 						templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(*sc.Scores[r.ID][c.ID])
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 128, Col: 203}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 127, Col: 203}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 						if templ_7745c5c3_Err != nil {
@@ -840,7 +839,7 @@ func OtherScorecards(roomID, playerID string, room *game.Room) templ.Component {
 				var templ_7745c5c3_Var58 string
 				templ_7745c5c3_Var58, templ_7745c5c3_Err = templ.JoinStringErrs(room.Players[i].Username)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 156, Col: 102}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 155, Col: 102}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var58))
 				if templ_7745c5c3_Err != nil {
@@ -904,7 +903,7 @@ func OtherScorecards(roomID, playerID string, room *game.Room) templ.Component {
 				var templ_7745c5c3_Var63 string
 				templ_7745c5c3_Var63, templ_7745c5c3_Err = templ.JoinStringErrs("other-dice-" + room.Players[i].ID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 163, Col: 62}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 162, Col: 62}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var63))
 				if templ_7745c5c3_Err != nil {
@@ -995,7 +994,7 @@ func OtherScorecards(roomID, playerID string, room *game.Room) templ.Component {
 				var templ_7745c5c3_Var68 string
 				templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinStringErrs(room.Players[i].Username)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 181, Col: 102}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 180, Col: 102}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var68))
 				if templ_7745c5c3_Err != nil {
@@ -1059,7 +1058,7 @@ func OtherScorecards(roomID, playerID string, room *game.Room) templ.Component {
 				var templ_7745c5c3_Var73 string
 				templ_7745c5c3_Var73, templ_7745c5c3_Err = templ.JoinStringErrs("other-dice-" + room.Players[i].ID)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 188, Col: 62}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 187, Col: 62}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var73))
 				if templ_7745c5c3_Err != nil {
