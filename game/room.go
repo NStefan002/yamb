@@ -35,12 +35,7 @@ func NewRoom(mode, dice string) *Room {
 	return &Room{
 		Broadcaster:  broadcaster.NewBroadcaster(),
 
-		Players: []*Player{
-			// dummy players for testing
-			// {ID: "1", Username: "Alice", ScoreCard: NewScoreCard(), Dice: NewDice()},
-			// {ID: "2", Username: "Bob", ScoreCard: NewScoreCard(), Dice: NewDice()},
-			// {ID: "3", Username: "Charlie", ScoreCard: NewScoreCard(), Dice: NewDice()},
-		},
+		Players:      []*Player{},
 		CurrentTurn:  0,
 		GameStarted:  false,
 		Dice:         NewDice(numOfDice),
@@ -56,6 +51,7 @@ func (r *Room) AddPlayer(player *Player) error {
 		return errors.New("room is full")
 	}
 	r.Players = append(r.Players, player)
+	r.Players[len(r.Players)-1].Team = Team(len(r.Players) - 1)
 	return nil
 }
 
