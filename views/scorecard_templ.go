@@ -90,7 +90,7 @@ func MainScoreCard(roomID string, player *game.Player) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 = []any{fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, filledTextColor, len(sc.Columns))}
+		var templ_7745c5c3_Var6 = []any{fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)] text-center", BorderPrimary, filledTextColor, len(sc.Columns))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -113,7 +113,7 @@ func MainScoreCard(roomID string, player *game.Player) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, c := range sc.Columns {
-			var templ_7745c5c3_Var8 = []any{fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, filledTextColor, len(sc.Columns))}
+			var templ_7745c5c3_Var8 = []any{fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)] text-center", BorderPrimary, filledTextColor, len(sc.Columns))}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -138,7 +138,7 @@ func MainScoreCard(roomID string, player *game.Player) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(c.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 28, Col: 159}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 28, Col: 171}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -198,7 +198,7 @@ func MainScoreCard(roomID string, player *game.Player) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var15 = []any{fmt.Sprintf("border-2 border-[%s] bg-[%s] text-left px-2 text-sm font-bold text-[%s]", BorderPrimary, BgHeaderField, filledTextColor)}
+			var templ_7745c5c3_Var15 = []any{fmt.Sprintf("border-2 border-[%s] bg-[%s] px-2 text-sm font-bold text-[%s] text-center", BorderPrimary, BgHeaderField, filledTextColor)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -223,7 +223,7 @@ func MainScoreCard(roomID string, player *game.Player) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(r.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 35, Col: 161}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 35, Col: 163}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -511,7 +511,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var35 = []any{fmt.Sprintf("border-2 border-[%s] font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, filledTextColor, len(sc.Columns))}
+		var templ_7745c5c3_Var35 = []any{fmt.Sprintf("border-2 border-[%s] font-bold text-[%s] w-[calc(100%%/%d)] text-center", BorderPrimary, filledTextColor, len(sc.Columns))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var35...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -534,7 +534,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, c := range sc.Columns {
-			var templ_7745c5c3_Var37 = []any{fmt.Sprintf("border-2 border-[%s] font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, filledTextColor, len(sc.Columns))}
+			var templ_7745c5c3_Var37 = []any{fmt.Sprintf("border-2 border-[%s] font-bold text-[%s] w-[calc(100%%/%d)] text-center", BorderPrimary, filledTextColor, len(sc.Columns))}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var37...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -559,7 +559,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 			var templ_7745c5c3_Var39 string
 			templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(c.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 108, Col: 151}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 108, Col: 163}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 			if templ_7745c5c3_Err != nil {
@@ -619,7 +619,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var44 = []any{fmt.Sprintf("border-2 border-[%s] bg-[%s] text-left font-bold text-[%s]", BorderPrimary, BgHeaderField, filledTextColor)}
+			var templ_7745c5c3_Var44 = []any{fmt.Sprintf("border-2 border-[%s] bg-[%s] font-bold text-[%s] text-center", BorderPrimary, BgHeaderField, filledTextColor)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var44...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -644,7 +644,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 			var templ_7745c5c3_Var46 string
 			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(r.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 115, Col: 148}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 115, Col: 150}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 			if templ_7745c5c3_Err != nil {
@@ -656,7 +656,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 			}
 			if strings.Contains(strings.ToLower(r.Name), "sum") {
 				for _, c := range sc.Columns {
-					var templ_7745c5c3_Var47 = []any{fmt.Sprintf("border-2 border-[%s] bg-[%s] font-semibold text-[%s]", BorderPrimary, BgSumField, filledTextColor)}
+					var templ_7745c5c3_Var47 = []any{fmt.Sprintf("border-2 border-[%s] bg-[%s] font-semibold text-[%s] text-center", BorderPrimary, BgSumField, filledTextColor)}
 					templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var47...)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -697,7 +697,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 			} else {
 				for _, c := range sc.Columns {
 					if sc.Scores[r.ID][c.ID] != nil {
-						var templ_7745c5c3_Var50 = []any{fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor)}
+						var templ_7745c5c3_Var50 = []any{fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-[%s] text-center", BorderPrimary, filledBgColor, filledTextColor)}
 						templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var50...)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
@@ -722,7 +722,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 						var templ_7745c5c3_Var52 string
 						templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(*sc.Scores[r.ID][c.ID])
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 127, Col: 161}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/scorecard.templ`, Line: 127, Col: 173}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 						if templ_7745c5c3_Err != nil {
@@ -733,7 +733,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 							return templ_7745c5c3_Err
 						}
 					} else {
-						var templ_7745c5c3_Var53 = []any{fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s]", BorderPrimary, BgRollingArea)}
+						var templ_7745c5c3_Var53 = []any{fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-center", BorderPrimary, BgRollingArea)}
 						templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var53...)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
