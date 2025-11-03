@@ -8,17 +8,17 @@ import (
 
 templ MainScoreCard(roomID string, player *game.Player) {
 	{{
-	sc := player.ScoreCard
+		sc := player.ScoreCard
 
-	filledTextColor := ""
-	switch player.Team {
-	case game.Blue:
-		filledTextColor = BlueAccent
-	case game.Red:
-		filledTextColor = RedAccent
-	case game.Yellow:
-		filledTextColor = YellowAccent
-	}
+		filledTextColor := ""
+		switch player.Team {
+		case game.Blue:
+			filledTextColor = BlueAccent
+		case game.Red:
+			filledTextColor = RedAccent
+		case game.Yellow:
+			filledTextColor = YellowAccent
+		}
 	}}
 	<table class={ fmt.Sprintf("table-fixed border-collapse border-2 border-[%s] w-full h-full max-w-[90vw] max-h-[90vh] text-sm text-center", BorderPrimary) }>
 		<thead class={ fmt.Sprintf("bg-[%s] h-[calc(100%%/%d)]", BgHeaderField, len(sc.Rows)+1) }>
@@ -52,21 +52,21 @@ templ MainScoreCard(roomID string, player *game.Player) {
 
 templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
 	{{
-	sc := player.ScoreCard
+		sc := player.ScoreCard
 
-	filledBgColor := ""
-	filledTextColor := ""
-	switch player.Team {
-	case game.Blue:
-		filledBgColor = BlueFilled
-		filledTextColor = BlueAccent
-	case game.Red:
-		filledBgColor = RedFilled
-		filledTextColor = RedAccent
-	case game.Yellow:
-		filledBgColor = YellowFilled
-		filledTextColor = YellowAccent
-	}
+		filledBgColor := ""
+		filledTextColor := ""
+		switch player.Team {
+		case game.Blue:
+			filledBgColor = BlueFilled
+			filledTextColor = BlueAccent
+		case game.Red:
+			filledBgColor = RedFilled
+			filledTextColor = RedAccent
+		case game.Yellow:
+			filledBgColor = YellowFilled
+			filledTextColor = YellowAccent
+		}
 	}}
 	if sc.Scores[rowID][colID] != nil {
 		<td class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-sm bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }>{ *sc.Scores[rowID][colID] }</td>
@@ -84,38 +84,38 @@ templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
 
 templ SmallScoreCardTable(player *game.Player) {
 	{{
-	sc := player.ScoreCard
+		sc := player.ScoreCard
 
-	filledBgColor := ""
-	filledTextColor := ""
-	switch player.Team {
-	case game.Blue:
-		filledBgColor = BlueFilled
-		filledTextColor = BlueAccent
-	case game.Red:
-		filledBgColor = RedFilled
-		filledTextColor = RedAccent
-	case game.Yellow:
-		filledBgColor = YellowFilled
-		filledTextColor = YellowAccent
-	}
+		filledBgColor := ""
+		filledTextColor := ""
+		switch player.Team {
+		case game.Blue:
+			filledBgColor = BlueFilled
+			filledTextColor = BlueAccent
+		case game.Red:
+			filledBgColor = RedFilled
+			filledTextColor = RedAccent
+		case game.Yellow:
+			filledBgColor = YellowFilled
+			filledTextColor = YellowAccent
+		}
 	}}
-	<table class={ fmt.Sprintf("table-auto border-collapse border-2 border-[%s] w-full max-w-[90vw] text-center text-xs", BorderPrimary) }>
-		<thead>
+	<table class={ fmt.Sprintf("table-fixed border-collapse border-2 border-[%s] w-full h-full max-w-[90vw] max-h-[90vh] text-xs text-center", BorderPrimary) }>
+		<thead class={ fmt.Sprintf("bg-[%s] h-[calc(100%%/%d)]", BgHeaderField, len(sc.Rows)+1) }>
 			<tr>
-				<th class={ fmt.Sprintf("border-2 border-[%s] px-1 py-1 bg-[%s] text-[%s] font-bold text-[10px] whitespace-nowrap", BorderPrimary, BgHeaderField, filledTextColor) }></th>
+				<th class={ fmt.Sprintf("border-2 border-[%s] font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, filledTextColor, len(sc.Columns)) }></th>
 				for _, c := range sc.Columns {
-					<th class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 bg-[%s] text-[%s] font-bold text-[10px] whitespace-nowrap", BorderPrimary, BgHeaderField, filledTextColor) }>{ c.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] font-bold text-[%s] w-[calc(100%%/%d)]", BorderPrimary, filledTextColor, len(sc.Columns)) }>{ c.Name }</th>
 				}
 			</tr>
 		</thead>
-		<tbody>
+		<tbody class={ fmt.Sprintf("h-[calc(100%%-100%%/%d)]", len(sc.Rows)+1) }>
 			for _, r := range sc.Rows {
-				<tr>
-					<th class={ fmt.Sprintf("border-2 border-[%s] px-1 py-1 bg-[%s] text-left text-[10px] font-bold text-[%s] whitespace-nowrap", BorderPrimary, BgHeaderField, filledTextColor) }>{ r.Name }</th>
+				<tr class={ fmt.Sprintf("h-[calc(100%%/%d)]", len(sc.Rows)+1) }>
+					<th class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-left font-bold text-[%s]", BorderPrimary, BgHeaderField, filledTextColor) }>{ r.Name }</th>
 					if strings.Contains(strings.ToLower(r.Name), "sum") {
 						for _, c := range sc.Columns {
-							<td class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 bg-[%s] text-[10px] font-semibold whitespace-nowrap text-[%s]", BorderPrimary, BgSumField, filledTextColor) }>
+							<td class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] font-semibold text-[%s]", BorderPrimary, BgSumField, filledTextColor) }>
 								if sc.Scores[r.ID][c.ID] != nil {
 									{ *sc.Scores[r.ID][c.ID] }
 								}
@@ -124,9 +124,9 @@ templ SmallScoreCardTable(player *game.Player) {
 					} else {
 						for _, c := range sc.Columns {
 							if sc.Scores[r.ID][c.ID] != nil {
-								<td class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 text-[10px] font-semibold whitespace-nowrap bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }>{ *sc.Scores[r.ID][c.ID] }</td>
+								<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }>{ *sc.Scores[r.ID][c.ID] }</td>
 							} else {
-								<td class={ fmt.Sprintf("border-2 border-[%s] px-1.5 py-1 text-[10px] font-semibold whitespace-nowrap bg-[%s]", BorderPrimary, BgRollingArea) }></td>
+								<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s]", BorderPrimary, BgRollingArea) }></td>
 							}
 						}
 					}
