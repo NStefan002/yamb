@@ -188,7 +188,7 @@ func RoomPage(roomID, playerID string, room *game.Room) templ.Component {
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<html><head><title>Room ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<html class=\"select-none\"><head><title>Room ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

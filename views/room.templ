@@ -39,7 +39,7 @@ templ RoomLink(roomID string) {
 }
 
 templ RoomPage(roomID, playerID string, room *game.Room) {
-	<html>
+	<html class="select-none">
 		<head>
 			<title>Room { roomID } - Yamb Online</title>
 			<script src="/js/htmx.min.js"></script>
