@@ -2,6 +2,7 @@ package views
 
 import (
 	"yamb/game"
+	"yamb/broadcaster"
 	"fmt"
 )
 
@@ -183,27 +184,27 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 				</div>
 			</footer>
 			<!-- SSE connection -->
-			<div sse-connect={ "/room/" + roomID + "/events" }>
+			<div sse-connect={ fmt.Sprintf("/room/%s/events", roomID) }>
 				<div
-					hx-trigger="sse:scoreUpdated"
+					hx-trigger={ fmt.Sprintf("sse:%s", broadcaster.ScoreUpdated) }
 					hx-get={ fmt.Sprintf("/room/%s/other-scorecards", roomID) }
 					hx-target="#other-scorecards"
 					hx-swap="innerHTML"
 				></div>
 				<div
-					hx-trigger="sse:turnEnded"
+					hx-trigger={ fmt.Sprintf("sse:%s", broadcaster.TurnEnded) }
 					hx-get={ fmt.Sprintf("/room/%s/dice-area", roomID) }
 					hx-target="#dice-area"
 					hx-swap="innerHTML"
 				></div>
 				<div
-					hx-trigger="sse:playerJoined"
+					hx-trigger={ fmt.Sprintf("sse:%s", broadcaster.PlayerJoined) }
 					hx-get={ "/room/" + roomID + "/player-counter" }
 					hx-target="#player-counter"
 					hx-swap="innerHTML"
 				></div>
 				<div
-					hx-trigger="sse:cellSelected"
+					hx-trigger={ fmt.Sprintf("sse:%s", broadcaster.CellSelected) }
 					hx-get={ "/room/" + roomID + "/cell-selected" }
 					hx-target="#write-score-button"
 					hx-swap="outerHTML"

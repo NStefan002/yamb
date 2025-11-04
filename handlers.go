@@ -106,8 +106,8 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: "playerJoined"})
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: "scoreUpdated"})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.PlayerJoined})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreUpdated})
 
 	if len(room.Players) == room.NumOfPlayers {
 		room.GameStarted = true
@@ -153,8 +153,8 @@ func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	room.RollDice()
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: "diceAreaUpdated"})
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: "scoreUpdated"})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.DiceAreaUpdated})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreUpdated})
 
 	playerCookie, err := r.Cookie("player_id")
 	if err != nil {
@@ -184,8 +184,8 @@ func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
 
 	dieIdx, _ := strconv.Atoi(r.FormValue("die_index"))
 	room.Dice.ToggleDie(dieIdx)
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: "diceAreaUpdated"})
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: "scoreUpdated"})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.DiceAreaUpdated})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreUpdated})
 
 	playCookie, err := r.Cookie("player_id")
 	if err != nil {
@@ -242,7 +242,7 @@ func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: "cellSelected"})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.CellSelected})
 
 	err = views.MainScoreCard(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
@@ -291,8 +291,8 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	room.EndTurn() // end the turn when the user enters result in a cell
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: "turnEnded"})
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: "scoreUpdated"})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.TurnEnded})
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreUpdated})
 
 	err = views.ScoreCardField(roomID, player, row, col).Render(r.Context(), w)
 	if err != nil {
