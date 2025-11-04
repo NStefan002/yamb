@@ -235,6 +235,54 @@ func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 	row := r.FormValue("row")
 	col := r.FormValue("col")
 
+	err = player.ScoreCard.SelectCell(row, col)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("could not select cell: %v", err), http.StatusBadRequest)
+		log.Println("error selecting cell:", err)
+		return
+	}
+
+	room.Broadcaster.Broadcast(broadcaster.Event{Name: "cellSelected"})
+
+	err = views.MainScoreCard(roomID, playerID, room).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "could not render score", http.StatusInternalServerError)
+		log.Println("error rendering score:", err)
+		return
+	}
+}
+
+func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
+	roomID := r.FormValue("room_id")
+	roomsMu.Lock()
+	room, ok := rooms[roomID]
+	roomsMu.Unlock()
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	playerCookie, err := r.Cookie("player_id")
+	if err != nil {
+		http.Error(w, "no player cookie", http.StatusForbidden)
+		log.Println("no player cookie:", err)
+		return
+	}
+	playerID := playerCookie.Value
+
+	player := room.GetPlayerByID(playerID)
+	if player == nil {
+		http.Error(w, "player not in room", http.StatusForbidden)
+		return
+	}
+
+	if room.Players[room.CurrentTurn].ID != playerID {
+		http.Error(w, "not your turn", http.StatusForbidden)
+		return
+	}
+
+	row, col := player.ScoreCard.GetSelectedCell()
+
 	_, err = player.ScoreCard.FillField(row, col, room.Dice)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("could not fill cell: %v", err), http.StatusBadRequest)
@@ -357,6 +405,32 @@ func PlayerCounterHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "could not render player counter", http.StatusInternalServerError)
 		log.Println("error rendering player counter:", err)
+		return
+	}
+}
+
+func CellSelectedHandler(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "roomID")
+	roomsMu.Lock()
+	room, ok := rooms[roomID]
+	roomsMu.Unlock()
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	playerCookie, err := r.Cookie("player_id")
+	if err != nil {
+		http.Error(w, "no player cookie", http.StatusForbidden)
+		log.Println("no player cookie:", err)
+		return
+	}
+	playerID := playerCookie.Value
+
+	err = views.WriteScoreButton(roomID, playerID, room).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "could not render write score button", http.StatusInternalServerError)
+		log.Println("error rendering write score button:", err)
 		return
 	}
 }

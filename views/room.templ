@@ -38,7 +38,6 @@ templ RoomLink(roomID string) {
 }
 
 templ RoomPage(roomID, playerID string, room *game.Room) {
-	{{ player := room.GetPlayerByID(playerID) }}
 	<html>
 		<head>
 			<title>Room { roomID } - Yamb Online</title>
@@ -154,8 +153,8 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					<!-- Game Content - Non-scrollable, fills available space -->
 					<div class="flex-1 flex flex-row p-4 gap-4 min-h-0">
 						<!-- Main Scorecard (Left) - Compact width based on content -->
-						<div class="bg-white rounded-lg p-4 flex items-center justify-center flex-1 h-full">
-							@MainScoreCard(roomID, player)
+						<div class="bg-white rounded-lg p-4 flex items-center justify-center flex-1 h-full" id="main-scorecard">
+							@MainScoreCard(roomID, playerID, room)
 						</div>
 						<!-- Dice Area (Right) - Fills remaining space -->
 						<div class="bg-white rounded-lg p-3 flex-1 flex flex-col h-full max-w-[90vw] max-h-[90vh]" id="dice-area">
@@ -202,6 +201,12 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					hx-get={ "/room/" + roomID + "/player-counter" }
 					hx-target="#player-counter"
 					hx-swap="innerHTML"
+				></div>
+				<div
+					hx-trigger="sse:cellSelected"
+					hx-get={ "/room/" + roomID + "/cell-selected" }
+					hx-target="#write-score-button"
+					hx-swap="outerHTML"
 				></div>
 			</div>
 			<script>

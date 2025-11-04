@@ -6,8 +6,9 @@ import (
 	"fmt"
 )
 
-templ MainScoreCard(roomID string, player *game.Player) {
+templ MainScoreCard(roomID string, playerID string, room *game.Room) {
 	{{
+		player := room.GetPlayerByID(playerID)
 		sc := player.ScoreCard
 
 		filledTextColor := ""
@@ -70,12 +71,21 @@ templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
 	}}
 	if sc.Scores[rowID][colID] != nil {
 		<td class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-sm bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }>{ *sc.Scores[rowID][colID] }</td>
+	} else if sc.SelectedCell[0] == rowID && sc.SelectedCell[1] == colID {
+		<td
+			class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-sm bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }
+			hx-post="/select-cell"
+			hx-target="#main-scorecard"
+			hx-swap="innerHTML"
+			hx-vals={ fmt.Sprintf(`{"room_id":"%s", "row":"%s", "col":"%s"}`, roomID, rowID, colID) }
+			id={ "cell-" + rowID + "-" + colID }
+		></td>
 	} else {
 		<td
 			class={ fmt.Sprintf("border-2 border-[%s] text-center align-middle cursor-pointer hover:bg-[%s] bg-[%s] text-sm transition-colors", BorderPrimary, BgGamePanel, BgRollingArea) }
 			hx-post="/select-cell"
-			hx-target={ "#cell-" + rowID + "-" + colID }
-			hx-swap="outerHTML"
+			hx-target="#main-scorecard"
+			hx-swap="innerHTML"
 			hx-vals={ fmt.Sprintf(`{"room_id":"%s", "row":"%s", "col":"%s"}`, roomID, rowID, colID) }
 			id={ "cell-" + rowID + "-" + colID }
 		></td>

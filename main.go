@@ -40,11 +40,13 @@ func main() {
 	r.Get("/room/{roomID}/other-scorecards", OtherScorecardsHandler)
 	r.Get("/room/{roomID}/dice-area", DiceAreaHandler)
 	r.Get("/room/{roomID}/player-counter", PlayerCounterHandler)
+	r.Get("/room/{roomID}/cell-selected", CellSelectedHandler)
 
 	// Actions (HTMX endpoints)
 	r.Post("/roll-dice", RollDiceHandler)
 	r.Post("/toggle-dice", ToggleDiceHandler)
 	r.Post("/select-cell", SelectCellHandler)
+	r.Post("/write-score", WriteScoreHandler)
 	// r.Post("/send-message", handleSendMessage)
 
 	port := os.Getenv("PORT")

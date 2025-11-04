@@ -17,6 +17,8 @@ type ScoreCard struct {
 	Columns []Column
 	// *int to allow nil (unfilled) scores
 	Scores map[string]map[string]*int // rowID -> colID -> score
+	// one singular selected cell for highlighting in UI (rowID, colID)
+	SelectedCell [2]string
 }
 
 func NewScoreCard() ScoreCard {
@@ -55,10 +57,38 @@ func NewScoreCard() ScoreCard {
 	}
 
 	return ScoreCard{
-		Rows:    rows,
-		Columns: cols,
-		Scores:  scores,
+		Rows:         rows,
+		Columns:      cols,
+		Scores:       scores,
+		SelectedCell: [2]string{"", ""}, // no cell selected initially
 	}
+}
+
+func (sc *ScoreCard) SelectCell(rowID, colID string) error {
+	if len(rowID) >= 3 && rowID[:3] == "sum" {
+		// cannot select sum rows
+		return errors.New("cannot select sum rows")
+	}
+
+	if sc.Scores[rowID][colID] != nil {
+		// if cell is already filled, cannot select
+		return errors.New("cannot select filled cell")
+	}
+
+	if sc.SelectedCell[0] == rowID && sc.SelectedCell[1] == colID {
+		// unselect if already selected
+		sc.SelectedCell[0] = ""
+		sc.SelectedCell[1] = ""
+	} else {
+		sc.SelectedCell[0] = rowID
+		sc.SelectedCell[1] = colID
+	}
+
+	return nil
+}
+
+func (sc *ScoreCard) GetSelectedCell() (string, string) {
+	return sc.SelectedCell[0], sc.SelectedCell[1]
 }
 
 func (sc *ScoreCard) fillT2B(rowID string, score int) error {
