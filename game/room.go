@@ -62,7 +62,7 @@ func (r *Room) RollDice() {
 	if r.Dice.RollsLeft > 0 {
 		for i := range r.NumOfDice {
 			if !r.Dice.Held[i] {
-				r.Dice.Values[i] = 1 + (rand.Intn(r.NumOfDice))
+				r.Dice.Values[i] = 1 + (rand.Intn(6))
 			}
 		}
 		r.Dice.RollsLeft--
