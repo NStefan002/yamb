@@ -47,6 +47,4 @@ tmp_dir = "tmp"
   keep_scroll = true
 
 [proxy]
-  app_port = 1312
   enabled = true
-  proxy_port = 3000
