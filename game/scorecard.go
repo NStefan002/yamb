@@ -8,7 +8,7 @@ type Column struct {
 }
 
 type Row struct {
-	ID   string // e.g. "ones", "twos", "yamb"
+	ID   string // e.g. "1", "2", "yamb"
 	Name string
 }
 
@@ -197,4 +197,84 @@ func (sc *ScoreCard) CalculateScore(rowID string, dice *Dice) (int, error) {
 		return dice.Yamb()
 	}
 	return 0, errors.New("unknown row ID")
+}
+
+// sum of 1-6 plus 30 if >= 60
+func (sc *ScoreCard) calcSum1(colID string) int {
+	sum := 0
+	allFilled := true
+	for _, r := range sc.Rows {
+		if r.ID == "sum1" {
+			break
+		}
+		if sc.Scores[r.ID][colID] != nil {
+			sum += *sc.Scores[r.ID][colID]
+		} else {
+			allFilled = false
+		}
+	}
+	if allFilled {
+		if sum >= 60 {
+			sum += 30
+		}
+		return sum
+	}
+	return 0
+}
+
+// (max - min) * 1s
+func (sc *ScoreCard) calcSum2(colID string) int {
+	if sc.Scores["max"][colID] == nil || sc.Scores["min"][colID] == nil || sc.Scores["1"][colID] == nil {
+		return 0
+	}
+	return (*sc.Scores["max"][colID] - *sc.Scores["min"][colID]) * *sc.Scores["1"][colID]
+}
+
+func (sc *ScoreCard) calcSum3(colID string) int {
+	sum := 0
+	allFilled := true
+	started := false
+	for _, r := range sc.Rows {
+		if r.ID == "sum3" {
+			break
+		}
+		if r.ID == "sum2" {
+			started = true
+			continue
+		}
+		if started {
+			if sc.Scores[r.ID][colID] != nil {
+				sum += *sc.Scores[r.ID][colID]
+			} else {
+				allFilled = false
+			}
+		}
+	}
+	if allFilled {
+		return sum
+	}
+	return 0
+}
+
+func (sc *ScoreCard) CalculateSums() {
+	for _, col := range sc.Columns {
+		if sc.Scores["sum1"][col.ID] == nil {
+			sum := sc.calcSum1(col.ID)
+			if sum > 0 {
+				sc.Scores["sum1"][col.ID] = &sum
+			}
+		}
+		if sc.Scores["sum2"][col.ID] == nil {
+			sum := sc.calcSum2(col.ID)
+			if sum > 0 {
+				sc.Scores["sum2"][col.ID] = &sum
+			}
+		}
+		if sc.Scores["sum3"][col.ID] == nil {
+			sum := sc.calcSum3(col.ID)
+			if sum > 0 {
+				sc.Scores["sum3"][col.ID] = &sum
+			}
+		}
+	}
 }

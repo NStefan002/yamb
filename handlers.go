@@ -290,11 +290,13 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	player.ScoreCard.CalculateSums()
+
 	room.EndTurn() // end the turn when the user enters result in a cell
 	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.TurnEnded})
 	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreUpdated})
 
-	err = views.ScoreCardField(roomID, player, row, col).Render(r.Context(), w)
+	err = views.MainScoreCard(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "could not render score", http.StatusInternalServerError)
 		log.Println("error rendering score:", err)
