@@ -281,20 +281,28 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	row, col := player.ScoreCard.GetSelectedCell()
+	announce := r.FormValue("announce") == "true"
+	fmt.Println("announce:", announce)
 
-	_, err = player.ScoreCard.FillField(row, col, room.Dice)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("could not fill cell: %v", err), http.StatusBadRequest)
-		log.Println("error filling cell:", err)
-		return
+	if announce {
+		player.ScoreCard.Announce()
+		room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreAnnounced})
+	} else {
+		row, col := player.ScoreCard.GetSelectedCell()
+
+		_, err = player.ScoreCard.FillCell(row, col, room.Dice)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("could not fill cell: %v", err), http.StatusBadRequest)
+			log.Println("error filling cell:", err)
+			return
+		}
+
+		player.ScoreCard.CalculateSums()
+
+		room.EndTurn() // end the turn when the user enters result in a cell
+		room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.TurnEnded})
+		room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreUpdated})
 	}
-
-	player.ScoreCard.CalculateSums()
-
-	room.EndTurn() // end the turn when the user enters result in a cell
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.TurnEnded})
-	room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreUpdated})
 
 	err = views.MainScoreCard(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {

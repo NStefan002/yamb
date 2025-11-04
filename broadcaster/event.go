@@ -8,6 +8,7 @@ const (
 	DiceAreaUpdated EventName = "diceAreaUpdated"
 	CellSelected    EventName = "cellSelected"
 	TurnEnded       EventName = "turnEnded"
+	ScoreAnnounced  EventName = "scoreAnnounced"
 )
 
 type Event struct {

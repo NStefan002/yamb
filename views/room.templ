@@ -186,7 +186,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 			<!-- SSE connection -->
 			<div sse-connect={ fmt.Sprintf("/room/%s/events", roomID) }>
 				<div
-					hx-trigger={ fmt.Sprintf("sse:%s", broadcaster.ScoreUpdated) }
+					hx-trigger={ fmt.Sprintf("sse:%s, sse:%s", broadcaster.ScoreUpdated, broadcaster.ScoreAnnounced) }
 					hx-get={ fmt.Sprintf("/room/%s/other-scorecards", roomID) }
 					hx-target="#other-scorecards"
 					hx-swap="innerHTML"
@@ -204,7 +204,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					hx-swap="innerHTML"
 				></div>
 				<div
-					hx-trigger={ fmt.Sprintf("sse:%s", broadcaster.CellSelected) }
+					hx-trigger={ fmt.Sprintf("sse:%s, sse:%s", broadcaster.CellSelected, broadcaster.ScoreAnnounced) }
 					hx-get={ "/room/" + roomID + "/cell-selected" }
 					hx-target="#write-score-button"
 					hx-swap="outerHTML"

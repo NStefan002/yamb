@@ -68,10 +68,26 @@ templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
 			filledBgColor = YellowFilled
 			filledTextColor = YellowAccent
 		}
+
+		selectedRowID, selectedColID := sc.GetSelectedCell()
+		selected := selectedRowID == rowID && selectedColID == colID
+		disabled := player.ScoreCard.IsAnnounced()
 	}}
 	if sc.Scores[rowID][colID] != nil {
 		<td class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-sm bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }>{ *sc.Scores[rowID][colID] }</td>
-	} else if sc.SelectedCell[0] == rowID && sc.SelectedCell[1] == colID {
+	} else if disabled {
+		if selected {
+			<td
+				class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-sm bg-[%s] text-[%s] cursor-not-allowed", BorderPrimary, filledBgColor, filledTextColor) }
+				id={ "cell-" + rowID + "-" + colID }
+			></td>
+		} else {
+			<td
+				class={ fmt.Sprintf("border-2 border-[%s] text-center text-sm bg-[%s] text-[%s] opacity-50 cursor-not-allowed", BorderPrimary, BgRollingArea, TextPrimary) }
+				id={ "cell-" + rowID + "-" + colID }
+			></td>
+		}
+	} else if selected {
 		<td
 			class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-sm bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }
 			hx-post="/select-cell"
@@ -109,6 +125,9 @@ templ SmallScoreCardTable(player *game.Player) {
 			filledBgColor = YellowFilled
 			filledTextColor = YellowAccent
 		}
+
+		announced := player.ScoreCard.IsAnnounced()
+		selectedRowID, selectedColID := sc.GetSelectedCell()
 	}}
 	<table class={ fmt.Sprintf("table-fixed border-collapse border-2 border-[%s] w-full h-full max-w-[90vw] max-h-[90vh] text-xs text-center", BorderPrimary) }>
 		<thead class={ fmt.Sprintf("bg-[%s] h-[calc(100%%/%d)]", BgHeaderField, len(sc.Rows)+1) }>
@@ -135,6 +154,12 @@ templ SmallScoreCardTable(player *game.Player) {
 						for _, c := range sc.Columns {
 							if sc.Scores[r.ID][c.ID] != nil {
 								<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-[%s] text-center", BorderPrimary, filledBgColor, filledTextColor) }>{ *sc.Scores[r.ID][c.ID] }</td>
+							} else if announced {
+								if selectedRowID == r.ID && selectedColID == c.ID {
+									<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-[%s] text-center", BorderPrimary, filledBgColor, filledTextColor) }></td>
+								} else {
+									<td class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-[%s] text-center opacity-50", BorderPrimary, BgRollingArea, TextPrimary) }></td>
+								}
 							} else {
 								<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-center", BorderPrimary, BgRollingArea) }></td>
 							}

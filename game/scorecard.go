@@ -19,6 +19,7 @@ type ScoreCard struct {
 	Scores map[string]map[string]*int // rowID -> colID -> score
 	// one singular selected cell for highlighting in UI (rowID, colID)
 	SelectedCell [2]string
+	Announced    bool // whether the player has announced their move
 }
 
 func NewScoreCard() ScoreCard {
@@ -91,6 +92,14 @@ func (sc *ScoreCard) GetSelectedCell() (string, string) {
 	return sc.SelectedCell[0], sc.SelectedCell[1]
 }
 
+func (sc *ScoreCard) Announce() {
+	sc.Announced = true
+}
+
+func (sc *ScoreCard) IsAnnounced() bool {
+	return sc.Announced
+}
+
 func (sc *ScoreCard) fillT2B(rowID string, score int) error {
 	// check if the field above is filled (if not the first row)
 	for i, r := range sc.Rows {
@@ -144,7 +153,16 @@ func (sc *ScoreCard) fillFree(rowID string, score int) error {
 	return nil
 }
 
-func (sc *ScoreCard) FillField(rowID, colID string, dice *Dice) (int, error) {
+func (sc *ScoreCard) fillAnnounce(rowID string, score int) error {
+	if !sc.Announced {
+		return errors.New("must announce before filling this cell")
+	}
+	sc.Scores[rowID]["announce"] = &score
+	sc.Announced = false // reset announce after filling
+	return nil
+}
+
+func (sc *ScoreCard) FillCell(rowID, colID string, dice *Dice) (int, error) {
 	if sc.Scores[rowID][colID] != nil {
 		return 0, errors.New("field already filled")
 	}
@@ -162,7 +180,7 @@ func (sc *ScoreCard) FillField(rowID, colID string, dice *Dice) (int, error) {
 	case "free":
 		return score, sc.fillFree(rowID, score)
 	case "announce":
-		return score, errors.New("TODO")
+		return score, sc.fillAnnounce(rowID, score)
 	}
 
 	return 0, errors.New("unknown column ID")

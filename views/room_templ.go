@@ -770,9 +770,9 @@ func RoomPage(roomID, playerID string, room *game.Room) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var62 string
-		templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("sse:%s", broadcaster.ScoreUpdated))
+		templ_7745c5c3_Var62, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("sse:%s, sse:%s", broadcaster.ScoreUpdated, broadcaster.ScoreAnnounced))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/room.templ`, Line: 189, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/room.templ`, Line: 189, Col: 101}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var62))
 		if templ_7745c5c3_Err != nil {
@@ -848,9 +848,9 @@ func RoomPage(roomID, playerID string, room *game.Room) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var68 string
-		templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("sse:%s", broadcaster.CellSelected))
+		templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("sse:%s, sse:%s", broadcaster.CellSelected, broadcaster.ScoreAnnounced))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/room.templ`, Line: 207, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/room.templ`, Line: 207, Col: 101}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var68))
 		if templ_7745c5c3_Err != nil {
