@@ -33,7 +33,7 @@ func NewRoom(mode, dice string) *Room {
 		numOfPlayers = 4
 	}
 	return &Room{
-		Broadcaster:  broadcaster.NewBroadcaster(),
+		Broadcaster: broadcaster.NewBroadcaster(),
 
 		Players:      []*Player{},
 		CurrentTurn:  0,
