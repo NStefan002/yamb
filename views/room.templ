@@ -252,6 +252,8 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					showSection("scorecards");
 				});
 			</script>
+			<script src="/js/errorHandler.js"></script>
+			<div id="error-container" class="error-container fixed inset-0 pointer-events-none z-[9999]"></div>
 		</body>
 	</html>
 }
@@ -292,6 +294,8 @@ templ UsernameEntry(roomID string) {
 					</button>
 				</form>
 			</div>
+			<script src="/js/errorHandler.js"></script>
+			<div id="error-container" class="error-container fixed inset-0 pointer-events-none z-[9999]"></div>
 		</body>
 	</html>
 }

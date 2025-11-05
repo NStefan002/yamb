@@ -231,7 +231,7 @@ func Index() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\">Create Room</button></form><div id=\"room-link\" class=\"text-center mt-4\"></div></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\">Create Room</button></form><div id=\"room-link\" class=\"text-center mt-4\"></div></div><div id=\"error-container\" class=\"error-container fixed inset-0 pointer-events-none z-[9999]\"></div><script src=\"/js/errorHandler.js\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -23,7 +23,7 @@ var (
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	err := views.Index().Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render index", http.StatusInternalServerError)
+		HxError(w, "could not render index", http.StatusInternalServerError)
 		log.Println("error rendering index:", err)
 		return
 	}
@@ -31,7 +31,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "bad form", http.StatusBadRequest)
+		HxError(w, "bad form", http.StatusBadRequest)
 		log.Println("error parsing form:", err)
 		return
 	}
@@ -46,7 +46,7 @@ func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := views.RoomLink(roomID).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render room link", http.StatusInternalServerError)
+		HxError(w, "could not render room link", http.StatusInternalServerError)
 		log.Println("error rendering room link:", err)
 		return
 	}
@@ -58,13 +58,13 @@ func RoomLinkHandler(w http.ResponseWriter, r *http.Request) {
 	_, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
 	err := views.UsernameEntry(roomID).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render username entry", http.StatusInternalServerError)
+		HxError(w, "could not render username entry", http.StatusInternalServerError)
 		log.Println("error rendering username entry:", err)
 		return
 	}
@@ -78,12 +78,12 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
 	if len(room.Players) >= 4 {
-		http.Error(w, "room full", http.StatusForbidden)
+		HxError(w, "room full", http.StatusForbidden)
 		return
 	}
 
@@ -101,7 +101,7 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := room.AddPlayer(game.NewPlayer(playerID, username))
 	if err != nil {
-		http.Error(w, fmt.Sprintf("could not add player: %v", err), http.StatusInternalServerError)
+		HxError(w, fmt.Sprintf("could not add player: %v", err), http.StatusInternalServerError)
 		log.Println("error adding player to room:", err)
 		return
 	}
@@ -122,7 +122,7 @@ func RoomPageHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
@@ -136,7 +136,7 @@ func RoomPageHandler(w http.ResponseWriter, r *http.Request) {
 	playerID := playerCookie.Value
 	err = views.RoomPage(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render room page", http.StatusInternalServerError)
+		HxError(w, "could not render room page", http.StatusInternalServerError)
 		log.Println("error rendering room page:", err)
 		return
 	}
@@ -148,7 +148,7 @@ func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
@@ -158,7 +158,7 @@ func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
 
 	playerCookie, err := r.Cookie("player_id")
 	if err != nil {
-		http.Error(w, "no player cookie", http.StatusForbidden)
+		HxError(w, "no player cookie", http.StatusForbidden)
 		log.Println("no player cookie:", err)
 		return
 	}
@@ -166,7 +166,7 @@ func RollDiceHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = views.DiceArea(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render dice area", http.StatusInternalServerError)
+		HxError(w, "could not render dice area", http.StatusInternalServerError)
 		log.Println("error rendering dice area:", err)
 		return
 	}
@@ -178,7 +178,7 @@ func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
@@ -189,7 +189,7 @@ func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
 
 	playCookie, err := r.Cookie("player_id")
 	if err != nil {
-		http.Error(w, "no player cookie", http.StatusForbidden)
+		HxError(w, "no player cookie", http.StatusForbidden)
 		log.Println("no player cookie:", err)
 		return
 	}
@@ -197,7 +197,7 @@ func ToggleDiceHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = views.DiceArea(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render dice area", http.StatusInternalServerError)
+		HxError(w, "could not render dice area", http.StatusInternalServerError)
 		log.Println("error rendering dice area:", err)
 		return
 	}
@@ -209,13 +209,13 @@ func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
 	playerCookie, err := r.Cookie("player_id")
 	if err != nil {
-		http.Error(w, "no player cookie", http.StatusForbidden)
+		HxError(w, "no player cookie", http.StatusForbidden)
 		log.Println("no player cookie:", err)
 		return
 	}
@@ -223,12 +223,12 @@ func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 
 	player := room.GetPlayerByID(playerID)
 	if player == nil {
-		http.Error(w, "player not in room", http.StatusForbidden)
+		HxError(w, "player not in room", http.StatusForbidden)
 		return
 	}
 
 	if room.Players[room.CurrentTurn].ID != playerID {
-		http.Error(w, "not your turn", http.StatusForbidden)
+		HxError(w, "not your turn", http.StatusForbidden)
 		return
 	}
 
@@ -237,7 +237,7 @@ func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = player.ScoreCard.SelectCell(row, col)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("could not select cell: %v", err), http.StatusBadRequest)
+		HxError(w, fmt.Sprintf("could not select cell: %v", err), http.StatusBadRequest)
 		log.Println("error selecting cell:", err)
 		return
 	}
@@ -246,7 +246,7 @@ func SelectCellHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = views.MainScoreCard(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render score", http.StatusInternalServerError)
+		HxError(w, "could not render score", http.StatusInternalServerError)
 		log.Println("error rendering score:", err)
 		return
 	}
@@ -258,13 +258,13 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
 	playerCookie, err := r.Cookie("player_id")
 	if err != nil {
-		http.Error(w, "no player cookie", http.StatusForbidden)
+		HxError(w, "no player cookie", http.StatusForbidden)
 		log.Println("no player cookie:", err)
 		return
 	}
@@ -272,12 +272,12 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 
 	player := room.GetPlayerByID(playerID)
 	if player == nil {
-		http.Error(w, "player not in room", http.StatusForbidden)
+		HxError(w, "player not in room", http.StatusForbidden)
 		return
 	}
 
 	if room.Players[room.CurrentTurn].ID != playerID {
-		http.Error(w, "not your turn", http.StatusForbidden)
+		HxError(w, "not your turn", http.StatusForbidden)
 		return
 	}
 
@@ -292,7 +292,7 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 
 		_, err = player.ScoreCard.FillCell(row, col, room.Dice)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("could not fill cell: %v", err), http.StatusBadRequest)
+			HxError(w, fmt.Sprintf("could not fill cell: %v", err), http.StatusBadRequest)
 			log.Println("error filling cell:", err)
 			return
 		}
@@ -306,7 +306,7 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = views.MainScoreCard(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render score", http.StatusInternalServerError)
+		HxError(w, "could not render score", http.StatusInternalServerError)
 		log.Println("error rendering score:", err)
 		return
 	}
@@ -318,20 +318,20 @@ func OtherScorecardsHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
 	playerCookie, err := r.Cookie("player_id")
 	if err != nil {
-		http.Error(w, "no player cookie", http.StatusForbidden)
+		HxError(w, "no player cookie", http.StatusForbidden)
 		log.Println("no player cookie:", err)
 		return
 	}
 	playerID := playerCookie.Value
 
 	if err := views.OtherScorecards(roomID, playerID, room).Render(r.Context(), w); err != nil {
-		http.Error(w, "could not render scorecards", http.StatusInternalServerError)
+		HxError(w, "could not render scorecards", http.StatusInternalServerError)
 		log.Println("error rendering scorecards:", err)
 		return
 	}
@@ -344,7 +344,7 @@ func EventsHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
@@ -355,7 +355,7 @@ func EventsHandler(w http.ResponseWriter, r *http.Request) {
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
-		http.Error(w, "Streaming unsupported", http.StatusInternalServerError)
+		HxError(w, "Streaming unsupported", http.StatusInternalServerError)
 		return
 	}
 
@@ -381,13 +381,13 @@ func DiceAreaHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
 	playerCookie, err := r.Cookie("player_id")
 	if err != nil {
-		http.Error(w, "no player cookie", http.StatusForbidden)
+		HxError(w, "no player cookie", http.StatusForbidden)
 		log.Println("no player cookie:", err)
 		return
 	}
@@ -395,7 +395,7 @@ func DiceAreaHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = views.DiceArea(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render dice area", http.StatusInternalServerError)
+		HxError(w, "could not render dice area", http.StatusInternalServerError)
 		log.Println("error rendering dice area:", err)
 		return
 	}
@@ -407,13 +407,13 @@ func PlayerCounterHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
 	err := views.PlayerCounter(room).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render player counter", http.StatusInternalServerError)
+		HxError(w, "could not render player counter", http.StatusInternalServerError)
 		log.Println("error rendering player counter:", err)
 		return
 	}
@@ -425,13 +425,13 @@ func CellSelectedHandler(w http.ResponseWriter, r *http.Request) {
 	room, ok := rooms[roomID]
 	roomsMu.Unlock()
 	if !ok {
-		http.NotFound(w, r)
+		HxError(w, "room does not exist", 404)
 		return
 	}
 
 	playerCookie, err := r.Cookie("player_id")
 	if err != nil {
-		http.Error(w, "no player cookie", http.StatusForbidden)
+		HxError(w, "no player cookie", http.StatusForbidden)
 		log.Println("no player cookie:", err)
 		return
 	}
@@ -439,8 +439,13 @@ func CellSelectedHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = views.WriteScoreButton(roomID, playerID, room).Render(r.Context(), w)
 	if err != nil {
-		http.Error(w, "could not render write score button", http.StatusInternalServerError)
+		HxError(w, "could not render write score button", http.StatusInternalServerError)
 		log.Println("error rendering write score button:", err)
 		return
 	}
+}
+
+func HxError(w http.ResponseWriter, msg string, status int) {
+	w.Header().Set("HX-Trigger", fmt.Sprintf(`{"showError": %q}`, msg))
+	w.WriteHeader(status)
 }
