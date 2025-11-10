@@ -199,17 +199,25 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 				></div>
 				<div
 					hx-trigger={ fmt.Sprintf("sse:%s", broadcaster.PlayerJoined) }
-					hx-get={ "/room/" + roomID + "/player-counter" }
+					hx-get={ fmt.Sprintf("/room/%s/player-counter", roomID) }
 					hx-target="#player-counter"
 					hx-swap="innerHTML"
 				></div>
 				<div
 					hx-trigger={ fmt.Sprintf("sse:%s, sse:%s", broadcaster.CellSelected, broadcaster.ScoreAnnounced) }
-					hx-get={ "/room/" + roomID + "/cell-selected" }
+					hx-get={ fmt.Sprintf("/room/%s/cell-selected", roomID) }
 					hx-target="#write-score-button"
 					hx-swap="outerHTML"
 				></div>
+				<div hx-trigger={ fmt.Sprintf("sse:%s", broadcaster.GameEnded) }></div> // just to listen for GameEnded event (handled in script below)
 			</div>
+			<script>
+				document.body.addEventListener("htmx:sseMessage", function (event) {
+					if (event.detail.type === {{ broadcaster.GameEnded }}) {
+						window.location.href = "/room/{{ roomID }}/results";
+					}
+				});
+			</script>
 			<script>
 				function toggleSidebar() {
 					const sidebar = document.getElementById("sidebar");

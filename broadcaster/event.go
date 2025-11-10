@@ -9,6 +9,7 @@ const (
 	CellSelected    EventName = "cellSelected"
 	TurnEnded       EventName = "turnEnded"
 	ScoreAnnounced  EventName = "scoreAnnounced"
+	GameEnded       EventName = "gameEnded"
 )
 
 type Event struct {

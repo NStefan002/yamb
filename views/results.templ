@@ -1,0 +1,148 @@
+package views
+
+import (
+	"yamb/game"
+	"fmt"
+)
+
+templ ResultsPage(roomID, playerID string, room *game.Room) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Yamb - Results</title>
+			<link rel="stylesheet" href="/css/results.css"/>
+			<script src="https://cdn.tailwindcss.com"></script>
+			// confetti for winner only
+			if playerID == room.Players[0].ID {
+				<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+				<script defer src="/js/results.js"></script>
+			}
+		</head>
+		<body class={ fmt.Sprintf("min-h-screen bg-[#FFFFFF] text-[%s]", TextPrimary) }>
+			if room.NumOfPlayers == 4 {
+				@TeamResuts(roomID, playerID, room)
+			} else {
+				@FFAResults(roomID, playerID, room)
+			}
+		</body>
+	</html>
+}
+
+// for 1v1 and 1v1v1 end of the game results
+templ FFAResults(roomID, playerID string, room *game.Room) {
+	<div class="w-full max-w-5xl mx-auto px-4 pt-6 pb-10 space-y-10">
+		<h1 class="text-xl font-bold text-center">Final Results</h1>
+		<div id="capture-ffa" class="space-y-10">
+			<!-- winner -->
+			<div class="text-center space-y-2 animate-[winner-pop_700ms_ease-out]">
+				<div class="text-4xl font-bold">🏆 { room.Players[0].Username } wins!</div>
+				<div class="text-lg font-medium">{ room.Players[0].ScoreCard.TotalScore() } points</div>
+			</div>
+			<!-- buttons -->
+			<div class="flex justify-center gap-4">
+				<button
+					class={ fmt.Sprintf("bg-[%s] hover:bg-[%s] text-white font-medium px-6 py-2 rounded-lg transition", BtnPrimary, BorderPrimary) }
+				>
+					Play Again
+				</button>
+				<button
+					class={ fmt.Sprintf("bg-white hover:bg-[%s] border border-[%s] text-[%s] font-medium px-6 py-2 rounded-lg transition", BgRollingArea, BorderPrimary, TextPrimary) }
+				>
+					Home
+				</button>
+			</div>
+			<!-- graph -->
+			<div
+				class="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-10"
+			>
+				for i, p := range room.Players {
+					{{
+						bgColor := ""
+						switch p.Team {
+						case game.Blue:
+							bgColor = BlueAccent
+						case game.Red:
+							bgColor = RedAccent
+						case game.Yellow:
+							bgColor = YellowAccent
+						}
+					}}
+					<div class="flex flex-col items-center">
+						<div
+							class="result-bar"
+							style={ fmt.Sprintf("background: %s; animation-delay: %dms; --target-height: %dpx;", bgColor, i*150, p.ScoreCard.TotalScore()/10) }
+							data-final-height={ p.ScoreCard.TotalScore() / 10 }
+						></div>
+						<div class="mt-2 font-semibold text-sm">{ p.Username }</div>
+						<div class="text-xs text-[#0F126A]">{ p.ScoreCard.TotalScore() } pts</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+}
+
+// for 2v2 end of the game results
+templ TeamResuts(roomID, playerID string, room *game.Room) {
+	<div class="w-full max-w-5xl mx-auto px-4 pt-6 pb-10 space-y-10">
+		<h1 class="text-xl font-bold text-center">Final Results</h1>
+		<div id="capture-team" class="space-y-10">
+			{{
+				teamName := ""
+				if room.Players[0].Team == game.Blue {
+					teamName = "Blue"
+				} else {
+					teamName = "Red"
+				}
+			}}
+			<!-- winner -->
+			<div class="text-center space-y-2 animate-[winner-pop_700ms_ease-out]">
+				<div class="text-4xl font-bold">🏆 { teamName } team wins!</div>
+				<div class="text-lg font-medium">{ room.Players[0].ScoreCard.TotalScore() } points</div>
+				<div class="text-sm opacity-80">{ room.Players[0].Username } & { room.Players[1].Username }</div>
+			</div>
+			<!-- buttons -->
+			<div class="flex justify-center gap-4">
+				<button
+					class={ fmt.Sprintf("bg-[%s] hover:bg-[%s] text-white font-medium px-6 py-2 rounded-lg transition", BtnPrimary, BorderPrimary) }
+				>
+					Play Again
+				</button>
+				<button
+					class={ fmt.Sprintf("bg-white hover:bg-[%s] border border-[%s] text-[%s] font-medium px-6 py-2 rounded-lg transition", BgRollingArea, BorderPrimary, TextPrimary) }
+				>
+					Home
+				</button>
+			</div>
+			<!-- graph -->
+			<div
+				class="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-16"
+			>
+				for i := 0; i < 2; i++ {
+					{{
+						color := ""
+						teamName := ""
+						if room.Players[i].Team == game.Blue {
+							color = BlueAccent
+							teamName = "Blue"
+						} else {
+							color = RedAccent
+							teamName = "Red"
+						}
+					}}
+					<div class="flex flex-col items-center">
+						<div
+							class="result-bar"
+							style={ fmt.Sprintf("background: %s; animation-delay: %dms; --target-height: %dpx;", color, i*150, room.Players[i].ScoreCard.TotalScore()/10) }
+							data-final-height={ room.Players[i].ScoreCard.TotalScore() / 10 }
+						></div>
+						<div class="mt-2 font-semibold text-sm">{ teamName } Team</div>
+						<div class={ fmt.Sprintf("text-xs text-[%s]", color) }>{ room.Players[i].ScoreCard.TotalScore() } pts</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+}

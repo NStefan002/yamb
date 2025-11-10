@@ -3,6 +3,7 @@ package game
 import (
 	"errors"
 	"math/rand"
+	"slices"
 	"strconv"
 	"sync"
 	"yamb/broadcaster"
@@ -96,4 +97,20 @@ func (r *Room) GetPlayerByID(playerID string) *Player {
 		}
 	}
 	return nil
+}
+
+func (r *Room) SortPlayersByScore() {
+	if !r.GameEnded() {
+		return
+	}
+
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
+
+	sorted := make([]*Player, len(r.Players))
+	copy(sorted, r.Players)
+	slices.SortFunc(sorted, func(a, b *Player) int {
+		return b.ScoreCard.TotalScore() - a.ScoreCard.TotalScore()
+	})
+	r.Players = sorted
 }

@@ -70,6 +70,9 @@ func RoomLinkHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// FIX:
+// - [ ] handle duplicate usernames in the same room
+// - [ ] check if the player cookie already exists and reuse it
 func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := r.FormValue("room_id")
 	username := r.FormValue("username")
@@ -93,6 +96,7 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 		Value: playerID,
 		Path:  "/",
 	})
+	// TODO: do we want to use this cookie instead of passing room_id in forms?
 	http.SetCookie(w, &http.Cookie{
 		Name:  "room_id",
 		Value: roomID,
@@ -138,6 +142,33 @@ func RoomPageHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		HxError(w, "could not render room page", http.StatusInternalServerError)
 		log.Println("error rendering room page:", err)
+		return
+	}
+}
+
+func ResultsPageHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("ResultsPageHandler called")
+	roomID := chi.URLParam(r, "roomID")
+	roomsMu.Lock()
+	room, ok := rooms[roomID]
+	roomsMu.Unlock()
+	if !ok {
+		HxError(w, "room does not exist", 404)
+		return
+	}
+
+	playCookie, err := r.Cookie("player_id")
+	if err != nil {
+		HxError(w, "no player cookie", http.StatusForbidden)
+		log.Println("no player cookie:", err)
+		return
+	}
+	playerID := playCookie.Value
+
+	err = views.ResultsPage(roomID, playerID, room).Render(r.Context(), w)
+	if err != nil {
+		HxError(w, "could not render results page", http.StatusInternalServerError)
+		log.Println("error rendering results page:", err)
 		return
 	}
 }
@@ -301,13 +332,19 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 		room.EndTurn() // end the turn when the user enters result in a cell
 		room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.TurnEnded})
 		room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreUpdated})
-	}
 
-	err = views.MainScoreCard(roomID, playerID, room).Render(r.Context(), w)
-	if err != nil {
-		HxError(w, "could not render score", http.StatusInternalServerError)
-		log.Println("error rendering score:", err)
-		return
+		err = views.MainScoreCard(roomID, playerID, room).Render(r.Context(), w)
+		if err != nil {
+			HxError(w, "could not render score", http.StatusInternalServerError)
+			log.Println("error rendering score:", err)
+			return
+		}
+
+		if room.GameEnded() {
+			room.SortPlayersByScore()
+			room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.GameEnded})
+			return
+		}
 	}
 }
 

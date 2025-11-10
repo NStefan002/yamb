@@ -16,9 +16,13 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	// load htmx from assets/js
-	fs := http.StripPrefix("/js/", http.FileServer(http.Dir("assets/js")))
-	r.Handle("/js/*", fs)
+	// load js library files
+	jsFiles := http.StripPrefix("/js/", http.FileServer(http.Dir("assets/js")))
+	r.Handle("/js/*", jsFiles)
+
+	// load css files
+	cssFiles := http.StripPrefix("/css/", http.FileServer(http.Dir("assets/css")))
+	r.Handle("/css/*", cssFiles)
 
 	// landing page
 	r.Get("/", IndexHandler)
@@ -34,6 +38,9 @@ func main() {
 
 	// actual game page
 	r.Get("/room/{roomID}", RoomPageHandler)
+
+	// results page
+	r.Get("/room/{roomID}/results", ResultsPageHandler)
 
 	// HTMX endpoints for partial updates (events)
 	r.Get("/room/{roomID}/events", EventsHandler)
