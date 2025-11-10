@@ -282,7 +282,6 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	announce := r.FormValue("announce") == "true"
-	fmt.Println("announce:", announce)
 
 	if announce {
 		player.ScoreCard.Announce()
