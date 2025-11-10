@@ -56,7 +56,7 @@ jobs:
         uses: creyD/prettier_action@v4.6
         with:
           dry: true
-          prettier_options: --check "**/*.md"
+          prettier_options: --check "**/*.{md,css}"
 
   markdownlint:
     name: Markdownlint
