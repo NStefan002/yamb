@@ -166,23 +166,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 				<!-- Overlay for mobile -->
 				<div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 lg:hidden hidden" onclick="toggleSidebar()"></div>
 			</div>
-			<!-- Footer - Spans entire page -->
-			<footer class={ fmt.Sprintf("bg-[%s] border-t-2 border-[%s] px-6 py-3 flex-shrink-0", BgGamePanel, BorderPrimary) }>
-				<div class={ fmt.Sprintf("flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-[%s]", TextPrimary) }>
-					<div class="flex items-center gap-2">
-						<span class="font-medium">Development:</span>
-						<span>Stefan Novaković</span>
-						<span class={ fmt.Sprintf("text-[%s]", BorderPrimary) }>|</span>
-						<a href="https://nstefan002.github.io/" target="_blank" class={ fmt.Sprintf("hover:text-[%s] transition-colors", BorderPrimary) }>Website</a>
-					</div>
-					<div class="flex items-center gap-2">
-						<span class="font-medium">Design:</span>
-						<span>Marta Gavrilović</span>
-						<span class={ fmt.Sprintf("text-[%s]", BorderPrimary) }>|</span>
-						<a href="https://www.reddit.com/user/Skalamerijq/" target="_blank" class={ fmt.Sprintf("hover:text-[%s] transition-colors", BorderPrimary) }>Reddit Page</a>
-					</div>
-				</div>
-			</footer>
+			@footer()
 			<!-- SSE connection -->
 			<div sse-connect={ fmt.Sprintf("/room/%s/events", roomID) }>
 				<div
