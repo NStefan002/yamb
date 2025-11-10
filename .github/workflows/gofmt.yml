@@ -1,0 +1,29 @@
+name: Check Go formatting
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  gofmt:
+    name: Verify Go formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: Check formatting
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "::error::Go files are not formatted. Run 'gofmt -w .' to fix:"
+            echo "$unformatted"
+            exit 1
+          fi
+          echo "All Go files are properly formatted."
