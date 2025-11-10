@@ -99,6 +99,7 @@ func (r *Room) GetPlayerByID(playerID string) *Player {
 	return nil
 }
 
+// used after game ends to sort players by score in order to announce winner
 func (r *Room) SortPlayersByScore() {
 	if !r.GameEnded() {
 		return

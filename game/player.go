@@ -15,7 +15,6 @@ type Player struct {
 	ScoreCard  ScoreCard
 	Team       Team
 	FinalScore int
-	// TODO: add connection for chat
 }
 
 func NewPlayer(id, username string) *Player {

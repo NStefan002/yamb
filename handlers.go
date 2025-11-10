@@ -70,9 +70,6 @@ func RoomLinkHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// FIX:
-// - [ ] handle duplicate usernames in the same room
-// - [ ] check if the player cookie already exists and reuse it
 func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 	roomID := r.FormValue("room_id")
 	username := r.FormValue("username")

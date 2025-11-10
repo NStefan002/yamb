@@ -186,7 +186,6 @@ func (sc *ScoreCard) FillCell(rowID, colID string, dice *Dice) (int, error) {
 	return 0, errors.New("unknown column ID")
 }
 
-// TODO: make error messages more informative
 func (sc *ScoreCard) CalculateScore(rowID string, dice *Dice) (int, error) {
 	switch rowID {
 	case "1":
