@@ -218,7 +218,7 @@ func (sc *ScoreCard) CalculateScore(rowID string, dice *Dice) (int, error) {
 }
 
 // sum of 1-6 plus 30 if >= 60
-func (sc *ScoreCard) calcSum1(colID string) int {
+func (sc *ScoreCard) calcSum1(colID string) *int {
 	sum := 0
 	allFilled := true
 	for _, r := range sc.Rows {
@@ -235,20 +235,21 @@ func (sc *ScoreCard) calcSum1(colID string) int {
 		if sum >= 60 {
 			sum += 30
 		}
-		return sum
+		return &sum
 	}
-	return 0
+	return nil
 }
 
 // (max - min) * 1s
-func (sc *ScoreCard) calcSum2(colID string) int {
+func (sc *ScoreCard) calcSum2(colID string) *int {
 	if sc.Scores["max"][colID] == nil || sc.Scores["min"][colID] == nil || sc.Scores["1"][colID] == nil {
-		return 0
+		return nil
 	}
-	return (*sc.Scores["max"][colID] - *sc.Scores["min"][colID]) * *sc.Scores["1"][colID]
+	sum := (*sc.Scores["max"][colID] - *sc.Scores["min"][colID]) * *sc.Scores["1"][colID]
+	return &sum
 }
 
-func (sc *ScoreCard) calcSum3(colID string) int {
+func (sc *ScoreCard) calcSum3(colID string) *int {
 	sum := 0
 	allFilled := true
 	started := false
@@ -269,30 +270,21 @@ func (sc *ScoreCard) calcSum3(colID string) int {
 		}
 	}
 	if allFilled {
-		return sum
+		return &sum
 	}
-	return 0
+	return nil
 }
 
 func (sc *ScoreCard) CalculateSums() {
 	for _, col := range sc.Columns {
 		if sc.Scores["sum1"][col.ID] == nil {
-			sum := sc.calcSum1(col.ID)
-			if sum > 0 {
-				sc.Scores["sum1"][col.ID] = &sum
-			}
+			sc.Scores["sum1"][col.ID] = sc.calcSum1(col.ID)
 		}
 		if sc.Scores["sum2"][col.ID] == nil {
-			sum := sc.calcSum2(col.ID)
-			if sum > 0 {
-				sc.Scores["sum2"][col.ID] = &sum
-			}
+			sc.Scores["sum2"][col.ID] = sc.calcSum2(col.ID)
 		}
 		if sc.Scores["sum3"][col.ID] == nil {
-			sum := sc.calcSum3(col.ID)
-			if sum > 0 {
-				sc.Scores["sum3"][col.ID] = &sum
-			}
+			sc.Scores["sum3"][col.ID] = sc.calcSum3(col.ID)
 		}
 	}
 }
