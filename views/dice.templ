@@ -22,6 +22,8 @@ templ DiceArea(roomID, playerID string, room *game.Room) {
 			}
 		}
 		disableRoll = disableRoll || allKept
+
+		disableDice := room.Dice.RollsLeft == 3
 	}}
 	<!-- Your Dice Header with Roll Button -->
 	<div class="flex flex-col gap-3 mb-4">
@@ -49,7 +51,7 @@ templ DiceArea(roomID, playerID string, room *game.Room) {
 			<h3 class={ fmt.Sprintf("font-semibold text-xs text-[%s] mb-2", TextPrimary) }>Rolling Dice</h3>
 			<div class="flex justify-center">
 				<div class="grid grid-cols-3 gap-y-1.5 gap-x-8" id="rolling-dice">
-					@DiceRow(roomID, room.Dice.Values, room.Dice.Held, false)
+					@DiceRow(roomID, room.Dice.Values, room.Dice.Held, false, disableDice)
 				</div>
 			</div>
 		</div>
@@ -58,7 +60,7 @@ templ DiceArea(roomID, playerID string, room *game.Room) {
 			<h3 class={ fmt.Sprintf("font-semibold text-xs text-[%s] mb-2", TextPrimary) }>Kept Dice</h3>
 			<div class="flex justify-center">
 				<div class="grid grid-cols-3 gap-y-1.5 gap-x-8" id="kept-dice">
-					@DiceRow(roomID, room.Dice.Values, room.Dice.Held, true)
+					@DiceRow(roomID, room.Dice.Values, room.Dice.Held, true, disableDice)
 				</div>
 			</div>
 		</div>
@@ -160,28 +162,33 @@ templ Die(n int) {
 	</div>
 }
 
-templ DieWrapper(roomID string, n int, index int, isKept bool) {
+templ DieWrapper(roomID string, n int, index int, isKept, disabled bool) {
 	<div
-		hx-post="/toggle-dice"
-		hx-target="#dice-area"
-		hx-swap="innerHTML"
-		class={ fmt.Sprintf("w-full h-full aspect-square bg-white border-2 border-[%s] rounded-md shadow-sm flex items-center justify-center cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105", BlueAccent) }
-		if isKept {
-			title="Click to un-keep"
+		if disabled {
+			class={ fmt.Sprintf("w-full h-full aspect-square bg-white border-2 border-[%s] rounded-md shadow-sm flex items-center justify-center cursor-not-allowed opacity-60", BlueAccent) }
+			title="Cannot keep dice on first roll"
 		} else {
-			title="Click to keep"
+			hx-post="/toggle-dice"
+			hx-target="#dice-area"
+			hx-swap="innerHTML"
+			class={ fmt.Sprintf("w-full h-full aspect-square bg-white border-2 border-[%s] rounded-md shadow-sm flex items-center justify-center cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105", BlueAccent) }
+			if isKept {
+				title="Click to un-keep"
+			} else {
+				title="Click to keep"
+			}
+			hx-vals={ fmt.Sprintf(`{"room_id":"%s", "die_index":%d}`, roomID, index) }
 		}
-		hx-vals={ fmt.Sprintf(`{"room_id":"%s", "die_index":%d}`, roomID, index) }
 	>
 		@Die(n)
 	</div>
 }
 
-templ DiceRow(roomID string, values []int, keptDice []bool, displayKept bool) {
+templ DiceRow(roomID string, values []int, keptDice []bool, displayKept, disable bool) {
 	{{ displayMsg := true }}
 	for i, v := range values {
 		if keptDice[i] == displayKept {
-			@DieWrapper(roomID, v, i, keptDice[i])
+			@DieWrapper(roomID, v, i, keptDice[i], disable)
 			{{ displayMsg = false }}
 		}
 	}
