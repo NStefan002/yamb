@@ -20,12 +20,15 @@ templ ResultsPage(roomID, playerID string, room *game.Room) {
 				<script defer src="/js/results.js"></script>
 			}
 		</head>
-		<body class={ fmt.Sprintf("min-h-screen bg-[#FFFFFF] text-[%s]", TextPrimary) }>
-			if room.NumOfPlayers == 4 {
-				@TeamResuts(roomID, playerID, room)
-			} else {
-				@FFAResults(roomID, playerID, room)
-			}
+		<body class={ fmt.Sprintf("min-h-screen flex flex-col bg-[#FFFFFF] text-[%s]", TextPrimary) }>
+			<main class="flex-grow">
+				if room.NumOfPlayers == 4 {
+					@TeamResuts(roomID, playerID, room)
+				} else {
+					@FFAResults(roomID, playerID, room)
+				}
+			</main>
+			@footer()
 		</body>
 	</html>
 }
