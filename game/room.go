@@ -76,6 +76,17 @@ func (r *Room) EndTurn() {
 	r.Dice = NewDice(r.NumOfDice)
 }
 
+func (r *Room) GameEnded() bool {
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
+	for _, p := range r.Players {
+		if !p.ScoreCard.IsComplete() {
+			return false
+		}
+	}
+	return true
+}
+
 func (r *Room) GetPlayerByID(playerID string) *Player {
 	r.Mu.Lock()
 	defer r.Mu.Unlock()

@@ -296,3 +296,34 @@ func (sc *ScoreCard) CalculateSums() {
 		}
 	}
 }
+
+// check if all sum fields are filled (indicating completion)
+func (sc *ScoreCard) IsComplete() bool {
+	for _, col := range sc.Columns {
+		if sc.Scores["sum1"][col.ID] == nil {
+			return false
+		}
+		if sc.Scores["sum2"][col.ID] == nil {
+			return false
+		}
+		if sc.Scores["sum3"][col.ID] == nil {
+			return false
+		}
+	}
+	return true
+}
+
+// total score across all sum fields
+func (sc *ScoreCard) TotalScore() int {
+	if !sc.IsComplete() {
+		return 0
+	}
+	total := 0
+	for _, col := range sc.Columns {
+		total += *sc.Scores["sum1"][col.ID]
+		total += *sc.Scores["sum2"][col.ID]
+		total += *sc.Scores["sum3"][col.ID]
+	}
+
+	return total
+}
