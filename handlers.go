@@ -147,7 +147,6 @@ func RoomPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ResultsPageHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("ResultsPageHandler called")
 	roomID := chi.URLParam(r, "roomID")
 	roomsMu.Lock()
 	room, ok := rooms[roomID]
