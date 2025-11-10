@@ -1,0 +1,25 @@
+name: Check templ formatting
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  templfmt:
+    name: Verify templ formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@latest
+
+      - name: Check templ formatting
+        run: templ fmt -fail .
