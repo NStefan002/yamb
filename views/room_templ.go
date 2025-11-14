@@ -958,7 +958,7 @@ func UsernameEntry(roomID string) templ.Component {
 			templ_7745c5c3_Var72 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "<html><head><title>Join Room - Yamb Online</title><script src=\"https://cdn.tailwindcss.com\"></script></head>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "<html class=\"select-none\"><head><title>Join Room - Yamb Online</title><script src=\"https://cdn.tailwindcss.com\"></script></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
