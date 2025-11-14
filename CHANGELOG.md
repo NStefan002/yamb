@@ -1,0 +1,56 @@
+# Changelog
+
+## 1.0.0 (2025-11-14)
+
+
+### Features
+
+* add `Write Score` button and functionality ([a878622](https://github.com/NStefan002/yamb/commit/a878622a068864c9bb6e8b7fc21d479fd6cbff60))
+* add floating pop-ups for error messages ([d349604](https://github.com/NStefan002/yamb/commit/d3496047646a63a1b280ddfbd5e62a748941ca8f))
+* add footer to results page ([da8efc1](https://github.com/NStefan002/yamb/commit/da8efc15773cb147d0def48e908d11c01886807c))
+* add some new rows/cols to be used later ([a9f7651](https://github.com/NStefan002/yamb/commit/a9f7651c293734986bbf366ba9f46c0543168589))
+* add SSE for real-time updates ([6310bab](https://github.com/NStefan002/yamb/commit/6310babaec69e2101ee8d7625d401a2d504985e5))
+* calculate sums when the column is filled ([68e6eea](https://github.com/NStefan002/yamb/commit/68e6eeab0a6c8b1e2ad30b400af97b02152603a8))
+* different view for each player, use go-chi router ([8503101](https://github.com/NStefan002/yamb/commit/8503101647a0b4d95f416c023fef0a9121570074))
+* disable cursor selection in username page ([aa21ab2](https://github.com/NStefan002/yamb/commit/aa21ab25b60dd1f556d926a3fba9b1085d012196))
+* disable dice before the first roll ([b8e866a](https://github.com/NStefan002/yamb/commit/b8e866af1763c8c688ee67e9e87c7b82023f9ac6))
+* disable dice roll button when no rolls left or all dice kept ([8091f05](https://github.com/NStefan002/yamb/commit/8091f058a0bf58b8124b3b8909d80ae6b4423f02))
+* disable text selection in room view for better UX ([293c358](https://github.com/NStefan002/yamb/commit/293c358972e7e111ae95cee5c7ab5d3fcd560646))
+* do not use cdn for htmx ([7e1bef8](https://github.com/NStefan002/yamb/commit/7e1bef8a801620d2a0feeef4ebadfde739106076))
+* func to check if players have completed the game ([50039ad](https://github.com/NStefan002/yamb/commit/50039ad28e270cfa9161913a9b919f33d73225a4))
+* greatly improve dice logic, and scoreboard calculations ([1413ef3](https://github.com/NStefan002/yamb/commit/1413ef3f3f09932f2804797cb5db7d580f4e7007))
+* implement `announce` functionality ([a86e139](https://github.com/NStefan002/yamb/commit/a86e139e07b4ae89295799e942d3f7da4efea904))
+* implement results display ([ffcf3f8](https://github.com/NStefan002/yamb/commit/ffcf3f876c28a3f85a5773739947175ad9f9d240))
+* much better size handling for table rows/cols ([d5acf3e](https://github.com/NStefan002/yamb/commit/d5acf3eeb88285db7c44bcdd3c945db3334400b1))
+* protect room map and rooms with mutex ([b04bed3](https://github.com/NStefan002/yamb/commit/b04bed351a33d8ac6f545109344b1f67358a1251))
+* **room_templ:** open reddit page in new tab ([208ab70](https://github.com/NStefan002/yamb/commit/208ab709f67da8dfea326f4462d89189dec556f4))
+* **room:** assign each player to different team ([1dd08d4](https://github.com/NStefan002/yamb/commit/1dd08d442b555f7fe362671a9dcdf2c8e272f5d1))
+* **roomview:** add join room button ([0dc761c](https://github.com/NStefan002/yamb/commit/0dc761c0ca9a8a65aca4e47f6af6fe180a0659cc))
+* **scorecards:** center text in scorecards ([e649ff6](https://github.com/NStefan002/yamb/commit/e649ff60ea1788a1077c91de58988d9fb61aefb5))
+* **scorecards:** update other scorecards, bump `templ` version ([72ac025](https://github.com/NStefan002/yamb/commit/72ac0254780811fc5d97151ed5a29a7493162281))
+* small changes to game logic ([50ab701](https://github.com/NStefan002/yamb/commit/50ab70185d4e9ae93a98b50a9fa4a423dc9023a0))
+* some very basic views and logic ([c86ca4b](https://github.com/NStefan002/yamb/commit/c86ca4b047b2bcd41740469605fcad54224721f4))
+* use port from $PORT env var if set ([c58ef46](https://github.com/NStefan002/yamb/commit/c58ef463f9355eed2c809faf35a47692eb94e4ee))
+* **ux/ui:** complete design change and color scheme update ([be8cbe7](https://github.com/NStefan002/yamb/commit/be8cbe76e1549ba9cf42f708bb6add55aa02eb15))
+* **views:** add templ generated files ([c1d0d35](https://github.com/NStefan002/yamb/commit/c1d0d3508efd792d4b3f77bf6721abd59476f7d8))
+
+
+### Bug Fixes
+
+* allow users to write 0 to bottom four columns ([dee9859](https://github.com/NStefan002/yamb/commit/dee985999e33a720cb22a583413e5719630daa9b))
+* check for errors in min/max ([94112ae](https://github.com/NStefan002/yamb/commit/94112ae503f4ad75fac3d22d1f17a472645b88ed))
+* **colors:** wrong text color in scorecard ([2363321](https://github.com/NStefan002/yamb/commit/2363321311c7602ea43aaa127e82f5e48542d651))
+* **dice:** kenta check copied dice from wrong slice ([5699b54](https://github.com/NStefan002/yamb/commit/5699b548529b7cd60e97df18ff1cc8391e7a8318))
+* don't duplicate #dice-area div ([bb7bbc1](https://github.com/NStefan002/yamb/commit/bb7bbc14f5234c1024b8eeec316766ef75cd9698))
+* incorrect dice number range ([1667a9e](https://github.com/NStefan002/yamb/commit/1667a9ef79e41c64b32d5ab96a09bf63e7046728))
+* main scorecard fields bugs when refreshing ([187e80b](https://github.com/NStefan002/yamb/commit/187e80bf4cbf8429077743682d03b9aa1693df3e))
+* potential error in upper rows calculation, reworked functions ([f876555](https://github.com/NStefan002/yamb/commit/f876555e5ab0bf06b4f92907847691da321c3f41))
+* properly display held and unheld dice in the side panel ([2ad0e25](https://github.com/NStefan002/yamb/commit/2ad0e252d9e8950ce56ef91b983ba7137edea738))
+* provide only `port` to `ListenAndServe` ([2ca624c](https://github.com/NStefan002/yamb/commit/2ca624c1f2eeceb337e4ae8b9ece525b908d65d9))
+* remove debug print ([12da893](https://github.com/NStefan002/yamb/commit/12da8932fb605623195b5c530bc677542050e372))
+* remove debug print statements ([df7670c](https://github.com/NStefan002/yamb/commit/df7670c1a78925335abc2e92fa6f0390e7125a69))
+* remove sse stuff, maybe use it later ([5733108](https://github.com/NStefan002/yamb/commit/5733108ed6eb4f2b5a99e8d96e4e4abcf4080d3c))
+* **room_templ:** correct join link ([1659df3](https://github.com/NStefan002/yamb/commit/1659df3c6355c002eb3649d7dfbe3f5410aa245d))
+* **scorecard_templ:** remove debug print ([3942737](https://github.com/NStefan002/yamb/commit/39427377a6adddd05fe0e27667f2ff1f132d4ad4))
+* **scorecard:** correctly check last row index ([e716e8d](https://github.com/NStefan002/yamb/commit/e716e8dc255e94e2858f987bc18b8f505160367e))
+* **scorecard:** use arrows text instead of unicode arrows ([99b8fa1](https://github.com/NStefan002/yamb/commit/99b8fa197c8d290bf8d65031bf50c1a261007a38))
