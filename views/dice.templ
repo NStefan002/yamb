@@ -73,7 +73,7 @@ templ WriteScoreButton(roomID, playerID string, room *game.Room) {
 		_, colID := room.GetPlayerByID(playerID).ScoreCard.GetSelectedCell()
 		rollsLeft := room.Dice.RollsLeft
 		alreadyAnnounced := room.GetPlayerByID(playerID).ScoreCard.IsAnnounced()
-		announce := colID == "announce" && rollsLeft == 2 && !alreadyAnnounced
+		announce := colID == game.Announced && rollsLeft == 2 && !alreadyAnnounced
 	}}
 	<button
 		id="write-score-button"

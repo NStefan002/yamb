@@ -338,7 +338,7 @@ func WriteScoreButton(roomID, playerID string, room *game.Room) templ.Component 
 		_, colID := room.GetPlayerByID(playerID).ScoreCard.GetSelectedCell()
 		rollsLeft := room.Dice.RollsLeft
 		alreadyAnnounced := room.GetPlayerByID(playerID).ScoreCard.IsAnnounced()
-		announce := colID == "announce" && rollsLeft == 2 && !alreadyAnnounced
+		announce := colID == game.Announced && rollsLeft == 2 && !alreadyAnnounced
 		var templ_7745c5c3_Var23 = []any{fmt.Sprintf("bg-[%s] text-white py-2 px-4 rounded-lg hover:bg-[%s] font-bold text-sm disabled:bg-[%s] disabled:text-[%s] disabled:cursor-not-allowed transition-colors border-2 border-[%s] shadow-lg whitespace-nowrap", BtnPrimary, BtnHover, BgSumField, TextPrimary, BlueAccent)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var23...)
 		if templ_7745c5c3_Err != nil {

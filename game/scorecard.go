@@ -1,14 +1,45 @@
 package game
 
-import "errors"
+import (
+	"errors"
+)
+
+// column ids
+
+const (
+	TopToBottom            string = "t2b"
+	BottomToTop            string = "b2t"
+	Free                   string = "free"
+	Announced              string = "announced"
+)
+
+// row ids
+
+const (
+	Ones      string = "1"
+	Twos      string = "2"
+	Threes    string = "3"
+	Fours     string = "4"
+	Fives     string = "5"
+	Sixes     string = "6"
+	Sum1      string = "sum1"
+	Max       string = "max"
+	Min       string = "min"
+	Sum2      string = "sum2"
+	Straight  string = "straight"
+	FullHouse string = "fullhouse"
+	Quads     string = "quads"
+	Yamb      string = "yamb"
+	Sum3      string = "sum3"
+)
 
 type Column struct {
-	ID   string // e.g. "t2b", "b2t", "free", "announce"
+	ID   string
 	Name string // user-facing
 }
 
 type Row struct {
-	ID   string // e.g. "1", "2", "yamb"
+	ID   string
 	Name string
 }
 
@@ -24,28 +55,28 @@ type ScoreCard struct {
 
 func NewScoreCard() ScoreCard {
 	cols := []Column{
-		{ID: "t2b", Name: "↓"},
-		{ID: "b2t", Name: "↑"},
-		{ID: "free", Name: "↑↓"},
-		{ID: "announce", Name: "N"},
+		{ID: TopToBottom, Name: "↓"},
+		{ID: BottomToTop, Name: "↑"},
+		{ID: Free, Name: "↑↓"},
+		{ID: Announced, Name: "A"},
 	}
 
 	rows := []Row{
-		{ID: "1", Name: "1"},
-		{ID: "2", Name: "2"},
-		{ID: "3", Name: "3"},
-		{ID: "4", Name: "4"},
-		{ID: "5", Name: "5"},
-		{ID: "6", Name: "6"},
-		{ID: "sum1", Name: "Sum"},
-		{ID: "max", Name: "Max"},
-		{ID: "min", Name: "Min"},
-		{ID: "sum2", Name: "Sum"},
-		{ID: "kenta", Name: "Kenta"},
-		{ID: "full", Name: "Full"},
-		{ID: "poker", Name: "Poker"},
-		{ID: "yamb", Name: "Yamb"},
-		{ID: "sum3", Name: "Sum"},
+		{ID: Ones, Name: "1"},
+		{ID: Twos, Name: "2"},
+		{ID: Threes, Name: "3"},
+		{ID: Fours, Name: "4"},
+		{ID: Fives, Name: "5"},
+		{ID: Sixes, Name: "6"},
+		{ID: Sum1, Name: "Sum"},
+		{ID: Max, Name: "Max"},
+		{ID: Min, Name: "Min"},
+		{ID: Sum2, Name: "Sum"},
+		{ID: Straight, Name: "Straight"},
+		{ID: FullHouse, Name: "Full House"},
+		{ID: Quads, Name: "Quads"},
+		{ID: Yamb, Name: "Yamb"},
+		{ID: Sum3, Name: "Sum"},
 	}
 
 	// initialize empty scores
@@ -100,13 +131,13 @@ func (sc *ScoreCard) IsAnnounced() bool {
 	return sc.Announced
 }
 
-func (sc *ScoreCard) fillT2B(rowID string, score int) error {
+func (sc *ScoreCard) fillTopToBottom(rowID string, score int) error {
 	// check if the field above is filled (if not the first row)
 	for i, r := range sc.Rows {
 		if r.ID == rowID {
 			if i == 0 {
 				// first row, no need to check above
-				sc.Scores[rowID]["t2b"] = &score
+				sc.Scores[rowID][TopToBottom] = &score
 				return nil
 			}
 			aboveRowID := sc.Rows[i-1].ID
@@ -114,23 +145,23 @@ func (sc *ScoreCard) fillT2B(rowID string, score int) error {
 			if len(aboveRowID) >= 3 && aboveRowID[:3] == "sum" {
 				aboveRowID = sc.Rows[i-2].ID
 			}
-			if sc.Scores[aboveRowID]["t2b"] == nil {
+			if sc.Scores[aboveRowID][TopToBottom] == nil {
 				return errors.New("field above is not filled")
 			}
-			sc.Scores[rowID]["t2b"] = &score
+			sc.Scores[rowID][TopToBottom] = &score
 			return nil
 		}
 	}
 	return errors.New("unknown row ID")
 }
 
-func (sc *ScoreCard) fillB2T(rowID string, score int) error {
+func (sc *ScoreCard) fillBottomToTop(rowID string, score int) error {
 	// check if the field below is filled (if not the last row)
 	for i, r := range sc.Rows {
 		if r.ID == rowID {
 			if i == len(sc.Rows)-2 { // -2 because actual last row is sum
 				// last row, no need to check below
-				sc.Scores[rowID]["b2t"] = &score
+				sc.Scores[rowID][BottomToTop] = &score
 				return nil
 			}
 			belowRowID := sc.Rows[i+1].ID
@@ -138,10 +169,10 @@ func (sc *ScoreCard) fillB2T(rowID string, score int) error {
 			if len(belowRowID) >= 3 && belowRowID[:3] == "sum" {
 				belowRowID = sc.Rows[i+2].ID
 			}
-			if sc.Scores[belowRowID]["b2t"] == nil {
+			if sc.Scores[belowRowID][BottomToTop] == nil {
 				return errors.New("field below is not filled")
 			}
-			sc.Scores[rowID]["b2t"] = &score
+			sc.Scores[rowID][BottomToTop] = &score
 			return nil
 		}
 	}
@@ -149,7 +180,7 @@ func (sc *ScoreCard) fillB2T(rowID string, score int) error {
 }
 
 func (sc *ScoreCard) fillFree(rowID string, score int) error {
-	sc.Scores[rowID]["free"] = &score
+	sc.Scores[rowID][Free] = &score
 	return nil
 }
 
@@ -157,7 +188,7 @@ func (sc *ScoreCard) fillAnnounce(rowID string, score int) error {
 	if !sc.Announced {
 		return errors.New("must announce before filling this cell")
 	}
-	sc.Scores[rowID]["announce"] = &score
+	sc.Scores[rowID][Announced] = &score
 	sc.Announced = false // reset announce after filling
 	return nil
 }
@@ -173,13 +204,13 @@ func (sc *ScoreCard) FillCell(rowID, colID string, dice *Dice) (int, error) {
 	}
 
 	switch colID {
-	case "t2b":
-		return score, sc.fillT2B(rowID, score)
-	case "b2t":
-		return score, sc.fillB2T(rowID, score)
-	case "free":
+	case TopToBottom:
+		return score, sc.fillTopToBottom(rowID, score)
+	case BottomToTop:
+		return score, sc.fillBottomToTop(rowID, score)
+	case Free:
 		return score, sc.fillFree(rowID, score)
-	case "announce":
+	case Announced:
 		return score, sc.fillAnnounce(rowID, score)
 	}
 
@@ -188,29 +219,29 @@ func (sc *ScoreCard) FillCell(rowID, colID string, dice *Dice) (int, error) {
 
 func (sc *ScoreCard) CalculateScore(rowID string, dice *Dice) (int, error) {
 	switch rowID {
-	case "1":
+    case Ones:
 		return dice.Number(1)
-	case "2":
+	case Twos:
 		return dice.Number(2)
-	case "3":
+	case Threes:
 		return dice.Number(3)
-	case "4":
+	case Fours:
 		return dice.Number(4)
-	case "5":
+	case Fives:
 		return dice.Number(5)
-	case "6":
+	case Sixes:
 		return dice.Number(6)
-	case "max":
+    case Max:
 		return dice.MinMax()
-	case "min":
+    case Min:
 		return dice.MinMax()
-	case "kenta":
+	case Straight:
 		return dice.Kenta()
-	case "full":
+    case FullHouse:
 		return dice.Full()
-	case "poker":
+    case Quads:
 		return dice.Poker()
-	case "yamb":
+    case Yamb:
 		return dice.Yamb()
 	}
 	return 0, errors.New("unknown row ID")
@@ -221,7 +252,7 @@ func (sc *ScoreCard) calcSum1(colID string) *int {
 	sum := 0
 	allFilled := true
 	for _, r := range sc.Rows {
-		if r.ID == "sum1" {
+		if r.ID == Sum1 {
 			break
 		}
 		if sc.Scores[r.ID][colID] != nil {
@@ -241,10 +272,10 @@ func (sc *ScoreCard) calcSum1(colID string) *int {
 
 // (max - min) * 1s
 func (sc *ScoreCard) calcSum2(colID string) *int {
-	if sc.Scores["max"][colID] == nil || sc.Scores["min"][colID] == nil || sc.Scores["1"][colID] == nil {
+	if sc.Scores[Max][colID] == nil || sc.Scores[Min][colID] == nil || sc.Scores[Ones][colID] == nil {
 		return nil
 	}
-	sum := (*sc.Scores["max"][colID] - *sc.Scores["min"][colID]) * *sc.Scores["1"][colID]
+	sum := (*sc.Scores[Max][colID] - *sc.Scores[Min][colID]) * *sc.Scores[Ones][colID]
 	return &sum
 }
 
@@ -253,10 +284,10 @@ func (sc *ScoreCard) calcSum3(colID string) *int {
 	allFilled := true
 	started := false
 	for _, r := range sc.Rows {
-		if r.ID == "sum3" {
+		if r.ID == Sum3 {
 			break
 		}
-		if r.ID == "sum2" {
+		if r.ID == Sum2 {
 			started = true
 			continue
 		}
@@ -276,14 +307,14 @@ func (sc *ScoreCard) calcSum3(colID string) *int {
 
 func (sc *ScoreCard) CalculateSums() {
 	for _, col := range sc.Columns {
-		if sc.Scores["sum1"][col.ID] == nil {
-			sc.Scores["sum1"][col.ID] = sc.calcSum1(col.ID)
+		if sc.Scores[Sum1][col.ID] == nil {
+			sc.Scores[Sum1][col.ID] = sc.calcSum1(col.ID)
 		}
-		if sc.Scores["sum2"][col.ID] == nil {
-			sc.Scores["sum2"][col.ID] = sc.calcSum2(col.ID)
+		if sc.Scores[Sum2][col.ID] == nil {
+			sc.Scores[Sum2][col.ID] = sc.calcSum2(col.ID)
 		}
-		if sc.Scores["sum3"][col.ID] == nil {
-			sc.Scores["sum3"][col.ID] = sc.calcSum3(col.ID)
+		if sc.Scores[Sum3][col.ID] == nil {
+			sc.Scores[Sum3][col.ID] = sc.calcSum3(col.ID)
 		}
 	}
 }
@@ -291,13 +322,13 @@ func (sc *ScoreCard) CalculateSums() {
 // check if all sum fields are filled (indicating completion)
 func (sc *ScoreCard) IsComplete() bool {
 	for _, col := range sc.Columns {
-		if sc.Scores["sum1"][col.ID] == nil {
+		if sc.Scores[Sum1][col.ID] == nil {
 			return false
 		}
-		if sc.Scores["sum2"][col.ID] == nil {
+		if sc.Scores[Sum2][col.ID] == nil {
 			return false
 		}
-		if sc.Scores["sum3"][col.ID] == nil {
+		if sc.Scores[Sum3][col.ID] == nil {
 			return false
 		}
 	}
@@ -311,9 +342,9 @@ func (sc *ScoreCard) TotalScore() int {
 	}
 	total := 0
 	for _, col := range sc.Columns {
-		total += *sc.Scores["sum1"][col.ID]
-		total += *sc.Scores["sum2"][col.ID]
-		total += *sc.Scores["sum3"][col.ID]
+		total += *sc.Scores[Sum1][col.ID]
+		total += *sc.Scores[Sum2][col.ID]
+		total += *sc.Scores[Sum3][col.ID]
 	}
 
 	return total
