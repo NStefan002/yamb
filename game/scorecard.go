@@ -219,7 +219,7 @@ func (sc *ScoreCard) FillCell(rowID, colID string, dice *Dice) (int, error) {
 
 func (sc *ScoreCard) CalculateScore(rowID string, dice *Dice) (int, error) {
 	switch rowID {
-    case Ones:
+	case Ones:
 		return dice.Number(1)
 	case Twos:
 		return dice.Number(2)
@@ -231,17 +231,17 @@ func (sc *ScoreCard) CalculateScore(rowID string, dice *Dice) (int, error) {
 		return dice.Number(5)
 	case Sixes:
 		return dice.Number(6)
-    case Max:
+	case Max:
 		return dice.MinMax()
-    case Min:
+	case Min:
 		return dice.MinMax()
 	case Straight:
 		return dice.Kenta()
-    case FullHouse:
+	case FullHouse:
 		return dice.Full()
-    case Quads:
+	case Quads:
 		return dice.Poker()
-    case Yamb:
+	case Yamb:
 		return dice.Yamb()
 	}
 	return 0, errors.New("unknown row ID")
