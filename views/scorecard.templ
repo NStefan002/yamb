@@ -20,23 +20,27 @@ templ MainScoreCard(roomID string, playerID string, room *game.Room) {
 		case game.Yellow:
 			filledTextColor = YellowAccent
 		}
+
+		numOfCols := len(sc.Columns)
 	}}
 	<table class={ fmt.Sprintf("table-fixed border-collapse border-2 border-[%s] w-full h-full max-w-[90vw] max-h-[90vh] text-sm text-center", BorderPrimary) }>
 		<thead class={ fmt.Sprintf("bg-[%s] h-[calc(100%%/%d)]", BgHeaderField, len(sc.Rows)+1) }>
 			<tr>
-				<th class={ fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)] text-center", BorderPrimary, filledTextColor, len(sc.Columns)) }></th>
+				<th class={ fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-auto max-w-[22%%] px-1 sm:px-2 text-center break-words", BorderPrimary, filledTextColor) }></th>
 				for _, c := range sc.Columns {
-					<th class={ fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc(100%%/%d)] text-center", BorderPrimary, filledTextColor, len(sc.Columns)) }>{ c.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] text-sm font-bold text-[%s] w-[calc((100%%-22%%)/%d)] text-center break-words px-1 sm:px-2", BorderPrimary, filledTextColor, numOfCols) }>{ c.Name }</th>
 				}
 			</tr>
 		</thead>
 		<tbody class={ fmt.Sprintf("h-[calc(100%%-100%%/%d)]", len(sc.Rows)+1) }>
 			for _, r := range sc.Rows {
 				<tr class={ fmt.Sprintf("h-[calc(100%%/%d)]", len(sc.Rows)+1) }>
-					<th class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] px-2 text-sm font-bold text-[%s] text-center", BorderPrimary, BgHeaderField, filledTextColor) }>{ r.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] px-1 sm:px-2 text-xs sm:text-sm font-bold text-[%s] text-center break-all word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%%] leading-tight min-h-[2.8em] align-middle", BorderPrimary, BgHeaderField, filledTextColor) }>
+						{ r.Name }
+					</th>
 					for _, c := range sc.Columns {
 						if strings.Contains(strings.ToLower(r.Name), "sum") {
-							<td class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-center font-semibold text-[%s]", BorderPrimary, BgSumField, filledTextColor) }>
+							<td class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-center font-semibold text-[%s] w-[calc((100%%-22%%)/%d)] text-xs sm:text-sm", BorderPrimary, BgSumField, filledTextColor, numOfCols) }>
 								if sc.Scores[r.ID][c.ID] != nil {
 									{ *sc.Scores[r.ID][c.ID] }
 								}
@@ -54,6 +58,7 @@ templ MainScoreCard(roomID string, playerID string, room *game.Room) {
 templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
 	{{
 		sc := player.ScoreCard
+		numOfCols := len(sc.Columns)
 
 		filledBgColor := ""
 		filledTextColor := ""
@@ -74,22 +79,22 @@ templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
 		disabled := player.ScoreCard.IsAnnounced()
 	}}
 	if sc.Scores[rowID][colID] != nil {
-		<td class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-sm bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }>{ *sc.Scores[rowID][colID] }</td>
+		<td class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-xs sm:text-sm bg-[%s] text-[%s] w-[calc((100%%-22%%)/%d)]", BorderPrimary, filledBgColor, filledTextColor, numOfCols) }>{ *sc.Scores[rowID][colID] }</td>
 	} else if disabled {
 		if selected {
 			<td
-				class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-sm bg-[%s] text-[%s] cursor-not-allowed", BorderPrimary, filledBgColor, filledTextColor) }
+				class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-xs sm:text-sm bg-[%s] text-[%s] cursor-not-allowed w-[calc((100%%-22%%)/%d)]", BorderPrimary, filledBgColor, filledTextColor, numOfCols) }
 				id={ "cell-" + rowID + "-" + colID }
 			></td>
 		} else {
 			<td
-				class={ fmt.Sprintf("border-2 border-[%s] text-center text-sm bg-[%s] text-[%s] opacity-50 cursor-not-allowed", BorderPrimary, BgRollingArea, TextPrimary) }
+				class={ fmt.Sprintf("border-2 border-[%s] text-center text-xs sm:text-sm bg-[%s] text-[%s] opacity-50 cursor-not-allowed w-[calc((100%%-22%%)/%d)]", BorderPrimary, BgRollingArea, TextPrimary, numOfCols) }
 				id={ "cell-" + rowID + "-" + colID }
 			></td>
 		}
 	} else if selected {
 		<td
-			class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-sm bg-[%s] text-[%s]", BorderPrimary, filledBgColor, filledTextColor) }
+			class={ fmt.Sprintf("border-2 border-[%s] text-center font-semibold text-xs sm:text-sm bg-[%s] text-[%s] w-[calc((100%%-22%%)/%d)]", BorderPrimary, filledBgColor, filledTextColor, numOfCols) }
 			hx-post="/select-cell"
 			hx-target="#main-scorecard"
 			hx-swap="innerHTML"
@@ -98,7 +103,7 @@ templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
 		></td>
 	} else {
 		<td
-			class={ fmt.Sprintf("border-2 border-[%s] text-center align-middle cursor-pointer hover:bg-[%s] bg-[%s] text-sm transition-colors", BorderPrimary, BgGamePanel, BgRollingArea) }
+			class={ fmt.Sprintf("border-2 border-[%s] text-center align-middle cursor-pointer hover:bg-[%s] bg-[%s] text-xs sm:text-sm transition-colors w-[calc((100%%-22%%)/%d)]", BorderPrimary, BgGamePanel, BgRollingArea, numOfCols) }
 			hx-post="/select-cell"
 			hx-target="#main-scorecard"
 			hx-swap="innerHTML"
@@ -128,23 +133,27 @@ templ SmallScoreCardTable(player *game.Player) {
 
 		announced := player.ScoreCard.IsAnnounced()
 		selectedRowID, selectedColID := sc.GetSelectedCell()
+
+		numOfCols := len(sc.Columns)
 	}}
 	<table class={ fmt.Sprintf("table-fixed border-collapse border-2 border-[%s] w-full h-full max-w-[90vw] max-h-[90vh] text-xs text-center", BorderPrimary) }>
 		<thead class={ fmt.Sprintf("bg-[%s] h-[calc(100%%/%d)]", BgHeaderField, len(sc.Rows)+1) }>
 			<tr>
-				<th class={ fmt.Sprintf("border-2 border-[%s] font-bold text-[%s] w-[calc(100%%/%d)] text-center", BorderPrimary, filledTextColor, len(sc.Columns)) }></th>
+				<th class={ fmt.Sprintf("border-2 border-[%s] font-bold text-[%s] w-auto max-w-[22%%] px-1 text-center break-words", BorderPrimary, filledTextColor) }></th>
 				for _, c := range sc.Columns {
-					<th class={ fmt.Sprintf("border-2 border-[%s] font-bold text-[%s] w-[calc(100%%/%d)] text-center", BorderPrimary, filledTextColor, len(sc.Columns)) }>{ c.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] font-bold text-[%s] w-[calc((100%%-22%%)/%d)] text-center break-words px-1", BorderPrimary, filledTextColor, numOfCols) }>{ c.Name }</th>
 				}
 			</tr>
 		</thead>
 		<tbody class={ fmt.Sprintf("h-[calc(100%%-100%%/%d)]", len(sc.Rows)+1) }>
 			for _, r := range sc.Rows {
 				<tr class={ fmt.Sprintf("h-[calc(100%%/%d)]", len(sc.Rows)+1) }>
-					<th class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] font-bold text-[%s] text-center", BorderPrimary, BgHeaderField, filledTextColor) }>{ r.Name }</th>
+					<th class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] font-bold text-[%s] text-center word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%%] leading-tight min-h-[2.5em] align-middle px-1", BorderPrimary, BgHeaderField, filledTextColor) }>
+						{ r.Name }
+					</th>
 					if strings.Contains(strings.ToLower(r.Name), "sum") {
 						for _, c := range sc.Columns {
-							<td class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] font-semibold text-[%s] text-center", BorderPrimary, BgSumField, filledTextColor) }>
+							<td class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] font-semibold text-[%s] text-center w-[calc((100%%-22%%)/%d)]", BorderPrimary, BgSumField, filledTextColor, numOfCols) }>
 								if sc.Scores[r.ID][c.ID] != nil {
 									{ *sc.Scores[r.ID][c.ID] }
 								}
@@ -153,15 +162,15 @@ templ SmallScoreCardTable(player *game.Player) {
 					} else {
 						for _, c := range sc.Columns {
 							if sc.Scores[r.ID][c.ID] != nil {
-								<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-[%s] text-center", BorderPrimary, filledBgColor, filledTextColor) }>{ *sc.Scores[r.ID][c.ID] }</td>
+								<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-[%s] text-center w-[calc((100%%-22%%)/%d)]", BorderPrimary, filledBgColor, filledTextColor, numOfCols) }>{ *sc.Scores[r.ID][c.ID] }</td>
 							} else if announced {
 								if selectedRowID == r.ID && selectedColID == c.ID {
-									<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-[%s] text-center", BorderPrimary, filledBgColor, filledTextColor) }></td>
+									<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-[%s] text-center w-[calc((100%%-22%%)/%d)]", BorderPrimary, filledBgColor, filledTextColor, numOfCols) }></td>
 								} else {
-									<td class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-[%s] text-center opacity-50", BorderPrimary, BgRollingArea, TextPrimary) }></td>
+									<td class={ fmt.Sprintf("border-2 border-[%s] bg-[%s] text-[%s] text-center opacity-50 w-[calc((100%%-22%%)/%d)]", BorderPrimary, BgRollingArea, TextPrimary, numOfCols) }></td>
 								}
 							} else {
-								<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-center", BorderPrimary, BgRollingArea) }></td>
+								<td class={ fmt.Sprintf("border-2 border-[%s] font-semibold bg-[%s] text-center w-[calc((100%%-22%%)/%d)]", BorderPrimary, BgRollingArea, numOfCols) }></td>
 							}
 						}
 					}
@@ -185,7 +194,7 @@ templ OtherScorecards(roomID, playerID string, room *game.Room) {
 				if room.Players[i].ID == playerID {
 					{{ continue }}
 				}
-				<div class={ fmt.Sprintf("w-full max-w-sm bg-white rounded-lg p-2 border-2 border-[%s] shadow-md", BorderPrimary) }>
+				<div class={ fmt.Sprintf("w-full max-w-md bg-white rounded-lg p-2 border-2 border-[%s] shadow-md", BorderPrimary) }>
 					<div class="flex justify-between items-center mb-2">
 						<h4 class={ fmt.Sprintf("font-bold text-xs text-[%s]", TextPrimary) }>{ room.Players[i].Username }</h4>
 						if room.CurrentTurn == i {
@@ -204,15 +213,15 @@ templ OtherScorecards(roomID, playerID string, room *game.Room) {
 			}
 		</div>
 	} else {
-		<!-- 2 or more: grid layout -->
-		<div class="grid grid-cols-1 2xl:grid-cols-2 gap-3 w-full h-full">
+		<!-- 2 or more: grid layout - stack vertically on smaller screens -->
+		<div class="grid grid-cols-1 xl:grid-cols-2 gap-3 w-full h-full">
 			for i := 0; i < len(room.Players); i++ {
 				if room.Players[i].ID == playerID {
 					{{ continue }}
 				}
 				<div class={ fmt.Sprintf("bg-white rounded-lg p-2 border-2 border-[%s] shadow-md", BorderPrimary) }>
 					<div class="flex justify-between items-center mb-2">
-						<h4 class={ fmt.Sprintf("font-bold text-xs text-[%s]", TextPrimary) }>{ room.Players[i].Username }</h4>
+						<h4 class={ fmt.Sprintf("font-bold text-xs text-[%s] break-words max-w-[60%%]", TextPrimary) }>{ room.Players[i].Username }</h4>
 						if room.CurrentTurn == i {
 							<span class={ fmt.Sprintf("text-[10px] text-[%s] font-semibold", BtnHover) }>Rolling...</span>
 						} else {
