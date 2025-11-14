@@ -113,8 +113,8 @@ func (d *Dice) Kenta() (int, error) {
 		return 60, nil
 	}
 
-	// no kenta
-	return 0, errors.New("no kenta")
+	// no kenta (no error because we want to allow user to write 0)
+	return 0, nil
 }
 
 func (d *Dice) Full() (int, error) {
@@ -137,7 +137,8 @@ func (d *Dice) Full() (int, error) {
 		}
 	}
 	if !hasThree || !hasTwo {
-		return 0, errors.New("need a three-of-a-kind and a pair")
+		// no full (no error because we want to allow user to write 0)
+		return 0, nil
 	}
 	// 2 same + 3 same + 30
 	return d.sum() + 30, nil
@@ -151,7 +152,8 @@ func (d *Dice) Poker() (int, error) {
 	for i := range len(held) - 1 {
 		// all should be the same
 		if held[i] != held[i+1] {
-			return 0, errors.New("not all dice match")
+			// no poker (no error because we want to allow user to write 0)
+			return 0, nil
 		}
 	}
 	// 4 same + 50
@@ -166,7 +168,8 @@ func (d *Dice) Yamb() (int, error) {
 	for i := range len(held) - 1 {
 		// all should be the same
 		if held[i] != held[i+1] {
-			return 0, errors.New("not all dice match")
+			// no yamb (no error because we want to allow user to write 0)
+			return 0, nil
 		}
 	}
 	// 5 same + 80
