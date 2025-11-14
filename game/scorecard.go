@@ -11,6 +11,11 @@ const (
 	BottomToTop            string = "b2t"
 	Free                   string = "free"
 	Announced              string = "announced"
+	MiddleToTopAndToBottom string = "m2tb"
+	TopAndBottomToMiddle   string = "tb2m"
+	Forced                 string = "forced"
+	Hand                   string = "hand"
+	Maximum                string = "maximum"
 )
 
 // row ids
@@ -27,6 +32,7 @@ const (
 	Min       string = "min"
 	Sum2      string = "sum2"
 	Straight  string = "straight"
+	Trips     string = "trips"
 	FullHouse string = "fullhouse"
 	Quads     string = "quads"
 	Yamb      string = "yamb"
