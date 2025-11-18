@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"golang.org/x/net/websocket"
 )
 
 func main() {
@@ -54,7 +55,9 @@ func main() {
 	r.Post("/toggle-dice", ToggleDiceHandler)
 	r.Post("/select-cell", SelectCellHandler)
 	r.Post("/write-score", WriteScoreHandler)
-	// r.Post("/send-message", handleSendMessage)
+
+	// Chat endpoints
+	r.Handle("/room/{roomID}/chat/", websocket.Handler(ChatWebsocketHandler))
 
 	port := os.Getenv("PORT")
 	if port == "" {

@@ -1,0 +1,34 @@
+package views
+
+import "fmt"
+
+templ ChatMessage(username, text string) {
+	<div id="chat-box" hx-swap-oob="beforeend">
+		<div class="p-2 rounded-lg border border-gray-200 break-words whitespace-pre-line">
+			<strong>{ username }:</strong> { text }
+		</div>
+	</div>
+}
+
+templ ChatSection(roomID, playerID string) {
+	<div hx-ext="ws" ws-connect={ fmt.Sprintf("/room/%s/chat/", roomID) } id="chat-section" class="h-full flex flex-col hidden">
+		<h3 class={ fmt.Sprintf("font-bold text-[%s] mb-3 text-lg", TextPrimary) }>Chat</h3>
+		<div id="chat-box" hx-swap-oob="beforeend" class={ fmt.Sprintf("flex-1 overflow-y-auto space-y-2 text-sm mb-3 min-h-0 bg-white rounded-lg p-3 border-2 border-[%s]", BlueAccent) }>
+			<div class={ fmt.Sprintf("text-[%s] text-center py-4 chat-empty-placeholder", TextPrimary) }>No messages yet</div>
+		</div>
+		<form
+			class="flex space-x-2"
+			id="chat-form"
+			ws-send
+		>
+			<input
+				name="msg"
+				class={ fmt.Sprintf("border-2 border-[%s] rounded-lg flex-1 p-2 text-sm text-[%s] focus:outline-none focus:ring-2 focus:ring-[%s]", BlueAccent, TextPrimary, BorderPrimary) }
+				placeholder="Type message..."
+				required
+			/>
+			<input type="hidden" name="player_id" value={ playerID }/>
+			<button class={ fmt.Sprintf("bg-[%s] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[%s] transition-colors border-2 border-[%s]", BtnPrimary, BorderPrimary, BlueAccent) }>Send</button>
+		</form>
+	</div>
+}

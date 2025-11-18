@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"fmt"
 	"log"
 	"math/rand"
@@ -13,6 +15,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"golang.org/x/net/websocket"
 )
 
 var (
@@ -480,4 +483,47 @@ func CellSelectedHandler(w http.ResponseWriter, r *http.Request) {
 func HxError(w http.ResponseWriter, msg string, status int) {
 	w.Header().Set("HX-Trigger", fmt.Sprintf(`{"showError": %q}`, msg))
 	w.WriteHeader(status)
+}
+
+func ChatWebsocketHandler(ws *websocket.Conn) {
+	roomID := chi.URLParam(ws.Request(), "roomID")
+	roomsMu.Lock()
+	room, ok := rooms[roomID]
+	roomsMu.Unlock()
+	if !ok {
+		ws.Close()
+		return
+	}
+
+	room.Mu.Lock()
+	room.ChatConns[ws] = true
+	room.Mu.Unlock()
+
+	defer func() {
+		room.RemoveConn(ws)
+		ws.Close()
+	}()
+
+	for {
+		var msg struct {
+			Msg      string `json:"msg"`
+			PlayerID string `json:"player_id"`
+		}
+		if err := websocket.JSON.Receive(ws, &msg); err != nil {
+			break
+		}
+		player := room.GetPlayerByID(msg.PlayerID)
+		username := "Unknown"
+		if player != nil {
+			username = player.Username
+		}
+		// Render chat message HTML
+		var buf bytes.Buffer
+        err := views.ChatMessage(username, msg.Msg).Render(context.Background(), &buf)
+        if err != nil {
+            log.Println("error rendering chat message:", err)
+            continue
+        }
+		room.Broadcast(buf.String())
+	}
 }

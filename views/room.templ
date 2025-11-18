@@ -44,6 +44,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 			<title>Room { roomID } - Yamb Online</title>
 			<script src="/js/htmx.min.js"></script>
 			<script src="/js/sse.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/htmx-ext-ws@2.0.4" integrity="sha384-1RwI/nvUSrMRuNj7hX1+27J8XDdCoSLf0EjEyF69nacuWyiJYoQ/j39RT1mSnd2G" crossorigin="anonymous"></script>
 			<script src="https://cdn.tailwindcss.com"></script>
 			<style>
 				/* Custom scrollbar styling */
@@ -126,27 +127,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 							@OtherScorecards(roomID, playerID, room)
 						</div>
 						<!-- Chat Section -->
-						<div id="chat-section" class="h-full flex flex-col hidden">
-							<h3 class={ fmt.Sprintf("font-bold text-[%s] mb-3 text-lg", TextPrimary) }>Chat</h3>
-							<div id="chat-box" class={ fmt.Sprintf("flex-1 overflow-y-auto space-y-2 text-sm mb-3 min-h-0 bg-white rounded-lg p-3 border-2 border-[%s]", BlueAccent) }>
-								<div class={ fmt.Sprintf("text-[%s] text-center py-4", TextPrimary) }>No messages yet</div>
-							</div>
-							<form
-								id="chat-form"
-								class="flex space-x-2"
-								hx-post="/send-message"
-								hx-target="#chat-box"
-								hx-swap="beforeend"
-							>
-								<input
-									name="msg"
-									class={ fmt.Sprintf("border-2 border-[%s] rounded-lg flex-1 p-2 text-sm text-[%s] focus:outline-none focus:ring-2 focus:ring-[%s]", BlueAccent, TextPrimary, BorderPrimary) }
-									placeholder="Type message..."
-									required
-								/>
-								<button class={ fmt.Sprintf("bg-[%s] text-white px-4 rounded-lg text-sm font-semibold hover:bg-[%s] transition-colors border-2 border-[%s]", BtnPrimary, BorderPrimary, BlueAccent) }>Send</button>
-							</form>
-						</div>
+						@ChatSection(roomID, playerID)
 					</div>
 				</div>
 				<!-- Right Main Game Area (55-60% width on desktop) -->
@@ -195,6 +176,30 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 				></div>
 				<div hx-trigger={ fmt.Sprintf("sse:%s", broadcaster.GameEnded) }></div> // just to listen for GameEnded event (handled in script below)
 			</div>
+			<script>
+				document.body.addEventListener("htmx:oobAfterSwap", function (evt) {
+					// auto-scroll chat box to bottom
+					var chatBox = document.getElementById("chat-box");
+					if (chatBox) {
+						chatBox.scrollTop = chatBox.scrollHeight;
+
+						// hide "No messages yet" placeholder
+						var placeholder = chatBox.querySelector(".chat-empty-placeholder");
+						if (placeholder) {
+							placeholder.style.display = "none";
+						}
+					}
+				});
+
+				document.body.addEventListener("htmx:wsAfterSend", function (evt) {
+					// clear chat input after sending
+					var chatForm = document.getElementById("chat-form");
+					if (chatForm) {
+						var input = chatForm.querySelector("input[name='msg']");
+						if (input) input.value = "";
+					}
+				});
+			</script>
 			<script>
 				document.body.addEventListener("htmx:sseMessage", function (event) {
 					if (event.detail.type === {{ broadcaster.GameEnded }}) {

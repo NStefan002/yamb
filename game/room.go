@@ -2,11 +2,15 @@ package game
 
 import (
 	"errors"
+	"fmt"
+	"io"
 	"math/rand"
 	"slices"
 	"strconv"
 	"sync"
 	"yamb/broadcaster"
+
+	"golang.org/x/net/websocket"
 )
 
 type Room struct {
@@ -20,6 +24,8 @@ type Room struct {
 	GameStarted  bool
 	NumOfPlayers int // 2-4
 	NumOfDice    int // 5 or 6
+
+	ChatConns map[*websocket.Conn]bool
 }
 
 func NewRoom(mode, dice string) *Room {
@@ -42,6 +48,8 @@ func NewRoom(mode, dice string) *Room {
 		Dice:         NewDice(numOfDice),
 		NumOfPlayers: numOfPlayers,
 		NumOfDice:    numOfDice,
+
+		ChatConns: make(map[*websocket.Conn]bool),
 	}
 }
 
@@ -114,4 +122,62 @@ func (r *Room) SortPlayersByScore() {
 		return b.ScoreCard.TotalScore() - a.ScoreCard.TotalScore()
 	})
 	r.Players = sorted
+}
+
+func (r *Room) AddConn(ws *websocket.Conn) {
+	fmt.Printf("Adding new connection: %v\n", ws.RemoteAddr())
+
+	r.Mu.Lock()
+	r.ChatConns[ws] = true
+	r.Mu.Unlock()
+
+	r.readLoop(ws)
+}
+
+func (r *Room) RemoveConn(ws *websocket.Conn) {
+	fmt.Printf("Removing connection: %v\n", ws.RemoteAddr())
+
+	r.Mu.Lock()
+	delete(r.ChatConns, ws)
+	r.Mu.Unlock()
+}
+
+func (r *Room) readLoop(ws *websocket.Conn) {
+	buffer := make([]byte, 1024)
+	for {
+		n, err := ws.Read(buffer)
+		if err != nil {
+			if err == io.EOF {
+				fmt.Printf("Connection closed by client: %v\n", ws.RemoteAddr())
+				r.RemoveConn(ws)
+				ws.Close()
+				break
+			}
+			fmt.Printf("Error reading from connection %v: %v\n", ws.RemoteAddr(), err)
+			r.RemoveConn(ws)
+			ws.Close()
+			continue
+		}
+		msg := buffer[:n]
+		fmt.Printf("Received message from %v: %s\n", ws.RemoteAddr(), string(msg))
+		ws.Write([]byte("Message received"))
+		r.Broadcast(string(msg))
+	}
+}
+
+func (r *Room) Broadcast(msg string) {
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
+
+	for ws := range r.ChatConns {
+		go func(ws *websocket.Conn) {
+			// send as HTML fragment for htmx ws extension
+			_, err := ws.Write([]byte(msg))
+			if err != nil {
+				fmt.Printf("Error broadcasting to %v: %v\n", ws.RemoteAddr(), err)
+				r.RemoveConn(ws)
+				ws.Close()
+			}
+		}(ws)
+	}
 }
