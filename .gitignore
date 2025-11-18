@@ -27,5 +27,7 @@ go.work.sum
 # env file
 .env
 
+node_modules/
+
 # Editor/IDE
 .nvim.lua
