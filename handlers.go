@@ -519,11 +519,11 @@ func ChatWebsocketHandler(ws *websocket.Conn) {
 		}
 		// Render chat message HTML
 		var buf bytes.Buffer
-        err := views.ChatMessage(username, msg.Msg).Render(context.Background(), &buf)
-        if err != nil {
-            log.Println("error rendering chat message:", err)
-            continue
-        }
+		err := views.ChatMessage(username, msg.Msg).Render(context.Background(), &buf)
+		if err != nil {
+			log.Println("error rendering chat message:", err)
+			continue
+		}
 		room.Broadcast(buf.String())
 	}
 }
