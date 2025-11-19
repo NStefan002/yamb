@@ -13,6 +13,7 @@ templ ResultsPage(roomID, playerID string, room *game.Room) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Yamb - Results</title>
 			<link rel="stylesheet" href="/css/results.css"/>
+			<link rel="stylesheet" href="/css/style.css"/>
 			// confetti for winner only
 			if playerID == room.Players[0].ID {
 				<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
