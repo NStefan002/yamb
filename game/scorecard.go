@@ -115,7 +115,7 @@ func (sc *ScoreCard) SelectCell(rowID, colID string) error {
 
 	if sc.SelectedCell[0] == rowID && sc.SelectedCell[1] == colID {
 		// unselect if already selected
-        sc.UnselectCell()
+		sc.UnselectCell()
 	} else {
 		sc.SelectedCell[0] = rowID
 		sc.SelectedCell[1] = colID
@@ -125,8 +125,8 @@ func (sc *ScoreCard) SelectCell(rowID, colID string) error {
 }
 
 func (sc *ScoreCard) UnselectCell() {
-    sc.SelectedCell[0] = ""
-    sc.SelectedCell[1] = ""
+	sc.SelectedCell[0] = ""
+	sc.SelectedCell[1] = ""
 }
 
 func (sc *ScoreCard) GetSelectedCell() (string, string) {

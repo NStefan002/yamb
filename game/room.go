@@ -54,9 +54,9 @@ func NewRoom(mode, dice string) *Room {
 }
 
 func (r *Room) IsFull() bool {
-    r.Mu.Lock()
-    defer r.Mu.Unlock()
-    return len(r.Players) == r.NumOfPlayers
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
+	return len(r.Players) == r.NumOfPlayers
 }
 
 func (r *Room) AddPlayer(player *Player) error {
