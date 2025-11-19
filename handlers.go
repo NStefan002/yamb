@@ -85,7 +85,7 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(room.Players) >= 4 {
+	if room.IsFull() {
 		HxError(w, "room full", http.StatusForbidden)
 		return
 	}

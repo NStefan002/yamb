@@ -53,12 +53,15 @@ func NewRoom(mode, dice string) *Room {
 	}
 }
 
+func (r *Room) IsFull() bool {
+    r.Mu.Lock()
+    defer r.Mu.Unlock()
+    return len(r.Players) == r.NumOfPlayers
+}
+
 func (r *Room) AddPlayer(player *Player) error {
 	r.Mu.Lock()
 	defer r.Mu.Unlock()
-	if len(r.Players) == r.NumOfPlayers {
-		return errors.New("room is full")
-	}
 	r.Players = append(r.Players, player)
 	r.Players[len(r.Players)-1].Team = Team(len(r.Players) - 1)
 	return nil
