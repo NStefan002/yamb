@@ -162,7 +162,7 @@ templ SmallScoreCardTable(player *game.Player) {
 	>
 		<thead>
 			<tr>
-				<th class={ fmt.Sprintf("border-2 border-[var(--border-primary)] font-bold text-center w-auto max-w-[22%%] px-1 text-center break-words %s", filledTextStyle) }></th>
+				<th class={ "border-2 border-[var(--border-primary)] font-bold text-center w-auto max-w-[22%] px-1 text-center break-words" + filledTextStyle }></th>
 				for _, c := range sc.Columns {
 					<th class={ fmt.Sprintf("border-2 border-[var(--border-primary)] font-bold w-[var(--col-width)] text-center break-words px-1 %s", filledTextStyle) }>
 						{ c.Name }
@@ -176,7 +176,7 @@ templ SmallScoreCardTable(player *game.Player) {
 			for _, r := range sc.Rows {
 				<tr class="h-[var(--row-height)]">
 					<th
-						class={ fmt.Sprintf("border-2 border-[var(--border-primary)] bg-[var(--bg-header-field)] font-bold text-center word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%%] leading-tight min-h-[2.5em] align-middle px-1 %s", filledTextStyle) }
+						class={ "border-2 border-[var(--border-primary)] bg-[var(--bg-header-field)] font-bold text-center word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%] leading-tight min-h-[2.5em] align-middle px-1 %s" + filledTextStyle }
 					>
 						{ r.Name }
 					</th>

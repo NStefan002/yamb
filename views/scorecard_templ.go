@@ -461,7 +461,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var26 = []any{fmt.Sprintf("border-2 border-[var(--border-primary)] font-bold text-center w-auto max-w-[22%%] px-1 text-center break-words %s", filledTextStyle)}
+		var templ_7745c5c3_Var26 = []any{"border-2 border-[var(--border-primary)] font-bold text-center w-auto max-w-[22%] px-1 text-center break-words" + filledTextStyle}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var26...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -529,7 +529,7 @@ func SmallScoreCardTable(player *game.Player) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var31 = []any{fmt.Sprintf("border-2 border-[var(--border-primary)] bg-[var(--bg-header-field)] font-bold text-center word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%%] leading-tight min-h-[2.5em] align-middle px-1 %s", filledTextStyle)}
+			var templ_7745c5c3_Var31 = []any{"border-2 border-[var(--border-primary)] bg-[var(--bg-header-field)] font-bold text-center word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%] leading-tight min-h-[2.5em] align-middle px-1 %s" + filledTextStyle}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var31...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
