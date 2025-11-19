@@ -2,8 +2,8 @@ package game
 
 import (
 	"errors"
-	"fmt"
 	"io"
+	"log"
 	"math/rand"
 	"slices"
 	"strconv"
@@ -128,7 +128,7 @@ func (r *Room) SortPlayersByScore() {
 }
 
 func (r *Room) AddConn(ws *websocket.Conn) {
-	fmt.Printf("Adding new connection: %v\n", ws.RemoteAddr())
+	log.Printf("Adding new connection: %v\n", ws.RemoteAddr())
 
 	r.Mu.Lock()
 	r.ChatConns[ws] = true
@@ -138,7 +138,7 @@ func (r *Room) AddConn(ws *websocket.Conn) {
 }
 
 func (r *Room) RemoveConn(ws *websocket.Conn) {
-	fmt.Printf("Removing connection: %v\n", ws.RemoteAddr())
+	log.Printf("Removing connection: %v\n", ws.RemoteAddr())
 
 	r.Mu.Lock()
 	delete(r.ChatConns, ws)
@@ -151,18 +151,18 @@ func (r *Room) readLoop(ws *websocket.Conn) {
 		n, err := ws.Read(buffer)
 		if err != nil {
 			if err == io.EOF {
-				fmt.Printf("Connection closed by client: %v\n", ws.RemoteAddr())
+				log.Printf("Connection closed by client: %v\n", ws.RemoteAddr())
 				r.RemoveConn(ws)
 				ws.Close()
 				break
 			}
-			fmt.Printf("Error reading from connection %v: %v\n", ws.RemoteAddr(), err)
+			log.Printf("Error reading from connection %v: %v\n", ws.RemoteAddr(), err)
 			r.RemoveConn(ws)
 			ws.Close()
 			continue
 		}
 		msg := buffer[:n]
-		fmt.Printf("Received message from %v: %s\n", ws.RemoteAddr(), string(msg))
+		log.Printf("Received message from %v: %s\n", ws.RemoteAddr(), string(msg))
 		ws.Write([]byte("Message received"))
 		r.Broadcast(string(msg))
 	}
@@ -177,7 +177,7 @@ func (r *Room) Broadcast(msg string) {
 			// send as HTML fragment for htmx ws extension
 			_, err := ws.Write([]byte(msg))
 			if err != nil {
-				fmt.Printf("Error broadcasting to %v: %v\n", ws.RemoteAddr(), err)
+				log.Printf("Error broadcasting to %v: %v\n", ws.RemoteAddr(), err)
 				r.RemoveConn(ws)
 				ws.Close()
 			}

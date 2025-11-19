@@ -204,7 +204,6 @@ templ SmallScoreCardTable(player *game.Player) {
 										class={ fmt.Sprintf("border-2 border-[var(--border-primary)] font-semibold text-center w-[var(--col-width)] %s %s", filledBgStyle, filledTextStyle) }
 									></td>
 								} else {
-									{{ fmt.Println("Rendering disabled cell for other scorecard") }}
 									<td
 										class="border-2 border-[var(--border-primary)] bg-white text-[var(--text-primary)] text-center w-[var(--col-width)]"
 									></td>
