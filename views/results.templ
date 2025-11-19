@@ -13,14 +13,13 @@ templ ResultsPage(roomID, playerID string, room *game.Room) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Yamb - Results</title>
 			<link rel="stylesheet" href="/css/results.css"/>
-			<script src="https://cdn.tailwindcss.com"></script>
 			// confetti for winner only
 			if playerID == room.Players[0].ID {
 				<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 				<script defer src="/js/results.js"></script>
 			}
 		</head>
-		<body class={ fmt.Sprintf("min-h-screen flex flex-col bg-[#FFFFFF] text-[%s]", TextPrimary) }>
+		<body class="min-h-screen flex flex-col bg-[#FFFFFF] text-[var(--text-primary)]">
 			<main class="flex-grow">
 				if room.NumOfPlayers == 4 {
 					@TeamResuts(roomID, playerID, room)
@@ -41,25 +40,21 @@ templ FFAResults(roomID, playerID string, room *game.Room) {
 			<!-- winner -->
 			<div class="text-center space-y-2 animate-[winner-pop_700ms_ease-out]">
 				<div class="text-4xl font-bold">🏆 { room.Players[0].Username } wins!</div>
-				<div class="text-lg font-medium">{ room.Players[0].ScoreCard.TotalScore() } points</div>
+				<div class="text-lg font-medium">
+					{ room.Players[0].ScoreCard.TotalScore() } points
+				</div>
 			</div>
 			<!-- buttons -->
 			<div class="flex justify-center gap-4">
-				<button
-					class={ fmt.Sprintf("bg-[%s] hover:bg-[%s] text-white font-medium px-6 py-2 rounded-lg transition", BtnPrimary, BorderPrimary) }
-				>
+				<button class="bg-[var(--btn-primary)] hover:bg-[var(--btn-hover)] text-white font-medium px-6 py-2 rounded-lg transition">
 					Play Again
 				</button>
-				<button
-					class={ fmt.Sprintf("bg-white hover:bg-[%s] border border-[%s] text-[%s] font-medium px-6 py-2 rounded-lg transition", BgRollingArea, BorderPrimary, TextPrimary) }
-				>
+				<button class="bg-white hover:bg-[var(--bg-rolling-area)] border border-[var(--border-primary)] text-[var(--text-primary)] font-medium px-6 py-2 rounded-lg transition">
 					Home
 				</button>
 			</div>
 			<!-- graph -->
-			<div
-				class="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-10"
-			>
+			<div class="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-10">
 				for i, p := range room.Players {
 					{{
 						bgColor := ""
@@ -79,7 +74,9 @@ templ FFAResults(roomID, playerID string, room *game.Room) {
 							data-final-height={ p.ScoreCard.TotalScore() / 10 }
 						></div>
 						<div class="mt-2 font-semibold text-sm">{ p.Username }</div>
-						<div class="text-xs text-[#0F126A]">{ p.ScoreCard.TotalScore() } pts</div>
+						<div class="text-xs text-[#0F126A]">
+							{ p.ScoreCard.TotalScore() } pts
+						</div>
 					</div>
 				}
 			</div>
@@ -103,35 +100,33 @@ templ TeamResuts(roomID, playerID string, room *game.Room) {
 			<!-- winner -->
 			<div class="text-center space-y-2 animate-[winner-pop_700ms_ease-out]">
 				<div class="text-4xl font-bold">🏆 { teamName } team wins!</div>
-				<div class="text-lg font-medium">{ room.Players[0].ScoreCard.TotalScore() } points</div>
-				<div class="text-sm opacity-80">{ room.Players[0].Username } & { room.Players[1].Username }</div>
+				<div class="text-lg font-medium">
+					{ room.Players[0].ScoreCard.TotalScore() } points
+				</div>
+				<div class="text-sm opacity-80">
+					{ room.Players[0].Username } & { room.Players[1].Username }
+				</div>
 			</div>
 			<!-- buttons -->
 			<div class="flex justify-center gap-4">
-				<button
-					class={ fmt.Sprintf("bg-[%s] hover:bg-[%s] text-white font-medium px-6 py-2 rounded-lg transition", BtnPrimary, BorderPrimary) }
-				>
+				<button class="bg-[var(--btn-primary)] hover:bg-[var(--btn-hover)] text-white font-medium px-6 py-2 rounded-lg transition">
 					Play Again
 				</button>
-				<button
-					class={ fmt.Sprintf("bg-white hover:bg-[%s] border border-[%s] text-[%s] font-medium px-6 py-2 rounded-lg transition", BgRollingArea, BorderPrimary, TextPrimary) }
-				>
+				<button class="bg-white hover:bg-[var(--bg-rolling-area)] border border-[var(--border-primary)] text-[var(--text-primary)] font-medium px-6 py-2 rounded-lg transition">
 					Home
 				</button>
 			</div>
 			<!-- graph -->
-			<div
-				class="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-16"
-			>
+			<div class="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-16">
 				for i := 0; i < 2; i++ {
 					{{
 						color := ""
 						teamName := ""
 						if room.Players[i].Team == game.Blue {
-							color = BlueAccent
+							color = "text-[var(--blue-accent)]"
 							teamName = "Blue"
 						} else {
-							color = RedAccent
+							color = "text-[var(--red-accent)]"
 							teamName = "Red"
 						}
 					}}
@@ -142,7 +137,11 @@ templ TeamResuts(roomID, playerID string, room *game.Room) {
 							data-final-height={ room.Players[i].ScoreCard.TotalScore() / 10 }
 						></div>
 						<div class="mt-2 font-semibold text-sm">{ teamName } Team</div>
-						<div class={ fmt.Sprintf("text-xs text-[%s]", color) }>{ room.Players[i].ScoreCard.TotalScore() } pts</div>
+						<div
+							class={ fmt.Sprintf("text-xs %s", color) }
+						>
+							{ room.Players[i].ScoreCard.TotalScore() } pts
+						</div>
 					</div>
 				}
 			</div>

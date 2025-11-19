@@ -7,7 +7,7 @@ import (
 
 templ DiceArea(roomID, playerID string, room *game.Room) {
 	if room.Players[room.CurrentTurn].ID != playerID {
-		<div class={ fmt.Sprintf("text-center text-[%s] py-8 font-medium", TextPrimary) }>
+		<div class="text-center text-[var(--text-primary)] py-8 font-medium">
 			Waiting for your turn...
 		</div>
 		{{ return }}
@@ -27,14 +27,19 @@ templ DiceArea(roomID, playerID string, room *game.Room) {
 	}}
 	<!-- Your Dice Header with Roll Button -->
 	<div class="flex flex-col gap-3 mb-4">
-		<h2 class={ fmt.Sprintf("text-xl font-bold text-[%s] text-center w-full", TextPrimary) }>Your Dice</h2>
+		<h2 class="text-xl font-bold text-[var(--text-primary)] text-center w-full">
+			Your Dice
+		</h2>
 		<div class="flex flex-col sm:flex-row items-stretch sm:items-center sm:justify-between gap-2 w-full">
-			<div class={ fmt.Sprintf("text-base text-[%s] font-semibold whitespace-nowrap", TextPrimary) }>
-				Rolls remaining: <span class={ fmt.Sprintf("text-[%s] font-bold", BlueAccent) }>{ room.Dice.RollsLeft }</span>
+			<div class="text-base text-[var(--text-primary)] font-semibold whitespace-nowrap">
+				Rolls remaining:
+				<span class="text-[var(--blue-accent)] font-bold">
+					{ room.Dice.RollsLeft }
+				</span>
 			</div>
 			<button
 				id="roll-button"
-				class={ fmt.Sprintf("bg-[%s] text-white py-2 px-4 rounded-lg hover:bg-[%s] font-bold text-sm disabled:bg-[%s] disabled:text-[%s] disabled:cursor-not-allowed transition-colors border-2 border-[%s] shadow-lg whitespace-nowrap", BtnPrimary, BtnHover, BgSumField, TextPrimary, BlueAccent) }
+				class="bg-[var(--btn-primary)] text-white py-2 px-4 rounded-lg hover:bg-[var(--btn-hover)] font-bold text-sm disabled:bg-[var(--bg-sum-field)] disabled:text-[var(--text-primary)] disabled:cursor-not-allowed transition-colors border-2 border-[var(--blue-accent)] shadow-lg whitespace-nowrap"
 				hx-post="/roll-dice"
 				hx-target="#dice-area"
 				hx-swap="innerHTML"
@@ -47,8 +52,8 @@ templ DiceArea(roomID, playerID string, room *game.Room) {
 	</div>
 	<div class="flex flex-col gap-3">
 		<!-- Rolling Dice -->
-		<div class={ fmt.Sprintf("border-2 border-[%s] rounded-lg p-3 bg-[%s]", BlueAccent, BgRollingArea) }>
-			<h3 class={ fmt.Sprintf("font-semibold text-xs text-[%s] mb-2", TextPrimary) }>Rolling Dice</h3>
+		<div class="border-2 border-[var(--blue-accent)] rounded-lg p-3 bg-[var(--bg-rolling-area)]">
+			<h3 class="font-semibold text-xs text-[var(--text-primary)] mb-2">Rolling Dice</h3>
 			<div class="flex justify-center">
 				<div class="grid grid-cols-3 gap-y-1.5 gap-x-8" id="rolling-dice">
 					@DiceRow(roomID, room.Dice.Values, room.Dice.Held, false, disableDice)
@@ -56,8 +61,8 @@ templ DiceArea(roomID, playerID string, room *game.Room) {
 			</div>
 		</div>
 		<!-- Kept Dice -->
-		<div class={ fmt.Sprintf("border-2 border-[%s] rounded-lg p-3 bg-white", BlueAccent) }>
-			<h3 class={ fmt.Sprintf("font-semibold text-xs text-[%s] mb-2", TextPrimary) }>Kept Dice</h3>
+		<div class="border-2 border-[var(--blue-accent)] rounded-lg p-3 bg-white">
+			<h3 class="font-semibold text-xs text-[var(--text-primary)] mb-2">Kept Dice</h3>
 			<div class="flex justify-center">
 				<div class="grid grid-cols-3 gap-y-1.5 gap-x-8" id="kept-dice">
 					@DiceRow(roomID, room.Dice.Values, room.Dice.Held, true, disableDice)
@@ -77,7 +82,7 @@ templ WriteScoreButton(roomID, playerID string, room *game.Room) {
 	}}
 	<button
 		id="write-score-button"
-		class={ fmt.Sprintf("bg-[%s] text-white py-2 px-4 rounded-lg hover:bg-[%s] font-bold text-sm disabled:bg-[%s] disabled:text-[%s] disabled:cursor-not-allowed transition-colors border-2 border-[%s] shadow-lg whitespace-nowrap", BtnPrimary, BtnHover, BgSumField, TextPrimary, BlueAccent) }
+		class="bg-[var(--btn-primary)] text-white py-2 px-4 rounded-lg hover:bg-[var(--btn-hover)] font-bold text-sm disabled:bg-[var(--bg-sum-field)] disabled:text-[var(--text-primary)] disabled:cursor-not-allowed transition-colors border-2 border-[var(--blue-accent)] shadow-lg whitespace-nowrap"
 		hx-post="/write-score"
 		hx-target="#main-scorecard"
 		hx-swap="innerHTML"
@@ -92,7 +97,7 @@ templ WriteScoreButton(roomID, playerID string, room *game.Room) {
 }
 
 templ Dot() {
-	<div class={ fmt.Sprintf("flex items-center justify-center text-[%s]", BlueAccent) }>●</div>
+	<div class="flex items-center justify-center text-[var(--blue-accent)]">●</div>
 }
 
 templ Die(n int) {
@@ -165,13 +170,13 @@ templ Die(n int) {
 templ DieWrapper(roomID string, n int, index int, isKept, disabled bool) {
 	<div
 		if disabled {
-			class={ fmt.Sprintf("w-full h-full aspect-square bg-white border-2 border-[%s] rounded-md shadow-sm flex items-center justify-center cursor-not-allowed opacity-60", BlueAccent) }
+			class="w-full h-full aspect-square bg-white border-2 border-[var(--blue-accent)] rounded-md shadow-sm flex items-center justify-center cursor-not-allowed opacity-60"
 			title="Cannot keep dice on first roll"
 		} else {
 			hx-post="/toggle-dice"
 			hx-target="#dice-area"
 			hx-swap="innerHTML"
-			class={ fmt.Sprintf("w-full h-full aspect-square bg-white border-2 border-[%s] rounded-md shadow-sm flex items-center justify-center cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105", BlueAccent) }
+			class="w-full h-full aspect-square bg-white border-2 border-[var(--blue-accent)] rounded-md shadow-sm flex items-center justify-center cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-105"
 			if isKept {
 				title="Click to un-keep"
 			} else {
@@ -193,7 +198,7 @@ templ DiceRow(roomID string, values []int, keptDice []bool, displayKept, disable
 		}
 	}
 	if displayMsg {
-		<div class={ fmt.Sprintf("col-span-3 flex items-center justify-center text-[%s] text-xs font-medium py-4", TextPrimary) }>
+		<div class="col-span-3 flex items-center justify-center text-[var(--text-primary)] text-xs font-medium py-4">
 			if displayKept {
 				No kept dice
 			} else {
@@ -204,92 +209,143 @@ templ DiceRow(roomID string, values []int, keptDice []bool, displayKept, disable
 }
 
 templ SmallDot() {
-	<div class={ fmt.Sprintf("flex items-center justify-center text-[%s] text-[8px] leading-none", BlueAccent) }>●</div>
+	<div class="flex items-center justify-center text-[var(--blue-accent)] text-[8px] leading-none">
+		●
+	</div>
 }
 
 templ SmallDie(n int, isKept bool) {
-	{{
-		bgColor := fmt.Sprintf("bg-[%s]", BgRollingArea)
-		if isKept {
-			bgColor = "bg-white"
-		}
-	}}
-	<div class={ fmt.Sprintf("w-8 h-8 border border-[%s] rounded flex items-center justify-center %s", BlueAccent, bgColor) }>
-		<div class="grid grid-cols-3 grid-rows-3 w-full h-full p-0.5">
-			switch n {
-				case 0:
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-				case 1:
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					@SmallDot()
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-				case 2:
-					@SmallDot()
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					<div></div>
-					@SmallDot()
-				case 3:
-					@SmallDot()
-					<div></div>
-					<div></div>
-					<div></div>
-					@SmallDot()
-					<div></div>
-					<div></div>
-					<div></div>
-					@SmallDot()
-				case 4:
-					@SmallDot()
-					<div></div>
-					@SmallDot()
-					<div></div>
-					<div></div>
-					<div></div>
-					@SmallDot()
-					<div></div>
-					@SmallDot()
-				case 5:
-					@SmallDot()
-					<div></div>
-					@SmallDot()
-					<div></div>
-					@SmallDot()
-					<div></div>
-					@SmallDot()
-					<div></div>
-					@SmallDot()
-				case 6:
-					@SmallDot()
-					<div></div>
-					@SmallDot()
-					@SmallDot()
-					<div></div>
-					@SmallDot()
-					@SmallDot()
-					<div></div>
-					@SmallDot()
-			}
+	if isKept {
+		<div class="w-8 h-8 border border-[var(--blue-accent)] rounded flex items-center justify-center bg-white">
+			<div class="grid grid-cols-3 grid-rows-3 w-full h-full p-0.5">
+				switch n {
+					case 0:
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+					case 1:
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>@SmallDot()
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+					case 2:
+						@SmallDot()
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>@SmallDot()
+					case 3:
+						@SmallDot()
+						<div></div>
+						<div></div>
+						<div></div>@SmallDot()
+						<div></div>
+						<div></div>
+						<div></div>@SmallDot()
+					case 4:
+						@SmallDot()
+						<div></div>@SmallDot()
+						<div></div>
+						<div></div>
+						<div></div>
+						@SmallDot()
+						<div></div>@SmallDot()
+					case 5:
+						@SmallDot()
+						<div></div>@SmallDot()
+						<div></div>@SmallDot()
+						<div></div>
+						@SmallDot()
+						<div></div>@SmallDot()
+					case 6:
+						@SmallDot()
+						<div></div>@SmallDot()
+						@SmallDot()
+						<div></div>@SmallDot()
+						@SmallDot()
+						<div></div>@SmallDot()
+				}
+			</div>
 		</div>
-	</div>
+	} else {
+		<div class="w-8 h-8 border border-[var(--blue-accent)] rounded flex items-center justify-center bg-[var(--bg-rolling-area)]">
+			<div class="grid grid-cols-3 grid-rows-3 w-full h-full p-0.5">
+				switch n {
+					case 0:
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+					case 1:
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>@SmallDot()
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+					case 2:
+						@SmallDot()
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>@SmallDot()
+					case 3:
+						@SmallDot()
+						<div></div>
+						<div></div>
+						<div></div>@SmallDot()
+						<div></div>
+						<div></div>
+						<div></div>@SmallDot()
+					case 4:
+						@SmallDot()
+						<div></div>@SmallDot()
+						<div></div>
+						<div></div>
+						<div></div>
+						@SmallDot()
+						<div></div>@SmallDot()
+					case 5:
+						@SmallDot()
+						<div></div>@SmallDot()
+						<div></div>@SmallDot()
+						<div></div>
+						@SmallDot()
+						<div></div>@SmallDot()
+					case 6:
+						@SmallDot()
+						<div></div>@SmallDot()
+						@SmallDot()
+						<div></div>@SmallDot()
+						@SmallDot()
+						<div></div>@SmallDot()
+				}
+			</div>
+		</div>
+	}
 }
 
 templ SmallDiceRow(dice *game.Dice, display bool) {

@@ -1,21 +1,31 @@
 package views
 
-import "fmt"
-
 templ footer() {
-	<footer class={ fmt.Sprintf("bg-[%s] border-t-2 border-[%s] px-6 py-3 flex-shrink-0", BgGamePanel, BorderPrimary) }>
-		<div class={ fmt.Sprintf("flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-[%s]", TextPrimary) }>
+	<footer class="bg-[var(--bg-game-panel)] border-t-2 border-[var(--border-primary)] px-6 py-3 flex-shrink-0">
+		<div class="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-[var(--text-primary)]">
 			<div class="flex items-center gap-2">
 				<span class="font-medium">Development:</span>
 				<span>Stefan Novaković</span>
-				<span class={ fmt.Sprintf("text-[%s]", BorderPrimary) }>|</span>
-				<a href="https://nstefan002.github.io/" target="_blank" class={ fmt.Sprintf("hover:text-[%s] transition-colors", BorderPrimary) }>Website</a>
+				<span class="text-[var(--border-primary)]">|</span>
+				<a
+					href="https://nstefan002.github.io/"
+					target="_blank"
+					class="hover:text-[var(--border-primary)] transition-colors"
+				>
+					Website
+				</a>
 			</div>
 			<div class="flex items-center gap-2">
 				<span class="font-medium">Design:</span>
 				<span>Marta Gavrilović</span>
-				<span class={ fmt.Sprintf("text-[%s]", BorderPrimary) }>|</span>
-				<a href="https://www.reddit.com/user/Skalamerijq/" target="_blank" class={ fmt.Sprintf("hover:text-[%s] transition-colors", BorderPrimary) }>Reddit Page</a>
+				<span class="text-[var(--border-primary)]">|</span>
+				<a
+					href="https://www.reddit.com/user/Skalamerijq/"
+					target="_blank"
+					class="hover:text-[var(--border-primary)] transition-colors"
+				>
+					Reddit Page
+				</a>
 			</div>
 		</div>
 	</footer>

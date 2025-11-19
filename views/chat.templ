@@ -11,10 +11,21 @@ templ ChatMessage(username, text string) {
 }
 
 templ ChatSection(roomID, playerID string) {
-	<div hx-ext="ws" ws-connect={ fmt.Sprintf("/room/%s/chat/", roomID) } id="chat-section" class="h-full flex flex-col hidden">
-		<h3 class={ fmt.Sprintf("font-bold text-[%s] mb-3 text-lg", TextPrimary) }>Chat</h3>
-		<div id="chat-box" hx-swap-oob="beforeend" class={ fmt.Sprintf("flex-1 overflow-y-auto space-y-2 text-sm mb-3 min-h-0 bg-white rounded-lg p-3 border-2 border-[%s]", BlueAccent) }>
-			<div class={ fmt.Sprintf("text-[%s] text-center py-4 chat-empty-placeholder", TextPrimary) }>No messages yet</div>
+	<div
+		hx-ext="ws"
+		ws-connect={ fmt.Sprintf("/room/%s/chat/", roomID) }
+		id="chat-section"
+		class="h-full flex flex-col hidden"
+	>
+		<h3 class="font-bold text-[var(--text-primary)] mb-3 text-lg">Chat</h3>
+		<div
+			id="chat-box"
+			hx-swap-oob="beforeend"
+			class="flex-1 overflow-y-auto space-y-2 text-sm mb-3 min-h-0 bg-white rounded-lg p-3 border-2 border-[var(--blue-accent)]"
+		>
+			<div class="text-[var(--text-primary)] text-center py-4 chat-empty-placeholder">
+				No messages yet
+			</div>
 		</div>
 		<form
 			class="flex space-x-2"
@@ -23,12 +34,14 @@ templ ChatSection(roomID, playerID string) {
 		>
 			<input
 				name="msg"
-				class={ fmt.Sprintf("border-2 border-[%s] rounded-lg flex-1 p-2 text-sm text-[%s] focus:outline-none focus:ring-2 focus:ring-[%s]", BlueAccent, TextPrimary, BorderPrimary) }
+				class="border-2 border-[var(--blue-accent)] rounded-lg flex-1 p-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)]"
 				placeholder="Type message..."
 				required
 			/>
 			<input type="hidden" name="player_id" value={ playerID }/>
-			<button class={ fmt.Sprintf("bg-[%s] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[%s] transition-colors border-2 border-[%s]", BtnPrimary, BorderPrimary, BlueAccent) }>Send</button>
+			<button class="bg-[var(--btn-primary)] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[var(--btn-hover)] transition-colors border-2 border-[var(--blue-accent)]">
+				Send
+			</button>
 		</form>
 	</div>
 }

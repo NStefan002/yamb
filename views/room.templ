@@ -12,11 +12,13 @@ script hrefToRoomID(roomID string) {
 
 templ RoomLink(roomID string) {
 	<div class="space-y-3">
-		<p class={ fmt.Sprintf("text-sm text-center text-[%s]", TextPrimary) }>Your room is ready:</p>
+		<p class="text-sm text-center text-[var(--text-primary)]">
+			Your room is ready:
+		</p>
 		<div class="flex items-center space-x-2">
 			<input
 				id="room-url"
-				class={ fmt.Sprintf("border border-[%s] rounded-lg p-2 flex-1 text-sm focus:outline-none focus:ring-2 focus:ring-[%s]", BorderPrimary, BorderPrimary) }
+				class="border border-[var(--border-primary)] rounded-lg p-2 flex-1 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)]"
 				value={ fmt.Sprintf("https://yamb-xnuq.onrender.com/%s", roomID) }
 				readonly
 			/>
@@ -24,13 +26,13 @@ templ RoomLink(roomID string) {
 		<div class="flex justify-center space-x-2">
 			<button
 				onclick={ hrefToRoomID(roomID) }
-				class={ fmt.Sprintf("bg-[%s] text-white px-4 py-2 rounded-lg hover:bg-[%s] font-medium transition-colors", BtnPrimary, BorderPrimary) }
+				class="bg-[var(--btn-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--border-primary)] font-medium transition-colors"
 			>
 				Join Room Now
 			</button>
 			<button
 				onclick="navigator.clipboard.writeText(document.getElementById('room-url').value)"
-				class={ fmt.Sprintf("bg-[%s] text-[%s] px-4 py-2 rounded-lg hover:bg-[%s] font-medium transition-colors", BgRollingArea, TextPrimary, BgSumField) }
+				class="bg-[var(--bg-rolling-area)] text-[var(--text-primary)] px-4 py-2 rounded-lg hover:bg-[var(--bg-sum-field)] font-medium transition-colors"
 			>
 				Copy Room URL
 			</button>
@@ -45,7 +47,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 			<script src="/js/htmx.min.js"></script>
 			<script src="/js/sse.js"></script>
 			<script src="https://cdn.jsdelivr.net/npm/htmx-ext-ws@2.0.4" integrity="sha384-1RwI/nvUSrMRuNj7hX1+27J8XDdCoSLf0EjEyF69nacuWyiJYoQ/j39RT1mSnd2G" crossorigin="anonymous"></script>
-			<script src="https://cdn.tailwindcss.com"></script>
+			<link href="/css/style.css" rel="stylesheet"/>
 			<style>
 				/* Custom scrollbar styling */
 				::-webkit-scrollbar {
@@ -66,19 +68,19 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 		</head>
 		<body class="h-screen flex flex-col bg-white overflow-hidden" hx-ext="sse">
 			<!-- Header -->
-			<header class={ fmt.Sprintf("px-4 py-3 bg-white border-b border-[%s] flex justify-between items-center flex-shrink-0", BorderPrimary) }>
-				<h1 class={ fmt.Sprintf("font-bold text-xl text-[%s]", BlueAccent) }>ROOM { roomID }</h1>
+			<header class="px-4 py-3 bg-white border-b border-[var(--border-primary)] flex justify-between items-center flex-shrink-0">
+				<h1 class="font-bold text-xl text-[var(--blue-accent)]">ROOM { roomID }</h1>
 				<div class="flex items-center space-x-4">
-					<div id="player-counter" class={ fmt.Sprintf("text-sm text-[%s] font-medium", TextPrimary) }>
+					<div id="player-counter" class="text-sm text-[var(--text-primary)] font-medium">
 						@PlayerCounter(room)
 					</div>
 					<!-- Hamburger Button for Mobile -->
 					<button
 						id="sidebar-toggle"
-						class={ fmt.Sprintf("lg:hidden p-2 rounded-lg bg-[%s] hover:bg-[%s] transition-colors", BgGamePanel, BgRollingArea) }
+						class="lg:hidden p-2 rounded-lg bg-[var(--bg-game-panel)] hover:bg-[var(--bg-rolling-area)] transition-colors"
 						onclick="toggleSidebar()"
 					>
-						<svg class={ fmt.Sprintf("w-6 h-6 text-[%s]", BlueAccent) } fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg class="w-6 h-6 text-[var(--blue-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
 						</svg>
 					</button>
@@ -87,17 +89,20 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 			<!-- Main Content Area -->
 			<div class="flex-1 flex overflow-hidden min-h-0">
 				<!-- Left Sidebar -->
-				<div id="sidebar" class={ fmt.Sprintf("fixed lg:relative inset-y-0 left-0 w-full sm:w-96 lg:w-2/5 bg-[%s] shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-20 flex flex-col border-r-2 border-[%s]", BgGamePanel, BorderPrimary) }>
+				<div
+					id="sidebar"
+					class="fixed lg:relative inset-y-0 left-0 w-full sm:w-96 lg:w-2/5 bg-[var(--bg-game-panel)] shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-20 flex flex-col border-r-2 border-[var(--border-primary)]"
+				>
 					<!-- Sidebar Header -->
-					<div class={ fmt.Sprintf("p-4 bg-[%s] border-b-2 border-[%s] flex-shrink-0", BgGamePanel, BorderPrimary) }>
+					<div class="p-4 bg-[var(--bg-game-panel)] border-b-2 border-[var(--border-primary)] flex-shrink-0">
 						<div class="flex justify-between items-center mb-3">
-							<h2 class={ fmt.Sprintf("text-lg font-bold text-[%s]", RedAccent) }>GAME PANEL</h2>
+							<h2 class="text-lg font-bold text-[var(--red-accent)]">GAME PANEL</h2>
 							<button
 								id="close-sidebar"
-								class={ fmt.Sprintf("lg:hidden p-1 rounded hover:bg-[%s] transition-colors", BgRollingArea) }
+								class="lg:hidden p-1 rounded hover:bg-[var(--bg-rolling-area)] transition-colors"
 								onclick="toggleSidebar()"
 							>
-								<svg class={ fmt.Sprintf("w-6 h-6 text-[%s]", BlueAccent) } fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg class="w-6 h-6 text-[var(--blue-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 								</svg>
 							</button>
@@ -106,14 +111,14 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 						<div class="flex gap-4">
 							<button
 								id="toggle-scorecards"
-								class={ fmt.Sprintf("bg-[%s] text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-[%s] transition-colors border-2 border-[%s] w-auto", BtnHover, RedAccent, BlueAccent) }
+								class="bg-[var(--btn-hover)] text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-[var(--red-accent)] transition-colors border-2 border-[var(--blue-accent)] w-auto"
 								onclick="showSection('scorecards')"
 							>
 								Scorecards
 							</button>
 							<button
 								id="toggle-chat"
-								class={ fmt.Sprintf("bg-[%s] text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-[%s] transition-colors border-2 border-[%s] w-auto", BtnPrimary, BorderPrimary, BlueAccent) }
+								class="bg-[var(--btn-primary)] text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-[var(--border-primary)] transition-colors border-2 border-[var(--blue-accent)] w-auto"
 								onclick="showSection('chat')"
 							>
 								Chat
@@ -145,7 +150,11 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					</div>
 				</div>
 				<!-- Overlay for mobile -->
-				<div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 lg:hidden hidden" onclick="toggleSidebar()"></div>
+				<div
+					id="sidebar-overlay"
+					class="fixed inset-0 bg-black/50 z-10 lg:hidden hidden"
+					onclick="toggleSidebar()"
+				></div>
 			</div>
 			@footer()
 			<!-- SSE connection -->
@@ -230,17 +239,17 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 					if (section === "scorecards") {
 						scorecardsSection.classList.remove("hidden");
 						chatSection.classList.add("hidden");
-						scorecardsBtn.classList.remove("bg-[{{ BtnPrimary }}]");
-						scorecardsBtn.classList.add("bg-[{{ BtnHover }}]");
-						chatBtn.classList.remove("bg-[{{ BtnHover }}]");
-						chatBtn.classList.add("bg-[{{ BtnPrimary }}]");
+						scorecardsBtn.classList.remove("bg-[var(--btn-primary)]", "bg-[var(--btn-hover)]");
+						chatBtn.classList.remove("bg-[var(--btn-primary)]", "bg-[var(--btn-hover)]");
+						scorecardsBtn.classList.add("bg-[var(--btn-hover)]");
+						chatBtn.classList.add("bg-[var(--btn-primary)]");
 					} else if (section === "chat") {
 						scorecardsSection.classList.add("hidden");
 						chatSection.classList.remove("hidden");
-						scorecardsBtn.classList.remove("bg-[{{ BtnHover }}]");
-						scorecardsBtn.classList.add("bg-[{{ BtnPrimary }}]");
-						chatBtn.classList.remove("bg-[{{ BtnPrimary }}]");
-						chatBtn.classList.add("bg-[{{ BtnHover }}]");
+						scorecardsBtn.classList.remove("bg-[var(--btn-primary)]", "bg-[var(--btn-hover)]");
+						chatBtn.classList.remove("bg-[var(--btn-primary)]", "bg-[var(--btn-hover)]");
+						scorecardsBtn.classList.add("bg-[var(--btn-primary)]");
+						chatBtn.classList.add("bg-[var(--btn-hover)]");
 					}
 				}
 
@@ -263,20 +272,22 @@ templ UsernameEntry(roomID string) {
 	<html class="select-none">
 		<head>
 			<title>Join Room - Yamb Online</title>
-			<script src="https://cdn.tailwindcss.com"></script>
+			<link href="/css/style.css" rel="stylesheet"/>
 		</head>
-		<body class={ fmt.Sprintf("flex items-center justify-center h-screen bg-[%s]", BgGamePanel) }>
-			<div class={ fmt.Sprintf("bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6 border-2 border-[%s]", BorderPrimary) }>
-				<h1 class={ fmt.Sprintf("text-3xl font-bold text-center text-[%s]", BlueAccent) }>Join Room</h1>
-				<p class={ fmt.Sprintf("text-sm text-[%s] text-center", TextPrimary) }>Enter your username to join the game</p>
+		<body class="flex items-center justify-center h-screen bg-[var(--bg-game-panel)]">
+			<div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6 border-2 border-[var(--border-primary)]">
+				<h1 class="text-3xl font-bold text-center text-[var(--blue-accent)]">Join Room</h1>
+				<p class="text-sm text-[var(--text-primary)] text-center">
+					Enter your username to join the game
+				</p>
 				<form action="/join-room" method="POST" class="space-y-4">
 					<input type="hidden" name="room_id" value={ roomID }/>
 					<div>
-						<label class={ fmt.Sprintf("block text-sm font-semibold mb-2 text-[%s]", TextPrimary) }>Username</label>
+						<label class="block text-sm font-semibold mb-2 text-[var(--text-primary)]">Username</label>
 						<input
 							type="text"
 							name="username"
-							class={ fmt.Sprintf("w-full border-2 border-[%s] rounded-lg p-3 text-[%s] focus:outline-none focus:ring-2 focus:ring-[%s]", BorderPrimary, TextPrimary, BorderPrimary) }
+							class="w-full border-2 border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)]"
 							placeholder="Enter your username"
 							required
 							maxlength="20"
@@ -285,7 +296,7 @@ templ UsernameEntry(roomID string) {
 					</div>
 					<button
 						type="submit"
-						class={ fmt.Sprintf("w-full bg-[%s] text-white py-3 rounded-lg hover:bg-[%s] font-semibold transition-colors border-2 border-[%s]", BtnPrimary, BtnHover, BlueAccent) }
+						class="w-full bg-[var(--btn-primary)] text-white py-3 rounded-lg hover:bg-[var(--btn-hover)] font-semibold transition-colors border-2 border-[var(--blue-accent)]"
 					>
 						Join Room
 					</button>

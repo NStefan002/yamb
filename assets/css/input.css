@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+:root {
+  --bg-main: #ffffff;
+  --border-primary: #5172bc;
+  --bg-game-panel: #f1f4ff;
+  --bg-rolling-area: #ecedf1;
+  --bg-sum-field: #dcdfe7;
+  --bg-header-field: #cbcdd4;
+
+  --yellow-filled: #f2cf6a;
+  --yellow-accent: #7b6c0b;
+
+  --blue-accent: #0f126a;
+  --text-primary: #204481;
+
+  --btn-primary: #7897dc;
+  --blue-filled: #bccff6;
+
+  --red-accent: #af2121;
+  --btn-hover: #cb5c5c;
+  --red-filled: #eca6a6;
+
+  --col-width: auto;
+  --row-height: auto;
+  --tbody-height: auto;
+}

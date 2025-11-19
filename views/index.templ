@@ -1,39 +1,49 @@
 package views
 
-import "fmt"
-
 templ Index() {
 	<html>
 		<head>
 			<title>Yamb Online</title>
 			<script src="/js/htmx.min.js"></script>
-			<script src="https://cdn.tailwindcss.com"></script>
+			<link href="/css/style.css" rel="stylesheet"/>
 		</head>
-		<body class={ fmt.Sprintf("flex items-center justify-center min-h-screen bg-[%s]", BgGamePanel) }>
-			<div class={ fmt.Sprintf("bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6 border-2 border-[%s]", BorderPrimary) }>
+		<body class="flex items-center justify-center min-h-screen bg-[var(--bg-game-panel)]">
+			<div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6 border-2 border-[var(--border-primary)]">
 				<div class="text-center">
-					<h1 class={ fmt.Sprintf("text-4xl font-bold text-[%s] mb-2", BlueAccent) }>Yamb Online</h1>
-					<p class={ fmt.Sprintf("text-sm text-[%s]", TextPrimary) }>Create a game room and invite your friends</p>
+					<h1 class="text-4xl font-bold text-[var(--blue-accent)] mb-2">Yamb Online</h1>
+					<p class="text-sm text-[var(--text-primary)]">
+						Create a game room and invite your friends
+					</p>
 				</div>
 				<form hx-post="/create-room" hx-target="#room-link" class="space-y-5">
 					<div>
-						<label class={ fmt.Sprintf("block text-sm font-semibold text-[%s] mb-2", TextPrimary) }>Game Mode</label>
-						<select name="mode" class={ fmt.Sprintf("w-full border-2 border-[%s] rounded-lg p-3 text-[%s] focus:outline-none focus:ring-2 focus:ring-[%s] bg-white", BorderPrimary, TextPrimary, BorderPrimary) }>
+						<label class="block text-sm font-semibold text-[var(--text-primary)] mb-2">
+							Game Mode
+						</label>
+						<select
+							name="mode"
+							class="w-full border-2 border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)] bg-white"
+						>
 							<option value="1v1">1 vs 1</option>
 							<option value="2v2">2 vs 2</option>
 							<option value="1v1v1">1 vs 1 vs 1</option>
 						</select>
 					</div>
 					<div>
-						<label class={ fmt.Sprintf("block text-sm font-semibold text-[%s] mb-2", TextPrimary) }>Dice Count</label>
-						<select name="dice" class={ fmt.Sprintf("w-full border-2 border-[%s] rounded-lg p-3 text-[%s] focus:outline-none focus:ring-2 focus:ring-[%s] bg-white", BorderPrimary, TextPrimary, BorderPrimary) }>
+						<label class="block text-sm font-semibold text-[var(--text-primary)] mb-2">
+							Dice Count
+						</label>
+						<select
+							name="dice"
+							class="w-full border-2 border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)] bg-white"
+						>
 							<option value="5">5 Dice</option>
 							<option value="6">6 Dice</option>
 						</select>
 					</div>
 					<button
 						type="submit"
-						class={ fmt.Sprintf("w-full bg-[%s] text-white py-3 rounded-lg hover:bg-[%s] font-bold text-lg transition-colors border-2 border-[%s] shadow-lg", BtnPrimary, BtnHover, BlueAccent) }
+						class="w-full bg-[var(--btn-primary)] text-white py-3 rounded-lg hover:bg-[var(--btn-hover)] font-bold text-lg transition-colors border-2 border-[var(--blue-accent)] shadow-lg"
 					>
 						Create Room
 					</button>

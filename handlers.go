@@ -316,6 +316,12 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 	if announce {
 		player.ScoreCard.Announce()
 		room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreAnnounced})
+		err = views.MainScoreCard(roomID, playerID, room).Render(r.Context(), w)
+		if err != nil {
+			HxError(w, "could not render score", http.StatusInternalServerError)
+			log.Println("error rendering score:", err)
+			return
+		}
 	} else {
 		row, col := player.ScoreCard.GetSelectedCell()
 
