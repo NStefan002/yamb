@@ -335,6 +335,7 @@ func WriteScoreHandler(w http.ResponseWriter, r *http.Request) {
 		player.ScoreCard.CalculateSums()
 
 		room.EndTurn() // end the turn when the user enters result in a cell
+        player.ScoreCard.UnselectCell()
 		room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.TurnEnded})
 		room.Broadcaster.Broadcast(broadcaster.Event{Name: broadcaster.ScoreUpdated})
 
