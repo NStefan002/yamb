@@ -1,37 +1,42 @@
-# build stage
+# templ + go build
 FROM golang:1.24 AS build-stage
 WORKDIR /app
 
 # install templ
 RUN go install github.com/a-h/templ/cmd/templ@latest
 
-# Install Tailwind CLI
-RUN apt-get update && apt-get install -y curl && \
-    curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 && \
-    chmod +x tailwindcss-linux-x64 && mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
-
-# copy go.mod first for caching
+# copy go.mod early for caching
 COPY go.mod go.sum ./
 RUN go mod download
 
-# copy everything
-COPY . /app
+# copy source
+COPY . .
 
-# generate go files from templ files
+# generate .go files from templ
 RUN templ generate
-
-# generate tailwind css
-RUN tailwindcss -i ./assets/css/input.css -o ./assets/css/style.css
 
 # build Go binary
 RUN CGO_ENABLED=0 GOOS=linux go build -o /entrypoint
 
-# release stage
+
+# tailwind build
+FROM node:20-alpine AS tailwind-stage
+WORKDIR /app
+
+# copy tailwind config + CSS
+COPY tailwind.config.js package.json package-lock.json ./
+COPY assets ./assets
+
+RUN npm ci
+RUN npx tailwindcss -i ./assets/css/input.css -o ./assets/css/style.css --minify
+
+
+# final release stage
 FROM gcr.io/distroless/static-debian11 AS release-stage
 WORKDIR /
 
 COPY --from=build-stage /entrypoint /entrypoint
-COPY --from=build-stage /app/assets /assets
+COPY --from=tailwind-stage /app/assets /assets
 
 EXPOSE 8080
 USER nonroot:nonroot
