@@ -90,12 +90,24 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	playerID := uuid.New().String()
-	http.SetCookie(w, &http.Cookie{
-		Name:  "player_id",
-		Value: playerID,
-		Path:  "/",
-	})
+	var playerID string
+	playerCookie, err := r.Cookie("player_id")
+	if err == nil {
+		playerID = playerCookie.Value
+		// check if playerID is already in the room, and treat as returning player
+		if room.GetPlayerByID(playerID) != nil {
+			http.Redirect(w, r, fmt.Sprintf("/room/%s", roomID), http.StatusSeeOther)
+			return
+		}
+	} else {
+		playerID := uuid.New().String()
+		http.SetCookie(w, &http.Cookie{
+			Name:  "player_id",
+			Value: playerID,
+			Path:  "/",
+		})
+	}
+
 	// TODO: do we want to use this cookie instead of passing room_id in forms?
 	http.SetCookie(w, &http.Cookie{
 		Name:  "room_id",
@@ -103,7 +115,7 @@ func JoinRoomHandler(w http.ResponseWriter, r *http.Request) {
 		Path:  "/",
 	})
 
-	err := room.AddPlayer(game.NewPlayer(playerID, username))
+	err = room.AddPlayer(game.NewPlayer(playerID, username))
 	if err != nil {
 		HxError(w, fmt.Sprintf("could not add player: %v", err), http.StatusInternalServerError)
 		log.Println("error adding player to room:", err)

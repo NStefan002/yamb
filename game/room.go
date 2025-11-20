@@ -62,6 +62,11 @@ func (r *Room) IsFull() bool {
 func (r *Room) AddPlayer(player *Player) error {
 	r.Mu.Lock()
 	defer r.Mu.Unlock()
+	for _, p := range r.Players {
+		if p.ID == player.ID {
+			return errors.New("player is already in the room")
+		}
+	}
 	r.Players = append(r.Players, player)
 	r.Players[len(r.Players)-1].Team = Team(len(r.Players) - 1)
 	return nil
