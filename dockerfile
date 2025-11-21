@@ -23,11 +23,17 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /entrypoint
 FROM node:20-alpine AS tailwind-stage
 WORKDIR /app
 
-# copy tailwind config + CSS
+# copy configs
 COPY tailwind.config.js package.json package-lock.json ./
+
+# copy assets
 COPY assets ./assets
 
+# copy templ files so tailwind can scan them
+COPY views ./views
+
 RUN npm ci
+RUN mkdir -p ./assets/css
 RUN npx tailwindcss -i ./assets/css/input.css -o ./assets/css/style.css --minify
 
 
