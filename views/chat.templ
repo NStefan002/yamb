@@ -50,12 +50,17 @@ templ ChatSection(roomID, playerID string, room *game.Room) {
 			}
 		</div>
 		<form
-			class="flex space-x-2"
+			class="flex space-x-2 bg-white"
 			id="chat-form"
 			ws-send
+			autocomplete="off"
 		>
 			<input
 				name="msg"
+				autocomplete="off"
+				autocorrect="off"
+				autocapitalize="off"
+				spellcheck="false"
 				class="border-2 border-[var(--blue-accent)] rounded-lg flex-1 p-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)]"
 				placeholder="Type message..."
 				required
