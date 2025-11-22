@@ -126,45 +126,12 @@ func (r *Room) SortPlayersByScore() {
 	r.Players = sorted
 }
 
-func (r *Room) AddConn(ws *websocket.Conn) {
-	log.Printf("Adding new connection: %v\n", ws.RemoteAddr())
-
-	r.Mu.Lock()
-	r.ChatConns[ws] = true
-	r.Mu.Unlock()
-
-	r.readLoop(ws)
-}
-
 func (r *Room) RemoveConn(ws *websocket.Conn) {
 	log.Printf("Removing connection: %v\n", ws.RemoteAddr())
 
 	r.Mu.Lock()
 	delete(r.ChatConns, ws)
 	r.Mu.Unlock()
-}
-
-func (r *Room) readLoop(ws *websocket.Conn) {
-	buffer := make([]byte, 1024)
-	for {
-		n, err := ws.Read(buffer)
-		if err != nil {
-			if err == io.EOF {
-				log.Printf("Connection closed by client: %v\n", ws.RemoteAddr())
-				r.RemoveConn(ws)
-				ws.Close()
-				break
-			}
-			log.Printf("Error reading from connection %v: %v\n", ws.RemoteAddr(), err)
-			r.RemoveConn(ws)
-			ws.Close()
-			continue
-		}
-		msg := buffer[:n]
-		log.Printf("Received message from %v: %s\n", ws.RemoteAddr(), string(msg))
-		ws.Write([]byte("Message received"))
-		r.Broadcast(string(msg))
-	}
 }
 
 func (r *Room) Broadcast(msg string) {
