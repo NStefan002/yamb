@@ -1,16 +1,25 @@
 package views
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"yamb/game"
+)
 
-templ ChatMessage(username, text string) {
-	<div id="chat-box" hx-swap-oob="beforeend">
-		<div class="p-2 rounded-lg border border-gray-200 break-words whitespace-pre-line">
-			<strong>{ username }:</strong> { text }
-		</div>
+// TODO: add styles based on player's color
+templ ChatMessage(player *game.Player, text string) {
+	<div class="p-2 rounded-lg border border-gray-200 break-words whitespace-pre-line">
+		<strong>{ player.Username }:</strong> { text }
 	</div>
 }
 
-templ ChatSection(roomID, playerID string) {
+templ ChatMessageWrapper(player *game.Player, text string) {
+	<div id="chat-box" hx-swap-oob="beforeend">
+		@ChatMessage(player, text)
+	</div>
+}
+
+templ ChatSection(roomID, playerID string, room *game.Room) {
 	<div
 		hx-ext="ws"
 		ws-connect={ fmt.Sprintf("/room/%s/chat/", roomID) }
@@ -18,14 +27,27 @@ templ ChatSection(roomID, playerID string) {
 		class="h-full flex flex-col hidden"
 	>
 		<h3 class="font-bold text-[var(--text-primary)] mb-3 text-lg">Chat</h3>
+		<!-- hx-swap-oob="beforeend" -->
 		<div
 			id="chat-box"
-			hx-swap-oob="beforeend"
 			class="flex-1 overflow-y-auto space-y-2 text-sm mb-3 min-h-0 bg-white rounded-lg p-3 border-2 border-[var(--blue-accent)]"
 		>
-			<div class="text-[var(--text-primary)] text-center py-4 chat-empty-placeholder">
-				No messages yet
-			</div>
+			if len(room.ChatHistory) > 0 {
+				for _, msg := range room.ChatHistory {
+					{{
+						player := room.GetPlayerByID(msg.PlayerID)
+						if player == nil {
+							log.Printf("Warning: Player with ID %s not found in room %s", msg.PlayerID, roomID)
+							continue
+						}
+					}}
+					@ChatMessage(player, msg.Message)
+				}
+			} else {
+				<div class="text-[var(--text-primary)] text-center py-4 chat-empty-placeholder">
+					No messages yet
+				</div>
+			}
 		</div>
 		<form
 			class="flex space-x-2"

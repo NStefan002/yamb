@@ -520,16 +520,16 @@ func ChatWebsocketHandler(ws *websocket.Conn) {
 			break
 		}
 		player := room.GetPlayerByID(msg.PlayerID)
-		username := "Unknown"
-		if player != nil {
-			username = player.Username
-		}
+		// add message to room chat history
+		room.Mu.Lock()
+		room.ChatHistory = append(room.ChatHistory, game.NewChatMessage(player.ID, msg.Msg))
+		room.Mu.Unlock()
 		// Render chat message HTML
 		var buf bytes.Buffer
-		err := views.ChatMessage(username, msg.Msg).Render(context.Background(), &buf)
+		err := views.ChatMessageWrapper(player, msg.Msg).Render(context.Background(), &buf)
 		if err != nil {
 			log.Println("error rendering chat message:", err)
-			continue
+            break
 		}
 		room.Broadcast(buf.String())
 	}

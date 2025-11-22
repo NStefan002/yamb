@@ -132,7 +132,7 @@ templ RoomPage(roomID, playerID string, room *game.Room) {
 							@OtherScorecards(roomID, playerID, room)
 						</div>
 						<!-- Chat Section -->
-						@ChatSection(roomID, playerID)
+						@ChatSection(roomID, playerID, room)
 					</div>
 				</div>
 				<!-- Right Main Game Area (55-60% width on desktop) -->

@@ -1,7 +1,6 @@
 package game
 
 import (
-	"io"
 	"log"
 	"math/rand"
 	"slices"
@@ -11,6 +10,18 @@ import (
 
 	"golang.org/x/net/websocket"
 )
+
+type ChatMessage struct {
+	PlayerID string
+	Message  string
+}
+
+func NewChatMessage(playerID, message string) *ChatMessage {
+	return &ChatMessage{
+		PlayerID: playerID,
+		Message:  message,
+	}
+}
 
 type Room struct {
 	Mu          sync.Mutex
@@ -24,7 +35,8 @@ type Room struct {
 	NumOfPlayers int // 2-4
 	NumOfDice    int // 5 or 6
 
-	ChatConns map[*websocket.Conn]bool
+	ChatConns   map[*websocket.Conn]bool
+	ChatHistory []*ChatMessage
 }
 
 func NewRoom(mode, dice string) *Room {
@@ -48,7 +60,8 @@ func NewRoom(mode, dice string) *Room {
 		NumOfPlayers: numOfPlayers,
 		NumOfDice:    numOfDice,
 
-		ChatConns: make(map[*websocket.Conn]bool),
+		ChatConns:   make(map[*websocket.Conn]bool),
+		ChatHistory: []*ChatMessage{},
 	}
 }
 
@@ -140,12 +153,9 @@ func (r *Room) Broadcast(msg string) {
 
 	for ws := range r.ChatConns {
 		go func(ws *websocket.Conn) {
-			// send as HTML fragment for htmx ws extension
-			_, err := ws.Write([]byte(msg))
-			if err != nil {
-				log.Printf("Error broadcasting to %v: %v\n", ws.RemoteAddr(), err)
+			if err := websocket.Message.Send(ws, msg); err != nil {
+				log.Println("Error broadcasting:", err)
 				r.RemoveConn(ws)
-				ws.Close()
 			}
 		}(ws)
 	}
