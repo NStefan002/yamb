@@ -529,7 +529,7 @@ func ChatWebsocketHandler(ws *websocket.Conn) {
 		err := views.ChatMessageWrapper(player, msg.Msg).Render(context.Background(), &buf)
 		if err != nil {
 			log.Println("error rendering chat message:", err)
-            break
+			break
 		}
 		room.Broadcast(buf.String())
 	}
