@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strconv"
 	"sync"
+	"time"
 	"yamb/broadcaster"
 
 	"golang.org/x/net/websocket"
@@ -14,12 +15,14 @@ import (
 type ChatMessage struct {
 	PlayerID string
 	Message  string
+	SentAt   time.Time
 }
 
 func NewChatMessage(playerID, message string) *ChatMessage {
 	return &ChatMessage{
 		PlayerID: playerID,
 		Message:  message,
+		SentAt:   time.Now(),
 	}
 }
 

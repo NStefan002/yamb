@@ -6,16 +6,47 @@ import (
 	"yamb/game"
 )
 
-// TODO: add styles based on player's color
-templ ChatMessage(player *game.Player, text string) {
-	<div class="p-2 rounded-lg border border-gray-200 break-words whitespace-pre-line">
-		<strong>{ player.Username }:</strong> { text }
+templ ChatMessage(player *game.Player, chatMsg *game.ChatMessage) {
+	{{
+		bg := ""
+		border := ""
+		textColor := ""
+
+		switch player.Team {
+		case game.Blue:
+			bg = "bg-[var(--blue-filled)]"
+			border = "border-[var(--blue-accent)]"
+			textColor = "text-[var(--blue-accent)]"
+		case game.Red:
+			bg = "bg-[var(--red-filled)]"
+			border = "border-[var(--red-accent)]"
+			textColor = "text-[var(--red-accent)]"
+		case game.Yellow:
+			bg = "bg-[var(--yellow-filled)]"
+			border = "border-[var(--yellow-accent)]"
+			textColor = "text-[var(--yellow-accent)]"
+		default:
+			bg = "bg-white"
+			border = "border-[var(--border-primary)]"
+			textColor = "text-[var(--text-primary)]"
+		}
+	}}
+	<div
+		class={ "chat-message max-w-[75%] p-3 rounded-2xl border shadow-sm " + fmt.Sprintf("%s %s %s", bg, border, textColor) }
+	>
+		<div class="flex items-center justify-between mb-1">
+			<strong class="font-semibold">{ player.Username }</strong>
+			<span class="text-[10px] opacity-70">
+				{ chatMsg.SentAt.Format("15:04") }
+			</span>
+		</div>
+		<div class="leading-snug whitespace-pre-line">{ chatMsg.Message }</div>
 	</div>
 }
 
-templ ChatMessageWrapper(player *game.Player, text string) {
+templ ChatMessageWrapper(player *game.Player, chatMsg *game.ChatMessage) {
 	<div id="chat-box" hx-swap-oob="beforeend">
-		@ChatMessage(player, text)
+		@ChatMessage(player, chatMsg)
 	</div>
 }
 
@@ -27,10 +58,9 @@ templ ChatSection(roomID, playerID string, room *game.Room) {
 		class="h-full flex flex-col hidden"
 	>
 		<h3 class="font-bold text-[var(--text-primary)] mb-3 text-lg">Chat</h3>
-		<!-- hx-swap-oob="beforeend" -->
 		<div
 			id="chat-box"
-			class="flex-1 overflow-y-auto space-y-2 text-sm mb-3 min-h-0 bg-white rounded-lg p-3 border-2 border-[var(--blue-accent)]"
+			class="flex-1 overflow-y-auto space-y-3 text-sm mb-3 min-h-0 bg-white rounded-lg p-4 border-2 border-[var(--blue-accent)]"
 		>
 			if len(room.ChatHistory) > 0 {
 				for _, msg := range room.ChatHistory {
@@ -41,7 +71,7 @@ templ ChatSection(roomID, playerID string, room *game.Room) {
 							continue
 						}
 					}}
-					@ChatMessage(player, msg.Message)
+					@ChatMessage(player, msg)
 				}
 			} else {
 				<div class="text-[var(--text-primary)] text-center py-4 chat-empty-placeholder">
