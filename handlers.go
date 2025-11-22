@@ -520,13 +520,14 @@ func ChatWebsocketHandler(ws *websocket.Conn) {
 			break
 		}
 		player := room.GetPlayerByID(msg.PlayerID)
+		chatMsg := game.NewChatMessage(player.ID, msg.Msg)
 		// add message to room chat history
 		room.Mu.Lock()
-		room.ChatHistory = append(room.ChatHistory, game.NewChatMessage(player.ID, msg.Msg))
+		room.ChatHistory = append(room.ChatHistory, chatMsg)
 		room.Mu.Unlock()
 		// Render chat message HTML
 		var buf bytes.Buffer
-		err := views.ChatMessageWrapper(player, msg.Msg).Render(context.Background(), &buf)
+		err := views.ChatMessageWrapper(player, chatMsg).Render(context.Background(), &buf)
 		if err != nil {
 			log.Println("error rendering chat message:", err)
 			break
