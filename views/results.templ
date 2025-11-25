@@ -16,7 +16,7 @@ templ ResultsPage(roomID, playerID string, room *game.Room) {
 			<link rel="stylesheet" href="/css/style.css"/>
 			// confetti for winner only
 			if playerID == room.Players[0].ID {
-				<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+				<script defer src="/js/confetti.browser.min.js"></script>
 				<script defer src="/js/results.js"></script>
 			}
 		</head>
