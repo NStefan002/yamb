@@ -40,7 +40,7 @@ templ ChatMessage(player *game.Player, chatMsg *game.ChatMessage) {
 				{ chatMsg.SentAt.Format("15:04") }
 			</span>
 		</div>
-		<div class="leading-snug whitespace-pre-line">{ chatMsg.Message }</div>
+		<div class="leading-snug whitespace-pre-line break-words">{ chatMsg.Message }</div>
 	</div>
 }
 
