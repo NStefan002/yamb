@@ -8,8 +8,6 @@
 
 - [Docker](https://www.docker.com)
 
-#### Commands
-
 ```bash
 docker build -t yamb .
 docker run -p 8080:8080 yamb
