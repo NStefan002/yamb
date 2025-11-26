@@ -47,10 +47,14 @@ templ FFAResults(roomID, playerID string, room *game.Room) {
 			</div>
 			<!-- buttons -->
 			<div class="flex justify-center gap-4">
-				<button class="bg-[var(--btn-primary)] hover:bg-[var(--btn-hover)] text-white font-medium px-6 py-2 rounded-lg transition">
-					Play Again
-				</button>
-				<button class="bg-white hover:bg-[var(--bg-rolling-area)] border border-[var(--border-primary)] text-[var(--text-primary)] font-medium px-6 py-2 rounded-lg transition">
+				<!-- TODO: uncomment when play again is implemented -->
+				<!-- <button class="bg-[var(- -btn-primary)] hover:bg-[var(- -btn-hover)] text-white font-medium px-6 py-2 rounded-lg transition" > -->
+				<!-- 	Play Again -->
+				<!-- </button> -->
+				<button
+					class="bg-white hover:bg-[var(--bg-rolling-area)] border border-[var(--border-primary)] text-[var(--text-primary)] font-medium px-6 py-2 rounded-lg transition"
+					onclick="window.location.href='/'"
+				>
 					Home
 				</button>
 			</div>
@@ -110,10 +114,14 @@ templ TeamResuts(roomID, playerID string, room *game.Room) {
 			</div>
 			<!-- buttons -->
 			<div class="flex justify-center gap-4">
-				<button class="bg-[var(--btn-primary)] hover:bg-[var(--btn-hover)] text-white font-medium px-6 py-2 rounded-lg transition">
-					Play Again
-				</button>
-				<button class="bg-white hover:bg-[var(--bg-rolling-area)] border border-[var(--border-primary)] text-[var(--text-primary)] font-medium px-6 py-2 rounded-lg transition">
+				<!-- TODO: uncomment when play again is implemented -->
+				<!-- <button class="bg-[var(- -btn-primary)] hover:bg-[var(- -btn-hover)] text-white font-medium px-6 py-2 rounded-lg transition" > -->
+				<!-- 	Play Again -->
+				<!-- </button> -->
+				<button
+					class="bg-white hover:bg-[var(--bg-rolling-area)] border border-[var(--border-primary)] text-[var(--text-primary)] font-medium px-6 py-2 rounded-lg transition"
+					onclick="window.location.href='/'"
+				>
 					Home
 				</button>
 			</div>
