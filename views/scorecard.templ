@@ -28,9 +28,7 @@ templ MainScoreCard(roomID string, playerID string, room *game.Room) {
 		class="table-fixed border-collapse border-2 border-[var(--border-primary)] w-full h-full max-w-[90vw] max-h-[90vh] text-sm text-center"
 		style={ fmt.Sprintf("--row-height: calc(100%%/%d); --tbody-height: calc(100%%-100%%/%d); --col-width:calc((100%%-22%%)/%d);", numOfRows, numOfRows, numOfCols) }
 	>
-		<thead
-			class="bg-[var(--bg-header-field)] h-[var(--row-height)]"
-		>
+		<thead class="bg-[var(--bg-header-field)] h-[var(--row-height)]">
 			<tr>
 				<th class="border-2 border-[var(--border-primary)] text-sm font-bold w-auto max-w-[22%] px-1 sm:px-2 text-center break-words"></th>
 				for _, c := range sc.Columns {
@@ -42,9 +40,7 @@ templ MainScoreCard(roomID string, playerID string, room *game.Room) {
 				}
 			</tr>
 		</thead>
-		<tbody
-			class="h-[var(--tbody-height)]"
-		>
+		<tbody class="h-[var(--tbody-height)]">
 			for _, r := range sc.Rows {
 				<tr class="h-[var(--row-height)]">
 					<th
