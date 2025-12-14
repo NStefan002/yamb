@@ -11,6 +11,7 @@
 - [ ] add functionality for `Play Again` and `Home` buttons in results page
 - [ ] display warning and prompt user when writing some delicate scores (e.g. 0 in lower half of the table) - with
       option to check `don't ask me again`
+- [ ] translations (including error messages)
 
 ## fix
 
@@ -19,3 +20,5 @@
 - [ ] handle users disconnecting
 - [ ] make reconnecting easier
 - [x] unselect cell after writing score
+- [ ] if the only remaining fields are 'announce', disable write button after first roll and show 'announce' button and
+      if the user tries to click roll button throw an error
