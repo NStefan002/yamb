@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"yamb/game"
+	"yamb/i18n"
 )
 
 templ ChatMessage(player *game.Player, chatMsg *game.ChatMessage) {
@@ -40,7 +41,9 @@ templ ChatMessage(player *game.Player, chatMsg *game.ChatMessage) {
 				{ chatMsg.SentAt.Format("15:04") }
 			</span>
 		</div>
-		<div class="leading-snug whitespace-pre-line break-words">{ chatMsg.Message }</div>
+		<div class="leading-snug whitespace-pre-line break-words">
+			{ chatMsg.Message }
+		</div>
 	</div>
 }
 
@@ -50,14 +53,16 @@ templ ChatMessageWrapper(player *game.Player, chatMsg *game.ChatMessage) {
 	</div>
 }
 
-templ ChatSection(roomID, playerID string, room *game.Room) {
+templ ChatSection(roomID, playerID, lang string, room *game.Room) {
 	<div
 		hx-ext="ws"
 		ws-connect={ fmt.Sprintf("/room/%s/chat/", roomID) }
 		id="chat-section"
 		class="h-full flex flex-col hidden"
 	>
-		<h3 class="font-bold text-[var(--text-primary)] mb-3 text-lg">Chat</h3>
+		<h3 class="font-bold text-[var(--text-primary)] mb-3 text-lg">
+			{ i18n.T(lang, "chat") }
+		</h3>
 		<div
 			id="chat-box"
 			class="flex-1 overflow-y-auto space-y-3 text-sm mb-3 min-h-0 bg-white rounded-lg p-4 border-2 border-[var(--blue-accent)]"
@@ -75,7 +80,7 @@ templ ChatSection(roomID, playerID string, room *game.Room) {
 				}
 			} else {
 				<div class="text-[var(--text-primary)] text-center py-4 chat-empty-placeholder">
-					No messages yet
+					{ i18n.T(lang, "no_messages_yet") }
 				</div>
 			}
 		</div>
@@ -92,12 +97,12 @@ templ ChatSection(roomID, playerID string, room *game.Room) {
 				autocapitalize="off"
 				spellcheck="false"
 				class="border-2 border-[var(--blue-accent)] rounded-lg flex-1 p-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)]"
-				placeholder="Type message..."
+				placeholder={ i18n.T(lang, "type_message") }
 				required
 			/>
 			<input type="hidden" name="player_id" value={ playerID }/>
 			<button class="bg-[var(--btn-primary)] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[var(--btn-hover)] transition-colors border-2 border-[var(--blue-accent)]">
-				Send
+				{ i18n.T(lang, "send") }
 			</button>
 		</form>
 	</div>

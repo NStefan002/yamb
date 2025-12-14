@@ -3,15 +3,16 @@ package views
 import (
 	"fmt"
 	"yamb/game"
+	"yamb/i18n"
 )
 
-templ ResultsPage(roomID, playerID string, room *game.Room) {
+templ ResultsPage(roomID, playerID, lang string, room *game.Room) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>Yamb - Results</title>
+			<title>{ i18n.T(lang, "results_title") }</title>
 			<link rel="stylesheet" href="/css/results.css"/>
 			<link rel="stylesheet" href="/css/style.css"/>
 			// confetti for winner only
@@ -19,30 +20,35 @@ templ ResultsPage(roomID, playerID string, room *game.Room) {
 				<script defer src="/js/confetti.browser.min.js"></script>
 				<script defer src="/js/results.js"></script>
 			}
+			<script src="/js/i18n.js"></script>
 		</head>
 		<body class="min-h-screen flex flex-col bg-[#FFFFFF] text-[var(--text-primary)]">
 			<main class="flex-grow">
 				if room.NumOfPlayers == 4 {
-					@TeamResuts(roomID, playerID, room)
+					@TeamResuts(roomID, playerID, lang, room)
 				} else {
-					@FFAResults(roomID, playerID, room)
+					@FFAResults(roomID, playerID, lang, room)
 				}
 			</main>
-			@footer()
+			@footer(lang)
 		</body>
 	</html>
 }
 
 // for 1v1 and 1v1v1 end of the game results
-templ FFAResults(roomID, playerID string, room *game.Room) {
+templ FFAResults(roomID, playerID, lang string, room *game.Room) {
 	<div class="w-full max-w-5xl mx-auto px-4 pt-6 pb-10 space-y-10">
-		<h1 class="text-xl font-bold text-center">Final Results</h1>
+		<h1 class="text-xl font-bold text-center">{ i18n.T(lang, "final_results") } </h1>
 		<div id="capture-ffa" class="space-y-10">
 			<!-- winner -->
 			<div class="text-center space-y-2 animate-[winner-pop_700ms_ease-out]">
-				<div class="text-4xl font-bold">🏆 { room.Players[0].Username } wins!</div>
+				<div class="text-4xl font-bold">
+					🏆 { room.Players[0].Username }
+					<span>{ i18n.T(lang, "wins") }</span>
+				</div>
 				<div class="text-lg font-medium">
-					{ room.Players[0].ScoreCard.TotalScore() } points
+					{ room.Players[0].ScoreCard.TotalScore() }
+					<span>{ i18n.T(lang, "points") }</span>
 				</div>
 			</div>
 			<!-- buttons -->
@@ -54,9 +60,7 @@ templ FFAResults(roomID, playerID string, room *game.Room) {
 				<button
 					class="bg-white hover:bg-[var(--bg-rolling-area)] border border-[var(--border-primary)] text-[var(--text-primary)] font-medium px-6 py-2 rounded-lg transition"
 					onclick="window.location.href='/'"
-				>
-					Home
-				</button>
+				>{ i18n.T(lang, "home") }</button>
 			</div>
 			<!-- graph -->
 			<div class="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-10">
@@ -80,7 +84,8 @@ templ FFAResults(roomID, playerID string, room *game.Room) {
 						></div>
 						<div class="mt-2 font-semibold text-sm">{ p.Username }</div>
 						<div class="text-xs text-[#0F126A]">
-							{ p.ScoreCard.TotalScore() } pts
+							{ p.ScoreCard.TotalScore() }
+							<span>{ i18n.T(lang, "points_short") }</span>
 						</div>
 					</div>
 				}
@@ -90,9 +95,9 @@ templ FFAResults(roomID, playerID string, room *game.Room) {
 }
 
 // for 2v2 end of the game results
-templ TeamResuts(roomID, playerID string, room *game.Room) {
+templ TeamResuts(roomID, playerID, lang string, room *game.Room) {
 	<div class="w-full max-w-5xl mx-auto px-4 pt-6 pb-10 space-y-10">
-		<h1 class="text-xl font-bold text-center">Final Results</h1>
+		<h1 class="text-xl font-bold text-center">{ i18n.T(lang, "final_results") }</h1>
 		<div id="capture-team" class="space-y-10">
 			{{
 				teamName := ""
@@ -104,9 +109,14 @@ templ TeamResuts(roomID, playerID string, room *game.Room) {
 			}}
 			<!-- winner -->
 			<div class="text-center space-y-2 animate-[winner-pop_700ms_ease-out]">
-				<div class="text-4xl font-bold">🏆 { teamName } team wins!</div>
+				<div class="text-4xl font-bold">
+					🏆 { teamName }
+					<span>{ i18n.T(lang, "team") }</span>
+					<span>{ i18n.T(lang, "wins") }</span>
+				</div>
 				<div class="text-lg font-medium">
-					{ room.Players[0].ScoreCard.TotalScore() } points
+					{ room.Players[0].ScoreCard.TotalScore() }
+					<span>{ i18n.T(lang, "points") }</span>
 				</div>
 				<div class="text-sm opacity-80">
 					{ room.Players[0].Username } & { room.Players[1].Username }
@@ -121,9 +131,7 @@ templ TeamResuts(roomID, playerID string, room *game.Room) {
 				<button
 					class="bg-white hover:bg-[var(--bg-rolling-area)] border border-[var(--border-primary)] text-[var(--text-primary)] font-medium px-6 py-2 rounded-lg transition"
 					onclick="window.location.href='/'"
-				>
-					Home
-				</button>
+				>{ i18n.T(lang, "home") }</button>
 			</div>
 			<!-- graph -->
 			<div class="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-16">
@@ -145,11 +153,14 @@ templ TeamResuts(roomID, playerID string, room *game.Room) {
 							style={ fmt.Sprintf("background: %s; animation-delay: %dms; --target-height: %dpx;", color, i*150, room.Players[i].ScoreCard.TotalScore()/10) }
 							data-final-height={ room.Players[i].ScoreCard.TotalScore() / 10 }
 						></div>
-						<div class="mt-2 font-semibold text-sm">{ teamName } Team</div>
+						<div class="mt-2 font-semibold text-sm">
+							{ teamName } <span>{ i18n.T(lang, "team") }</span>
+						</div>
 						<div
 							class={ fmt.Sprintf("text-xs %s", color) }
 						>
-							{ room.Players[i].ScoreCard.TotalScore() } pts
+							{ room.Players[i].ScoreCard.TotalScore() }
+							<span>{ i18n.T(lang, "points_short") }</span>
 						</div>
 					</div>
 				}

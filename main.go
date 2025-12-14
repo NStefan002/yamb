@@ -8,6 +8,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"golang.org/x/net/websocket"
+
+	"yamb/i18n"
 )
 
 func main() {
@@ -24,6 +26,15 @@ func main() {
 	// load css files
 	cssFiles := http.StripPrefix("/css/", http.FileServer(http.Dir("assets/css")))
 	r.Handle("/css/*", cssFiles)
+
+	// load locales
+	localeFiles := http.StripPrefix("/locales/", http.FileServer(http.Dir("assets/locales")))
+	r.Handle("/locales/*", localeFiles)
+
+	err := i18n.LoadLocales("assets/locales")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// landing page
 	r.Get("/", IndexHandler)
@@ -42,6 +53,9 @@ func main() {
 
 	// results page
 	r.Get("/room/{roomID}/results", ResultsPageHandler)
+
+	// change language
+	r.Post("/set-lang", SetLangHandler)
 
 	// HTMX endpoints for partial updates (events)
 	r.Get("/room/{roomID}/events", EventsHandler)

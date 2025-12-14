@@ -1,0 +1,76 @@
+package views
+
+import (
+	"strings"
+	"yamb/i18n"
+)
+
+templ footer(lang string) {
+	<footer class="bg-[var(--bg-game-panel)] border-t-2 border-[var(--border-primary)] px-6 py-3 flex-shrink-0">
+		<div class="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-[var(--text-primary)]">
+			<div class="flex items-center gap-2">
+				<span class="font-medium">{ i18n.T(lang, "footer_role_1") }</span>
+				<span>Stefan Novaković</span>
+				<span class="text-[var(--border-primary)]">|</span>
+				<a
+					href="https://nstefan002.github.io/"
+					target="_blank"
+					class="hover:text-[var(--border-primary)] transition-colors"
+				>{ i18n.T(lang, "footer_link_1") }</a>
+			</div>
+			<div class="flex items-center gap-2">
+				<span class="font-medium">{ i18n.T(lang, "footer_role_2") }</span>
+				<span>Marta Gavrilović</span>
+				<span class="text-[var(--border-primary)]">|</span>
+				<a
+					href="https://www.reddit.com/user/Skalamerijq/"
+					target="_blank"
+					class="hover:text-[var(--border-primary)] transition-colors"
+				>{ i18n.T(lang, "footer_link_2") }</a>
+			</div>
+		</div>
+	</footer>
+}
+
+templ LangSwitcher(currentLang string) {
+	<div class="relative">
+		<button
+			id="lang-toggle"
+			class="flex items-center gap-2 px-3 py-1.5 border border-[var(--border-primary)] rounded-lg bg-white text-sm font-semibold hover:bg-[var(--bg-rolling-area)] transition select-none"
+			onclick="toggleLangMenu()"
+		>
+			<span id="current-lang">{ strings.ToUpper(currentLang) }</span>
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M19 9l-7 7-7-7"
+				></path>
+			</svg>
+		</button>
+		<div
+			id="lang-menu"
+			class="absolute right-0 mt-2 w-28 bg-white border border-[var(--border-primary)] rounded-lg shadow-lg hidden z-50 overflow-hidden"
+		>
+			<button
+				class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--bg-rolling-area)]"
+				hx-post="/set-lang"
+				hx-swap="none"
+				hx-vals='{"lang": "en"}'
+				hx-on::after-request="window.location.reload()"
+			>
+				English
+			</button>
+			<button
+				class="w-full px-3 py-2 text-left text-sm hover:bg-[var(--bg-rolling-area)]"
+				hx-post="/set-lang"
+				hx-swap="none"
+				hx-vals='{"lang": "sr"}'
+				hx-on::after-request="window.location.reload()"
+			>
+				Српски
+			</button>
+		</div>
+	</div>
+}

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strings"
 	"yamb/game"
+	"yamb/i18n"
 )
 
-templ MainScoreCard(roomID string, playerID string, room *game.Room) {
+templ MainScoreCard(roomID string, playerID, lang string, room *game.Room) {
 	{{
 		player := room.GetPlayerByID(playerID)
 		sc := player.ScoreCard
@@ -34,9 +35,8 @@ templ MainScoreCard(roomID string, playerID string, room *game.Room) {
 				for _, c := range sc.Columns {
 					<th
 						class={ fmt.Sprintf("border-2 border-[var(--border-primary)] text-sm font-bold w-[var(--col-width)] text-center break-words px-1 sm:px-2 %s", filledTextStyle) }
-					>
-						{ c.Name }
-					</th>
+						title={ i18n.T(lang, "col_desc_"+c.ID) }
+					>{ i18n.T(lang, "col_" + c.ID) }</th>
 				}
 			</tr>
 		</thead>
@@ -45,9 +45,8 @@ templ MainScoreCard(roomID string, playerID string, room *game.Room) {
 				<tr class="h-[var(--row-height)]">
 					<th
 						class="border-2 border-[var(--border-primary)] bg-[var(--bg-header-field)] px-1 sm:px-2 text-xs sm:text-sm font-bold text-center break-all word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%] leading-tight min-h-[2.8em] align-middle"
-					>
-						{ r.Name }
-					</th>
+						title={ i18n.T(lang, "row_desc_"+r.ID) }
+					>{ i18n.T(lang, "row_" + r.ID) }</th>
 					for _, c := range sc.Columns {
 						if strings.Contains(strings.ToLower(r.Name), "sum") {
 							<td
@@ -128,7 +127,7 @@ templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
 	}
 }
 
-templ SmallScoreCardTable(player *game.Player) {
+templ SmallScoreCardTable(lang string, player *game.Player) {
 	{{
 		sc := player.ScoreCard
 
@@ -160,21 +159,21 @@ templ SmallScoreCardTable(player *game.Player) {
 			<tr>
 				<th class={ "border-2 border-[var(--border-primary)] font-bold text-center w-auto max-w-[22%] px-1 text-center break-words " + filledTextStyle }></th>
 				for _, c := range sc.Columns {
-					<th class={ fmt.Sprintf("border-2 border-[var(--border-primary)] font-bold w-[var(--col-width)] text-center break-words px-1 %s", filledTextStyle) }>
-						{ c.Name }
+					<th
+						class={ fmt.Sprintf("border-2 border-[var(--border-primary)] font-bold w-[var(--col-width)] text-center break-words px-1 %s", filledTextStyle) }
+					>
+						{ i18n.T(lang, "col_" + c.ID) }
 					</th>
 				}
 			</tr>
 		</thead>
-		<tbody
-			class="h-[var(--tbody-height)]"
-		>
+		<tbody class="h-[var(--tbody-height)]">
 			for _, r := range sc.Rows {
 				<tr class="h-[var(--row-height)]">
 					<th
 						class={ "border-2 border-[var(--border-primary)] bg-[var(--bg-header-field)] font-bold text-center word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%] leading-tight min-h-[2.5em] align-middle px-1 " + filledTextStyle }
 					>
-						{ r.Name }
+						{ i18n.T(lang, "row_" + r.ID) }
 					</th>
 					if strings.Contains(strings.ToLower(r.Name), "sum") {
 						for _, c := range sc.Columns {
@@ -217,13 +216,15 @@ templ SmallScoreCardTable(player *game.Player) {
 	</table>
 }
 
-templ OtherScorecards(roomID, playerID string, room *game.Room) {
-	<h3 class="font-bold text-[var(--text-primary)] mb-3 text-lg">Other Players</h3>
+templ OtherScorecards(roomID, playerID, lang string, room *game.Room) {
+	<h3 class="font-bold text-[var(--text-primary)] mb-3 text-lg">
+		{ i18n.T(lang, "other_players") }
+	</h3>
 	{{ otherCount := len(room.Players) - 1 }}
 	if otherCount <= 0 {
-		<div class="text-[var(--text-primary)] text-sm text-center py-8 bg-white rounded-lg border-2 border-[var(--border-primary)] w-full">
-			No other players yet
-		</div>
+		<div
+			class="text-[var(--text-primary)] text-sm text-center py-8 bg-white rounded-lg border-2 border-[var(--border-primary)] w-full"
+		>{ i18n.T(lang, "no_other_players") }</div>
 	} else if otherCount == 1 {
 		<!-- Single other player: center with flex -->
 		<div class="w-full h-full flex items-center justify-center p-2">
@@ -238,11 +239,11 @@ templ OtherScorecards(roomID, playerID string, room *game.Room) {
 						</h4>
 						if room.CurrentTurn == i {
 							<span class="text-[10px] text-[var(--btn-hover)] font-semibold">
-								Rolling...
+								{ i18n.T(lang, "rolling") }
 							</span>
 						} else {
 							<span class="text-[10px] text-[var(--btn-hover)] font-medium">
-								Waiting
+								{ i18n.T(lang, "waiting") }
 							</span>
 						}
 					</div>
@@ -250,7 +251,7 @@ templ OtherScorecards(roomID, playerID string, room *game.Room) {
 						@SmallDiceRow(room.Dice, room.CurrentTurn == i)
 					</div>
 					<div class="flex justify-center">
-						@SmallScoreCardTable(room.Players[i])
+						@SmallScoreCardTable(lang, room.Players[i])
 					</div>
 				</div>
 			}
@@ -269,11 +270,11 @@ templ OtherScorecards(roomID, playerID string, room *game.Room) {
 						</h4>
 						if room.CurrentTurn == i {
 							<span class="text-[10px] text-[var(--btn-hover)] font-semibold">
-								Rolling...
+								{ i18n.T(lang, "rolling") }
 							</span>
 						} else {
 							<span class="text-[10px] text-[var(--btn-hover)] font-medium">
-								Waiting...
+								{ i18n.T(lang, "waiting_dots") }
 							</span>
 						}
 					</div>
@@ -281,7 +282,7 @@ templ OtherScorecards(roomID, playerID string, room *game.Room) {
 						@SmallDiceRow(room.Dice, room.CurrentTurn == i)
 					</div>
 					<div class="flex justify-center">
-						@SmallScoreCardTable(room.Players[i])
+						@SmallScoreCardTable(lang, room.Players[i])
 					</div>
 				</div>
 			}
