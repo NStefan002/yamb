@@ -41,7 +41,7 @@ templ ChatMessage(player *game.Player, chatMsg *game.ChatMessage) {
 				{ chatMsg.SentAt.Format("15:04") }
 			</span>
 		</div>
-		<div class="leading-snug whitespace-pre-line break-words">
+		<div class="leading-snug whitespace-pre-line wrap-break-word">
 			{ chatMsg.Message }
 		</div>
 	</div>
@@ -58,14 +58,14 @@ templ ChatSection(roomID, playerID, lang string, room *game.Room) {
 		hx-ext="ws"
 		ws-connect={ fmt.Sprintf("/room/%s/chat/", roomID) }
 		id="chat-section"
-		class="h-full flex flex-col hidden"
+		class="h-full flex flex-col"
 	>
-		<h3 class="font-bold text-[var(--text-primary)] mb-3 text-lg">
+		<h3 class="font-bold text-(--text-primary) mb-3 text-lg">
 			{ i18n.T(lang, "chat") }
 		</h3>
 		<div
 			id="chat-box"
-			class="flex-1 overflow-y-auto space-y-3 text-sm mb-3 min-h-0 bg-white rounded-lg p-4 border-2 border-[var(--blue-accent)]"
+			class="flex-1 overflow-y-auto space-y-3 text-sm mb-3 min-h-0 bg-white rounded-lg p-4 border-2 border-(--blue-accent)"
 		>
 			if len(room.ChatHistory) > 0 {
 				for _, msg := range room.ChatHistory {
@@ -79,7 +79,7 @@ templ ChatSection(roomID, playerID, lang string, room *game.Room) {
 					@ChatMessage(player, msg)
 				}
 			} else {
-				<div class="text-[var(--text-primary)] text-center py-4 chat-empty-placeholder">
+				<div class="text-(--text-primary) text-center py-4 chat-empty-placeholder">
 					{ i18n.T(lang, "no_messages_yet") }
 				</div>
 			}
@@ -96,12 +96,12 @@ templ ChatSection(roomID, playerID, lang string, room *game.Room) {
 				autocorrect="off"
 				autocapitalize="off"
 				spellcheck="false"
-				class="border-2 border-[var(--blue-accent)] rounded-lg flex-1 p-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)]"
+				class="border-2 border-(--blue-accent) rounded-lg flex-1 p-2 text-sm text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-(--border-primary)"
 				placeholder={ i18n.T(lang, "type_message") }
 				required
 			/>
 			<input type="hidden" name="player_id" value={ playerID }/>
-			<button class="bg-[var(--btn-primary)] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[var(--btn-hover)] transition-colors border-2 border-[var(--blue-accent)]">
+			<button class="bg-(--btn-primary) text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-(--btn-hover) transition-colors border-2 border-(--blue-accent)">
 				{ i18n.T(lang, "send") }
 			</button>
 		</form>

@@ -22,8 +22,8 @@ templ ResultsPage(roomID, playerID, lang string, room *game.Room) {
 			}
 			<script src="/js/i18n.js"></script>
 		</head>
-		<body class="min-h-screen flex flex-col bg-[#FFFFFF] text-[var(--text-primary)]">
-			<main class="flex-grow">
+		<body class="min-h-screen flex flex-col bg-[#FFFFFF] text-(--text-primary)">
+			<main class="grow">
 				if room.NumOfPlayers == 4 {
 					@TeamResuts(roomID, playerID, lang, room)
 				} else {
@@ -58,7 +58,7 @@ templ FFAResults(roomID, playerID, lang string, room *game.Room) {
 				<!-- 	Play Again -->
 				<!-- </button> -->
 				<button
-					class="bg-white hover:bg-[var(--bg-rolling-area)] border border-[var(--border-primary)] text-[var(--text-primary)] font-medium px-6 py-2 rounded-lg transition"
+					class="bg-white hover:bg-(--bg-rolling-area) border border-(--border-primary) text-(--text-primary) font-medium px-6 py-2 rounded-lg transition"
 					onclick="window.location.href='/'"
 				>{ i18n.T(lang, "home") }</button>
 			</div>
@@ -129,7 +129,7 @@ templ TeamResuts(roomID, playerID, lang string, room *game.Room) {
 				<!-- 	Play Again -->
 				<!-- </button> -->
 				<button
-					class="bg-white hover:bg-[var(--bg-rolling-area)] border border-[var(--border-primary)] text-[var(--text-primary)] font-medium px-6 py-2 rounded-lg transition"
+					class="bg-white hover:bg-(--bg-rolling-area) border border-(--border-primary) text-(--text-primary) font-medium px-6 py-2 rounded-lg transition"
 					onclick="window.location.href='/'"
 				>{ i18n.T(lang, "home") }</button>
 			</div>

@@ -13,11 +13,11 @@ script hrefToRoomID(roomID string) {
 
 templ RoomLink(roomID, lang string) {
 	<div class="space-y-3">
-		<p class="text-sm text-center text-[var(--text-primary)]">{ i18n.T(lang, "your_room_is_ready") }</p>
+		<p class="text-sm text-center text-(--text-primary)">{ i18n.T(lang, "your_room_is_ready") }</p>
 		<div class="flex items-center space-x-2">
 			<input
 				id="room-url"
-				class="border border-[var(--border-primary)] rounded-lg p-2 flex-1 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)]"
+				class="border border-(--border-primary) rounded-lg p-2 flex-1 text-sm focus:outline-none focus:ring-2 focus:ring-(--border-primary)"
 				value={ fmt.Sprintf("https://yamb-xnuq.onrender.com/%s", roomID) }
 				readonly
 			/>
@@ -25,11 +25,11 @@ templ RoomLink(roomID, lang string) {
 		<div class="flex justify-center space-x-2">
 			<button
 				onclick={ hrefToRoomID(roomID) }
-				class="bg-[var(--btn-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--border-primary)] font-medium transition-colors"
+				class="bg-(--btn-primary) text-white px-4 py-2 rounded-lg hover:bg-(--border-primary) font-medium transition-colors"
 			>{ i18n.T(lang, "join_room_now") }</button>
 			<button
 				onclick="navigator.clipboard.writeText(document.getElementById('room-url').value)"
-				class="bg-[var(--bg-rolling-area)] text-[var(--text-primary)] px-4 py-2 rounded-lg hover:bg-[var(--bg-sum-field)] font-medium transition-colors"
+				class="bg-(--bg-rolling-area) text-(--text-primary) px-4 py-2 rounded-lg hover:bg-(--bg-sum-field) font-medium transition-colors"
 			>{ i18n.T(lang, "copy_room_url") }</button>
 		</div>
 	</div>
@@ -66,15 +66,15 @@ templ RoomPage(roomID, playerID, lang string, room *game.Room) {
 		</head>
 		<body class="h-screen flex flex-col bg-white overflow-hidden" hx-ext="sse">
 			<!-- Header -->
-			<header class="px-4 py-3 bg-white border-b border-[var(--border-primary)] flex justify-between items-center flex-shrink-0">
+			<header class="px-4 py-3 bg-white border-b border-(--border-primary) flex justify-between items-center shrink-0">
 				<!-- LEFT: Room + Players -->
 				<div class="flex items-center space-x-4">
-					<h1 class="font-bold text-xl text-[var(--blue-accent)]">
+					<h1 class="font-bold text-xl text-(--blue-accent)">
 						{ i18n.T(lang, "room") } { roomID }
 					</h1>
 					<div
 						id="player-counter"
-						class="text-sm text-[var(--text-primary)] font-medium"
+						class="text-sm text-(--text-primary) font-medium"
 					>
 						@PlayerCounter(lang, room)
 					</div>
@@ -85,17 +85,17 @@ templ RoomPage(roomID, playerID, lang string, room *game.Room) {
 						href="https://github.com/NStefan002/yamb/issues"
 						target="_blank"
 						rel="noopener noreferrer"
-						class="bg-white text-[var(--text-primary)] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-[var(--bg-rolling-area)] transition-colors border border-[var(--border-primary)]"
+						class="bg-white text-(--text-primary) px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-(--bg-rolling-area) transition-colors border border-(--border-primary)"
 					>{ i18n.T(lang, "report_bug") }</a>
 					@LangSwitcher(lang)
 					<!-- Hamburger Button for Mobile -->
 					<button
 						id="sidebar-toggle"
-						class="lg:hidden p-2 rounded-lg bg-[var(--bg-game-panel)] hover:bg-[var(--bg-rolling-area)] transition-colors"
+						class="lg:hidden p-2 rounded-lg bg-(--bg-game-panel) hover:bg-(--bg-rolling-area) transition-colors"
 						onclick="toggleSidebar()"
 					>
 						<svg
-							class="w-6 h-6 text-[var(--blue-accent)]"
+							class="w-6 h-6 text-(--blue-accent)"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -115,20 +115,20 @@ templ RoomPage(roomID, playerID, lang string, room *game.Room) {
 				<!-- Left Sidebar -->
 				<div
 					id="sidebar"
-					class="fixed lg:relative inset-y-0 left-0 w-full sm:w-96 lg:w-2/5 bg-[var(--bg-game-panel)] shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-20 flex flex-col border-r-2 border-[var(--border-primary)]"
+					class="fixed lg:relative inset-y-0 left-0 w-full sm:w-96 lg:w-2/5 bg-(--bg-game-panel) shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-20 flex flex-col border-r-2 border-(--border-primary)"
 				>
 					<!-- Sidebar Header -->
-					<div class="p-4 bg-[var(--bg-game-panel)] border-b-2 border-[var(--border-primary)] flex-shrink-0">
+					<div class="p-4 bg-(--bg-game-panel) border-b-2 border-(--border-primary) shrink-0">
 						<div class="flex justify-between items-center mb-3">
-							<h2 class="text-lg font-bold text-[var(--red-accent)]">
+							<h2 class="text-lg font-bold text-(--red-accent)">
 								{ i18n.T(lang, "game_panel") }
 							</h2>
 							<button
 								id="close-sidebar"
-								class="lg:hidden p-1 rounded hover:bg-[var(--bg-rolling-area)] transition-colors"
+								class="lg:hidden p-1 rounded hover:bg-(--bg-rolling-area) transition-colors"
 								onclick="toggleSidebar()"
 							>
-								<svg class="w-6 h-6 text-[var(--blue-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg class="w-6 h-6 text-(--blue-accent)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 								</svg>
 							</button>
@@ -137,12 +137,12 @@ templ RoomPage(roomID, playerID, lang string, room *game.Room) {
 						<div class="flex gap-4">
 							<button
 								id="toggle-scorecards"
-								class="bg-[var(--btn-hover)] text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-[var(--red-accent)] transition-colors border-2 border-[var(--blue-accent)] w-auto"
+								class="bg-(--btn-hover) text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-(--red-accent) transition-colors border-2 border-(--blue-accent) w-auto"
 								onclick="showSection('scorecards')"
 							>{ i18n.T(lang, "scorecards") }</button>
 							<button
 								id="toggle-chat"
-								class="bg-[var(--btn-primary)] text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-[var(--border-primary)] transition-colors border-2 border-[var(--blue-accent)] w-auto"
+								class="bg-(--btn-primary) text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-(--border-primary) transition-colors border-2 border-(--blue-accent) w-auto"
 								onclick="showSection('chat')"
 							>{ i18n.T(lang, "chat") }</button>
 						</div>
@@ -281,7 +281,7 @@ templ RoomPage(roomID, playerID, lang string, room *game.Room) {
 				});
 			</script>
 			<script src="/js/errorHandler.js"></script>
-			<div id="error-container" class="error-container fixed inset-0 pointer-events-none z-[9999]"></div>
+			<div id="error-container" class="error-container fixed inset-0 pointer-events-none z-9999"></div>
 		</body>
 	</html>
 }
@@ -298,22 +298,22 @@ templ UsernameEntry(roomID, lang string) {
 			<link href="/css/style.css" rel="stylesheet"/>
 			<script src="/js/i18n.js"></script>
 		</head>
-		<body class="flex items-center justify-center h-screen bg-[var(--bg-game-panel)]">
+		<body class="flex items-center justify-center h-screen bg-(--bg-game-panel)">
 			<div class="absolute top-4 right-4">
 				@LangSwitcher(lang)
 			</div>
-			<div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6 border-2 border-[var(--border-primary)]">
-				<h1 class="text-3xl font-bold text-center text-[var(--blue-accent)]">{ i18n.T(lang, "join_room") }</h1>
-				<p class="text-sm text-[var(--text-primary)] text-center">{ i18n.T(lang, "enter_username_to_join") }</p>
+			<div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6 border-2 border-(--border-primary)">
+				<h1 class="text-3xl font-bold text-center text-(--blue-accent)">{ i18n.T(lang, "join_room") }</h1>
+				<p class="text-sm text-(--text-primary) text-center">{ i18n.T(lang, "enter_username_to_join") }</p>
 				<form action="/join-room" method="POST" class="space-y-4">
 					<input type="hidden" name="room_id" value={ roomID }/>
 					<div>
-						<label for="username" class="block text-sm font-semibold mb-2 text-[var(--text-primary)]">{ i18n.T(lang, "username") }</label>
+						<label for="username" class="block text-sm font-semibold mb-2 text-(--text-primary)">{ i18n.T(lang, "username") }</label>
 						<input
 							type="text"
 							name="username"
 							id="username"
-							class="w-full border-2 border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)]"
+							class="w-full border-2 border-(--border-primary) rounded-lg p-3 text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-(--border-primary)"
 							placeholder={ i18n.T(lang, "enter_your_username") }
 							required
 							maxlength="20"
@@ -323,12 +323,12 @@ templ UsernameEntry(roomID, lang string) {
 					</div>
 					<button
 						type="submit"
-						class="w-full bg-[var(--btn-primary)] text-white py-3 rounded-lg hover:bg-[var(--btn-hover)] font-semibold transition-colors border-2 border-[var(--blue-accent)]"
+						class="w-full bg-(--btn-primary) text-white py-3 rounded-lg hover:bg-(--btn-hover) font-semibold transition-colors border-2 border-(--blue-accent)"
 					>{ i18n.T(lang, "proceed_to_game") }</button>
 				</form>
 			</div>
 			<script src="/js/errorHandler.js"></script>
-			<div id="error-container" class="error-container fixed inset-0 pointer-events-none z-[9999]"></div>
+			<div id="error-container" class="error-container fixed inset-0 pointer-events-none z-9999"></div>
 		</body>
 	</html>
 }

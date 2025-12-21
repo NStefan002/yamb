@@ -11,33 +11,33 @@ templ Index(lang string) {
 			<script src="/js/i18n.js"></script>
 			<link href="/css/style.css" rel="stylesheet"/>
 		</head>
-		<body class="flex items-center justify-center min-h-screen bg-[var(--bg-game-panel)]">
+		<body class="flex items-center justify-center min-h-screen bg-(--bg-game-panel)">
 			<div class="absolute top-4 right-4">
 				@LangSwitcher(lang)
 			</div>
-			<div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6 border-2 border-[var(--border-primary)]">
+			<div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6 border-2 border-(--border-primary)">
 				<div class="text-center">
-					<h1 class="text-4xl font-bold text-[var(--blue-accent)] mb-2">{ i18n.T(lang, "yamb_online") }</h1>
-					<p class="text-sm text-[var(--text-primary)]">{ i18n.T(lang, "create_game_room") }</p>
+					<h1 class="text-4xl font-bold text-(--blue-accent) mb-2">{ i18n.T(lang, "yamb_online") }</h1>
+					<p class="text-sm text-(--text-primary)">{ i18n.T(lang, "create_game_room") }</p>
 				</div>
 				<form hx-post="/create-room" hx-target="#room-link" class="space-y-5">
 					<div>
-						<label for="mode" class="block text-sm font-semibold text-[var(--text-primary)] mb-2">{ i18n.T(lang, "game_mode") }</label>
+						<label for="mode" class="block text-sm font-semibold text-(--text-primary) mb-2">{ i18n.T(lang, "game_mode") }</label>
 						<select
 							id="mode"
 							name="mode"
-							class="w-full border-2 border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)] bg-white"
+							class="w-full border-2 border-(--border-primary) rounded-lg p-3 text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-(--border-primary) bg-white"
 						>
 							<option value="1v1">{ i18n.T(lang, "one_vs_one") }</option>
 							<option value="1v1v1">{ i18n.T(lang, "one_vs_one_vs_one") }</option>
 						</select>
 					</div>
 					<div>
-						<label for="dice" class="block text-sm font-semibold text-[var(--text-primary)] mb-2">{ i18n.T(lang, "dice_count") }</label>
+						<label for="dice" class="block text-sm font-semibold text-(--text-primary) mb-2">{ i18n.T(lang, "dice_count") }</label>
 						<select
 							id="dice"
 							name="dice"
-							class="w-full border-2 border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-primary)] bg-white"
+							class="w-full border-2 border-(--border-primary) rounded-lg p-3 text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-(--border-primary) bg-white"
 						>
 							<option value="6">{ i18n.T(lang, "six_dice") }</option>
 							<option value="5">{ i18n.T(lang, "five_dice") }</option>
@@ -45,12 +45,12 @@ templ Index(lang string) {
 					</div>
 					<button
 						type="submit"
-						class="w-full bg-[var(--btn-primary)] text-white py-3 rounded-lg hover:bg-[var(--btn-hover)] font-bold text-lg transition-colors border-2 border-[var(--blue-accent)] shadow-lg"
+						class="w-full bg-(--btn-primary) text-white py-3 rounded-lg hover:bg-(--btn-hover) font-bold text-lg transition-colors border-2 border-(--blue-accent) shadow-lg"
 					>{ i18n.T(lang, "create_room") }</button>
 				</form>
 				<div id="room-link" class="text-center mt-4"></div>
 			</div>
-			<div id="error-container" class="error-container fixed inset-0 pointer-events-none z-[9999]"></div>
+			<div id="error-container" class="error-container fixed inset-0 pointer-events-none z-9999"></div>
 			<script src="/js/errorHandler.js"></script>
 		</body>
 	</html>

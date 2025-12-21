@@ -26,31 +26,31 @@ templ MainScoreCard(roomID string, playerID, lang string, room *game.Room) {
 		numOfRows := len(sc.Rows) + 1 // +1 for column names (header row)
 	}}
 	<table
-		class="table-fixed border-collapse border-2 border-[var(--border-primary)] w-full h-full text-sm text-center"
+		class="table-fixed border-collapse border-2 border-(--border-primary) w-full h-full text-sm text-center"
 		style={ fmt.Sprintf("--row-height: calc(100%%/%d); --tbody-height: calc(100%%-100%%/%d); --col-width:calc((100%%-22%%)/%d);", numOfRows, numOfRows, numOfCols) }
 	>
-		<thead class="bg-[var(--bg-header-field)] h-[var(--row-height)]">
+		<thead class="bg-(--bg-header-field) h-(--row-height)">
 			<tr>
-				<th class="border-2 border-[var(--border-primary)] text-sm font-bold w-auto max-w-[22%] px-1 sm:px-2 text-center break-words"></th>
+				<th class="border-2 border-(--border-primary) text-sm font-bold w-auto max-w-[22%] px-1 sm:px-2 text-center wrap-break-word"></th>
 				for _, c := range sc.Columns {
 					<th
-						class={ fmt.Sprintf("border-2 border-[var(--border-primary)] text-sm font-bold w-[var(--col-width)] text-center break-words px-1 sm:px-2 %s", filledTextStyle) }
+						class={ fmt.Sprintf("border-2 border-(--border-primary) text-sm font-bold w-(--col-width) text-center wrap-break-word px-1 sm:px-2 %s", filledTextStyle) }
 						title={ i18n.T(lang, "col_desc_"+c.ID) }
 					>{ i18n.T(lang, "col_" + c.ID) }</th>
 				}
 			</tr>
 		</thead>
-		<tbody class="h-[var(--tbody-height)]">
+		<tbody class="h-(--tbody-height)">
 			for _, r := range sc.Rows {
-				<tr class="h-[var(--row-height)]">
+				<tr class="h-(--row-height)">
 					<th
-						class="border-2 border-[var(--border-primary)] bg-[var(--bg-header-field)] px-1 sm:px-2 text-xs sm:text-sm font-bold text-center break-all word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%] leading-tight min-h-[2.8em] align-middle"
+						class="border-2 border-(--border-primary) bg-(--bg-header-field) px-1 sm:px-2 text-xs sm:text-sm font-bold text-center break-all word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%] leading-tight min-h-[2.8em] align-middle"
 						title={ i18n.T(lang, "row_desc_"+r.ID) }
 					>{ i18n.T(lang, "row_" + r.ID) }</th>
 					for _, c := range sc.Columns {
 						if strings.Contains(strings.ToLower(r.Name), "sum") {
 							<td
-								class={ fmt.Sprintf("border-2 border-[var(--border-primary)] bg-[var(--bg-sum-field)] text-center font-semibold text-xs sm:text-sm w-[var(--col-width)] %s", filledTextStyle) }
+								class={ fmt.Sprintf("border-2 border-(--border-primary) bg-(--bg-sum-field) text-center font-semibold text-xs sm:text-sm w-(--col-width) %s", filledTextStyle) }
 							>
 								if sc.Scores[r.ID][c.ID] != nil {
 									{ *sc.Scores[r.ID][c.ID] }
@@ -90,25 +90,25 @@ templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
 	}}
 	if sc.Scores[rowID][colID] != nil {
 		<td
-			class={ fmt.Sprintf("border-2 border-[var(--border-primary)] text-center font-semibold text-xs sm:text-sm w-[var(--col-width)] %s %s", filledBgStyle, filledTextStyle) }
+			class={ fmt.Sprintf("border-2 border-(--border-primary) text-center font-semibold text-xs sm:text-sm w-(--col-width) %s %s", filledBgStyle, filledTextStyle) }
 		>
 			{ *sc.Scores[rowID][colID] }
 		</td>
 	} else if disabled {
 		if selected {
 			<td
-				class={ fmt.Sprintf("border-2 border-[var(--border-primary)] text-center font-semibold text-xs sm:text-sm cursor-not-allowed w-[var(--col-width)] %s %s", filledBgStyle, filledTextStyle) }
+				class={ fmt.Sprintf("border-2 border-(--border-primary) text-center font-semibold text-xs sm:text-sm cursor-not-allowed w-(--col-width) %s %s", filledBgStyle, filledTextStyle) }
 				id={ "cell-" + rowID + "-" + colID }
 			></td>
 		} else {
 			<td
-				class="border-2 border-[var(--border-primary)] text-center text-xs sm:text-sm bg-white text-[var(--text-primary)] cursor-not-allowed w-[var(--col-width)]"
+				class="border-2 border-(--border-primary) text-center text-xs sm:text-sm bg-white text-(--text-primary) cursor-not-allowed w-(--col-width)"
 				id={ "cell-" + rowID + "-" + colID }
 			></td>
 		}
 	} else if selected {
 		<td
-			class={ fmt.Sprintf("border-2 border-[var(--border-primary)] text-center font-semibold text-xs sm:text-sm w-[var(--col-width)] %s %s", filledBgStyle, filledTextStyle) }
+			class={ fmt.Sprintf("border-2 border-(--border-primary) text-center font-semibold text-xs sm:text-sm w-(--col-width) %s %s", filledBgStyle, filledTextStyle) }
 			hx-post="/select-cell"
 			hx-target="#main-scorecard"
 			hx-swap="innerHTML"
@@ -117,7 +117,7 @@ templ ScoreCardField(roomID string, player *game.Player, rowID, colID string) {
 		></td>
 	} else {
 		<td
-			class="border-2 border-[var(--border-primary)] text-center align-middle cursor-pointer hover:bg-[var(--bg-game-panel)] bg-[var(--bg-rolling-area)] text-xs sm:text-sm transition-colors w-[var(--col-width)]"
+			class="border-2 border-(--border-primary) text-center align-middle cursor-pointer hover:bg-(--bg-game-panel) bg-(--bg-rolling-area) text-xs sm:text-sm transition-colors w-(--col-width)"
 			hx-post="/select-cell"
 			hx-target="#main-scorecard"
 			hx-swap="innerHTML"
@@ -152,33 +152,33 @@ templ SmallScoreCardTable(lang string, player *game.Player) {
 		numOfRows := len(sc.Rows) + 1
 	}}
 	<table
-		class="table-fixed border-collapse border-2 border-[var(--border-primary)] w-full h-full text-xs text-center bg-[var(--bg-header-field)]"
+		class="table-fixed border-collapse border-2 border-(--border-primary) w-full h-full text-xs text-center bg-(--bg-header-field)"
 		style={ fmt.Sprintf("--row-height: calc(100%%/%d); --col-width:calc((100%%-22%%)/%d); --tbody-height: calc(100%%-100%%/%d);", numOfRows, numOfCols, numOfRows) }
 	>
-		<thead class="h-[var(--row-height)]">
-			<tr class="h-[var(--row-height)]">
-				<th class={ "border-2 border-[var(--border-primary)] font-bold text-center w-auto max-w-[22%] px-1 break-words h-full align-middle " + filledTextStyle }></th>
+		<thead class="h-(--row-height)">
+			<tr class="h-(--row-height)">
+				<th class={ "border-2 border-(--border-primary) font-bold text-center w-auto max-w-[22%] px-1 wrap-break-word h-full align-middle " + filledTextStyle }></th>
 				for _, c := range sc.Columns {
 					<th
-						class={ fmt.Sprintf("border-2 border-[var(--border-primary)] font-bold w-[var(--col-width)] text-center break-words px-1 h-full align-middle %s", filledTextStyle) }
+						class={ fmt.Sprintf("border-2 border-(--border-primary) font-bold w-(--col-width) text-center wrap-break-word px-1 h-full align-middle %s", filledTextStyle) }
 					>
 						{ i18n.T(lang, "col_" + c.ID) }
 					</th>
 				}
 			</tr>
 		</thead>
-		<tbody class="h-[var(--tbody-height)]">
+		<tbody class="h-(--tbody-height)">
 			for _, r := range sc.Rows {
-				<tr class="h-[var(--row-height)]">
+				<tr class="h-(--row-height)">
 					<th
-						class={ "border-2 border-[var(--border-primary)] bg-[var(--bg-header-field)] font-bold text-center word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%] leading-tight min-h-[2.5em] align-middle px-1 " + filledTextStyle }
+						class={ "border-2 border-(--border-primary) bg-(--bg-header-field) font-bold text-center word-break-break-all overflow-wrap-anywhere hyphens-auto w-auto max-w-[22%] leading-tight min-h-[2.5em] align-middle px-1 " + filledTextStyle }
 					>
 						{ i18n.T(lang, "row_" + r.ID) }
 					</th>
 					if strings.Contains(strings.ToLower(r.Name), "sum") {
 						for _, c := range sc.Columns {
 							<td
-								class={ fmt.Sprintf("border-2 border-[var(--border-primary)] bg-[var(--bg-sum-field)] font-semibold text-center w-[var(--col-width)] %s", filledTextStyle) }
+								class={ fmt.Sprintf("border-2 border-(--border-primary) bg-(--bg-sum-field) font-semibold text-center w-(--col-width) %s", filledTextStyle) }
 							>
 								if sc.Scores[r.ID][c.ID] != nil {
 									{ *sc.Scores[r.ID][c.ID] }
@@ -189,23 +189,23 @@ templ SmallScoreCardTable(lang string, player *game.Player) {
 						for _, c := range sc.Columns {
 							if sc.Scores[r.ID][c.ID] != nil {
 								<td
-									class={ fmt.Sprintf("border-2 border-[var(--border-primary)] font-semibold text-center w-[var(--col-width)] %s %s", filledBgStyle, filledTextStyle) }
+									class={ fmt.Sprintf("border-2 border-(--border-primary) font-semibold text-center w-(--col-width) %s %s", filledBgStyle, filledTextStyle) }
 								>
 									{ *sc.Scores[r.ID][c.ID] }
 								</td>
 							} else if announced {
 								if selectedRowID == r.ID && selectedColID == c.ID {
 									<td
-										class={ fmt.Sprintf("border-2 border-[var(--border-primary)] font-semibold text-center w-[var(--col-width)] %s %s", filledBgStyle, filledTextStyle) }
+										class={ fmt.Sprintf("border-2 border-(--border-primary) font-semibold text-center w-(--col-width) %s %s", filledBgStyle, filledTextStyle) }
 									></td>
 								} else {
 									<td
-										class="border-2 border-[var(--border-primary)] bg-white text-[var(--text-primary)] text-center w-[var(--col-width)]"
+										class="border-2 border-(--border-primary) bg-white text-(--text-primary) text-center w-(--col-width)"
 									></td>
 								}
 							} else {
 								<td
-									class="border-2 border-[var(--border-primary)] font-semibold bg-[var(--bg-rolling-area)] text-center w-[var(--col-width)]"
+									class="border-2 border-(--border-primary) font-semibold bg-(--bg-rolling-area) text-center w-(--col-width)"
 								></td>
 							}
 						}
@@ -217,13 +217,13 @@ templ SmallScoreCardTable(lang string, player *game.Player) {
 }
 
 templ OtherScorecards(roomID, playerID, lang string, room *game.Room) {
-	<h3 class="font-bold text-[var(--text-primary)] mb-3 text-lg">
+	<h3 class="font-bold text-(--text-primary) mb-3 text-lg">
 		{ i18n.T(lang, "other_players") }
 	</h3>
 	{{ otherCount := len(room.Players) - 1 }}
 	if otherCount <= 0 {
 		<div
-			class="text-[var(--text-primary)] text-sm text-center py-8 bg-white rounded-lg border-2 border-[var(--border-primary)] w-full"
+			class="text-(--text-primary) text-sm text-center py-8 bg-white rounded-lg border-2 border-(--border-primary) w-full"
 		>{ i18n.T(lang, "no_other_players") }</div>
 	} else if otherCount == 1 {
 		<!-- Single other player: center with flex -->
@@ -232,22 +232,22 @@ templ OtherScorecards(roomID, playerID, lang string, room *game.Room) {
 				if room.Players[i].ID == playerID {
 					{{ continue }}
 				}
-				<div class="w-full max-w-md bg-white rounded-lg p-2 border-2 border-[var(--border-primary)] shadow-md flex flex-col h-full">
-					<div class="flex justify-between items-center mb-2 flex-shrink-0">
-						<h4 class="font-bold text-xs text-[var(--text-primary)]">
+				<div class="w-full max-w-md bg-white rounded-lg p-2 border-2 border-(--border-primary) shadow-md flex flex-col h-full">
+					<div class="flex justify-between items-center mb-2 shrink-0">
+						<h4 class="font-bold text-xs text-(--text-primary)">
 							{ room.Players[i].Username }
 						</h4>
 						if room.CurrentTurn == i {
-							<span class="text-xs text-[var(--btn-hover)] font-semibold">
+							<span class="text-xs text-(--btn-hover) font-semibold">
 								{ i18n.T(lang, "rolling") }
 							</span>
 						} else {
-							<span class="text-xs text-[var(--btn-hover)] font-medium">
+							<span class="text-xs text-(--btn-hover) font-medium">
 								{ i18n.T(lang, "waiting") }
 							</span>
 						}
 					</div>
-					<div class="mb-2 flex-shrink-0" id={ "other-dice-" + room.Players[i].ID }>
+					<div class="mb-2 shrink-0" id={ "other-dice-" + room.Players[i].ID }>
 						@SmallDiceRow(room.Dice, room.CurrentTurn == i)
 					</div>
 					<div class="flex justify-center flex-1 min-h-0">
@@ -263,22 +263,22 @@ templ OtherScorecards(roomID, playerID, lang string, room *game.Room) {
 				if room.Players[i].ID == playerID {
 					{{ continue }}
 				}
-				<div class="bg-white rounded-lg p-2 border-2 border-[var(--border-primary)] shadow-md flex flex-col h-full">
-					<div class="flex justify-between items-center mb-2 flex-shrink-0">
-						<h4 class="font-bold text-xs text-[var(--text-primary)] break-words max-w-[60%]">
+				<div class="bg-white rounded-lg p-2 border-2 border-(--border-primary) shadow-md flex flex-col h-full">
+					<div class="flex justify-between items-center mb-2 shrink-0">
+						<h4 class="font-bold text-xs text-(--text-primary) wrap-break-word max-w-[60%]">
 							{ room.Players[i].Username }
 						</h4>
 						if room.CurrentTurn == i {
-							<span class="text-xs text-[var(--btn-hover)] font-semibold">
+							<span class="text-xs text-(--btn-hover) font-semibold">
 								{ i18n.T(lang, "rolling") }
 							</span>
 						} else {
-							<span class="text-xs text-[var(--btn-hover)] font-medium">
+							<span class="text-xs text-(--btn-hover) font-medium">
 								{ i18n.T(lang, "waiting_dots") }
 							</span>
 						}
 					</div>
-					<div class="mb-2 flex-shrink-0" id={ "other-dice-" + room.Players[i].ID }>
+					<div class="mb-2 shrink-0" id={ "other-dice-" + room.Players[i].ID }>
 						@SmallDiceRow(room.Dice, room.CurrentTurn == i)
 					</div>
 					<div class="flex justify-center flex-1 min-h-0">
