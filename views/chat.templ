@@ -101,7 +101,7 @@ templ ChatSection(roomID, playerID, lang string, room *game.Room) {
 				required
 			/>
 			<input type="hidden" name="player_id" value={ playerID }/>
-			<button class="bg-(--btn-primary) text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-(--btn-hover) transition-colors border-2 border-(--blue-accent)">
+			<button class="bg-(--btn-primary) text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-(--btn-hover) transition-colors">
 				{ i18n.T(lang, "send") }
 			</button>
 		</form>

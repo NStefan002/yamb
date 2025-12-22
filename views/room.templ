@@ -137,12 +137,12 @@ templ RoomPage(roomID, playerID, lang string, room *game.Room) {
 						<div class="flex gap-4">
 							<button
 								id="toggle-scorecards"
-								class="bg-(--btn-hover) text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-(--red-accent) transition-colors border-2 border-(--blue-accent) w-auto"
+								class="bg-(--btn-hover) text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-(--red-accent) transition-colors w-auto"
 								onclick="showSection('scorecards')"
 							>{ i18n.T(lang, "scorecards") }</button>
 							<button
 								id="toggle-chat"
-								class="bg-(--btn-primary) text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-(--border-primary) transition-colors border-2 border-(--blue-accent) w-auto"
+								class="bg-(--btn-primary) text-white py-2 px-4 rounded-lg text-sm font-semibold hover:bg-(--border-primary) transition-colors w-auto"
 								onclick="showSection('chat')"
 							>{ i18n.T(lang, "chat") }</button>
 						</div>
@@ -323,7 +323,7 @@ templ UsernameEntry(roomID, lang string) {
 					</div>
 					<button
 						type="submit"
-						class="w-full bg-(--btn-primary) text-white py-3 rounded-lg hover:bg-(--btn-hover) font-semibold transition-colors border-2 border-(--blue-accent)"
+						class="w-full bg-(--btn-primary) text-white py-3 rounded-lg hover:bg-(--btn-hover) font-semibold transition-colors"
 					>{ i18n.T(lang, "proceed_to_game") }</button>
 				</form>
 			</div>

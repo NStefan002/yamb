@@ -58,7 +58,7 @@ templ FFAResults(roomID, playerID, lang string, room *game.Room) {
 				<!-- 	Play Again -->
 				<!-- </button> -->
 				<button
-					class="bg-white hover:bg-(--bg-rolling-area) border border-(--border-primary) text-(--text-primary) font-medium px-6 py-2 rounded-lg transition"
+					class="bg-white hover:bg-(--bg-rolling-area) text-(--text-primary) font-medium px-6 py-2 rounded-lg transition"
 					onclick="window.location.href='/'"
 				>{ i18n.T(lang, "home") }</button>
 			</div>
@@ -129,7 +129,7 @@ templ TeamResuts(roomID, playerID, lang string, room *game.Room) {
 				<!-- 	Play Again -->
 				<!-- </button> -->
 				<button
-					class="bg-white hover:bg-(--bg-rolling-area) border border-(--border-primary) text-(--text-primary) font-medium px-6 py-2 rounded-lg transition"
+					class="bg-white hover:bg-(--bg-rolling-area) text-(--text-primary) font-medium px-6 py-2 rounded-lg transition"
 					onclick="window.location.href='/'"
 				>{ i18n.T(lang, "home") }</button>
 			</div>
