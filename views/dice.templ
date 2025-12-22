@@ -40,7 +40,7 @@ templ DiceArea(roomID, playerID, lang string, room *game.Room) {
 			</div>
 			<button
 				id="roll-button"
-	class="bg-(--btn-primary) text-white py-2 px-4 rounded-lg hover:bg-(--btn-hover) font-bold text-sm disabled:bg-(--bg-sum-field) disabled:text-(--text-primary) disabled:cursor-not-allowed transition-colors shadow-lg whitespace-nowrap"
+				class="bg-(--btn-primary) text-white py-2 px-4 rounded-lg hover:bg-(--btn-hover) font-bold text-sm disabled:bg-(--bg-sum-field) disabled:text-(--text-primary) disabled:cursor-not-allowed transition-colors shadow-lg whitespace-nowrap"
 				hx-post="/roll-dice"
 				hx-target="#dice-area"
 				hx-swap="innerHTML"
